@@ -391,6 +391,29 @@ export function formatDate(dateStr: string): string {
   }).format(date);
 }
 
+// Format relative date (Hace X días, En X días)
+export function formatRelativeDate(dateStr: string, type: 'overdue' | 'today' | 'upcoming', daysOverdue: number): string {
+  if (type === 'today') return 'Hoy';
+  
+  if (type === 'overdue') {
+    if (daysOverdue === 1) return 'Hace 1 día';
+    if (daysOverdue < 30) return `Hace ${daysOverdue} días`;
+    const months = Math.floor(daysOverdue / 30);
+    return months === 1 ? 'Hace 1 mes' : `Hace ${months} meses`;
+  }
+  
+  // For upcoming, calculate roughly based on date diff from today
+  // Mock environment, so we just use the daysOverdue logic inverted or parse
+  const targetDate = new Date(dateStr);
+  const now = new Date('2026-02-13'); // Simulated 'today' to match mock data
+  const diffTime = Math.max(0, targetDate.getTime() - now.getTime());
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  
+  if (diffDays === 0) return 'Mañana';
+  if (diffDays === 1) return 'En 1 día';
+  return `En ${diffDays} días`;
+}
+
 // Get overdue members sorted by days overdue
 export function getOverdueMembers(): Member[] {
   return mockMembers

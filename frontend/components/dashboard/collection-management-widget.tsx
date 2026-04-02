@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { MessageCircle, AlertTriangle, CalendarClock, Clock, CheckCircle } from 'lucide-react';
+import { MessageCircle, AlertTriangle, CalendarClock, Clock, CheckCircle, CreditCard } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -22,7 +22,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import type { Member } from '@/lib/mock-data';
-import { formatCurrency, formatDate, PLAN_PRICES, getUpcomingExpiries } from '@/lib/mock-data';
+import { formatCurrency, formatDate, formatRelativeDate, PLAN_PRICES, getUpcomingExpiries } from '@/lib/mock-data';
 
 interface CollectionManagementWidgetProps {
   overdueMembers: Member[];
@@ -87,8 +87,10 @@ export function CollectionManagementWidget({
               ) : (
                 <TableHead className="font-bold text-foreground w-[120px] text-left">A Pagar</TableHead>
               )}
-              <TableHead className="font-bold text-foreground w-[130px] text-left">Vencimiento</TableHead>
-              <TableHead className="font-bold text-foreground text-left w-[140px]">Contactar</TableHead>
+              {type !== 'today' && (
+                <TableHead className="font-bold text-foreground w-[130px] text-left">Vencimiento</TableHead>
+              )}
+              <TableHead className="font-bold text-foreground text-right w-[150px]">Acciones</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -125,25 +127,41 @@ export function CollectionManagementWidget({
                     </span>
                   </TableCell>
                 )}
-                <TableCell className="text-left">
-                  <span className={`text-sm font-medium ${type === 'overdue' ? 'text-destructive/80' : 'text-muted-foreground'}`}>
-                    {formatDate(member.nextExpiry)}
-                  </span>
-                </TableCell>
-                <TableCell className="text-left">
-                  <Button
-                    size="sm"
-                    className="gap-1.5 bg-[#25D366] text-white hover:bg-[#128C7E] shadow-sm font-medium"
-                    onClick={() => handleWhatsApp(member, type)}
-                  >
-                    <MessageCircle className="h-4 w-4" />
-                    <span className="hidden sm:inline">WhatsApp</span>
-                    {contactCounts[member.id] && (
-                      <Badge className="ml-1 h-5 w-5 p-0 bg-white/20 text-white hover:bg-white/30 flex items-center justify-center border-0 rounded-full">
-                        {contactCounts[member.id]}
-                      </Badge>
-                    )}
-                  </Button>
+                {type !== 'today' && (
+                  <TableCell className="text-left">
+                    <span className={`text-sm font-medium ${type === 'overdue' ? 'text-destructive' : 'text-muted-foreground'}`}>
+                      {formatRelativeDate(member.nextExpiry, type, member.daysOverdue)}
+                    </span>
+                  </TableCell>
+                )}
+                <TableCell className="text-right">
+                  <div className="flex items-center justify-end gap-2">
+                    <Button
+                      size="sm"
+                      variant="default"
+                      className="gap-1.5 font-semibold shadow-sm"
+                      onClick={() => alert(`Iniciando cobro a ${member.name}`)}
+                    >
+                      <CreditCard className="h-4 w-4" />
+                      <span>Cobrar</span>
+                    </Button>
+                    <div className="relative">
+                      <Button
+                        size="icon"
+                        variant="outline"
+                        className="h-8 w-8 border-[#25D366] text-[#25D366] hover:bg-[#25D366]/10 hover:text-[#25D366] shadow-sm bg-transparent"
+                        onClick={() => handleWhatsApp(member, type)}
+                        title="Contactar por WhatsApp"
+                      >
+                        <MessageCircle className="h-4 w-4" />
+                      </Button>
+                      {contactCounts[member.id] && (
+                        <Badge className="absolute -top-2 -right-2 h-4 w-4 p-0 text-[10px] bg-[#25D366] text-white flex items-center justify-center border-0 rounded-full shadow-sm">
+                          {contactCounts[member.id]}
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}
