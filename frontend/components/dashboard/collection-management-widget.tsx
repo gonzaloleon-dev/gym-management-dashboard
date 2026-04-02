@@ -81,14 +81,14 @@ export function CollectionManagementWidget({
           <TableHeader>
             <TableRow className="bg-muted/20 hover:bg-muted/20">
               <TableHead className="font-bold text-foreground">Alumno</TableHead>
-              <TableHead className="font-bold text-foreground hidden sm:table-cell">Plan</TableHead>
+              <TableHead className="font-bold text-foreground hidden sm:table-cell text-left">Plan</TableHead>
               {type === 'overdue' ? (
-                <TableHead className="font-bold text-foreground w-[120px]">Deuda</TableHead>
+                <TableHead className="font-bold text-foreground w-[120px] text-left">Deuda</TableHead>
               ) : (
-                <TableHead className="font-bold text-foreground w-[120px]">A Pagar</TableHead>
+                <TableHead className="font-bold text-foreground w-[120px] text-left">A Pagar</TableHead>
               )}
-              <TableHead className="font-bold text-foreground">Vencimiento</TableHead>
-              <TableHead className="font-bold text-foreground text-right w-[140px]">Contactar</TableHead>
+              <TableHead className="font-bold text-foreground w-[130px] text-left">Vencimiento</TableHead>
+              <TableHead className="font-bold text-foreground text-left w-[140px]">Contactar</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -107,33 +107,33 @@ export function CollectionManagementWidget({
                     </div>
                   </div>
                 </TableCell>
-                <TableCell className="hidden sm:table-cell">
+                <TableCell className="hidden sm:table-cell text-left">
                   <Badge variant="outline" className="font-medium text-xs border-muted-foreground/30 text-foreground">
                     {member.plan}
                   </Badge>
                 </TableCell>
                 {type === 'overdue' ? (
-                  <TableCell>
+                  <TableCell className="text-left">
                     <span className="font-bold text-destructive">
                       {formatCurrency(member.debt)}
                     </span>
                   </TableCell>
                 ) : (
-                  <TableCell>
+                  <TableCell className="text-left">
                     <span className="font-semibold text-foreground">
                       {formatCurrency(PLAN_PRICES[member.plan])}
                     </span>
                   </TableCell>
                 )}
-                <TableCell>
+                <TableCell className="text-left">
                   <span className={`text-sm font-medium ${type === 'overdue' ? 'text-destructive/80' : 'text-muted-foreground'}`}>
                     {formatDate(member.nextExpiry)}
                   </span>
                 </TableCell>
-                <TableCell className="text-right">
+                <TableCell className="text-left">
                   <Button
                     size="sm"
-                    className="gap-1.5 bg-[#25D366] text-white hover:bg-[#128C7E] shadow-sm ml-auto font-medium"
+                    className="gap-1.5 bg-[#25D366] text-white hover:bg-[#128C7E] shadow-sm font-medium"
                     onClick={() => handleWhatsApp(member, type)}
                   >
                     <MessageCircle className="h-4 w-4" />
