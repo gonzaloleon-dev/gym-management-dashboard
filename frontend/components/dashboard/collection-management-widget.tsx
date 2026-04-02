@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { MessageCircle, AlertTriangle, CalendarClock, Clock, CheckCircle, CreditCard } from 'lucide-react';
+import { AlertTriangle, CalendarClock, Clock, CheckCircle, CreditCard } from 'lucide-react';
+import { FaWhatsapp } from 'react-icons/fa';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -90,7 +91,7 @@ export function CollectionManagementWidget({
               {type !== 'today' && (
                 <TableHead className="font-bold text-foreground w-[130px] text-left">Vencimiento</TableHead>
               )}
-              <TableHead className="font-bold text-foreground text-right w-[150px]">Acciones</TableHead>
+              <TableHead className="font-bold text-foreground w-[230px] text-center">Acciones</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -134,29 +135,29 @@ export function CollectionManagementWidget({
                     </span>
                   </TableCell>
                 )}
-                <TableCell className="text-right">
-                  <div className="flex items-center justify-end gap-2">
-                    <Button
-                      size="sm"
-                      variant="default"
-                      className="gap-1.5 font-semibold shadow-sm"
+                <TableCell className="w-[230px]">
+                  <div className="flex items-center justify-center gap-2">
+                    {/* Cobrar: izquierda — slate oscuro, diferenciado del verde */}
+                    <button
+                      className="h-8 flex items-center gap-1.5 px-3 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors shadow-sm text-sm font-semibold"
                       onClick={() => alert(`Iniciando cobro a ${member.name}`)}
+                      title="Registrar cobro"
                     >
-                      <CreditCard className="h-4 w-4" />
-                      <span>Cobrar</span>
-                    </Button>
+                      <CreditCard className="h-3.5 w-3.5" />
+                      Cobrar
+                    </button>
+                    {/* WhatsApp: derecha — verde oficial sólido */}
                     <div className="relative">
-                      <Button
-                        size="icon"
-                        variant="outline"
-                        className="h-8 w-8 border-[#25D366] text-[#25D366] hover:bg-[#25D366]/10 hover:text-[#25D366] shadow-sm bg-transparent"
+                      <button
+                        className="h-8 flex items-center gap-1.5 px-3 rounded-lg bg-[#25D366] text-white hover:bg-[#20bc5a] transition-colors shadow-sm text-sm font-semibold"
                         onClick={() => handleWhatsApp(member, type)}
                         title="Contactar por WhatsApp"
                       >
-                        <MessageCircle className="h-4 w-4" />
-                      </Button>
+                        <FaWhatsapp className="h-4 w-4" />
+                        <span className="hidden sm:inline">WhatsApp</span>
+                      </button>
                       {contactCounts[member.id] && (
-                        <Badge className="absolute -top-2 -right-2 h-4 w-4 p-0 text-[10px] bg-[#25D366] text-white flex items-center justify-center border-0 rounded-full shadow-sm">
+                        <Badge className="absolute -top-1.5 -right-1.5 h-4 w-4 p-0 text-[10px] bg-white text-[#25D366] font-bold flex items-center justify-center border border-[#25D366] rounded-full shadow-sm pointer-events-none">
                           {contactCounts[member.id]}
                         </Badge>
                       )}
