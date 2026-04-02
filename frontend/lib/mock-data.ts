@@ -367,81 +367,14 @@ export const todayExpiringMembers: Member[] = [
   },
 ];
 
-// Members expiring in next 2 days
-export const upcomingExpiringMembers: Member[] = [
-  {
-    id: '4',
-    dni: '33.456.123',
-    name: 'Camila López',
-    email: 'camila.lopez@yahoo.com',
-    phone: '+54 11 3456-7890',
-    plan: 'Funcional',
-    status: 'Activo',
-    lastPayment: '2026-01-25',
-    nextExpiry: '2026-02-25',
-    debt: 0,
-    daysOverdue: 0,
-    joinDate: '2022-01-05',
-  },
-  {
-    id: '1',
-    dni: '35.456.789',
-    name: 'Martín González',
-    email: 'martin.gonzalez@gmail.com',
-    phone: '+54 11 4567-8901',
-    plan: 'LIBRE',
-    status: 'Activo',
-    lastPayment: '2026-01-15',
-    nextExpiry: '2026-02-15',
-    debt: 0,
-    daysOverdue: 0,
-    joinDate: '2024-06-10',
-  },
-  {
-    id: '14',
-    dni: '39.234.567',
-    name: 'Sofía Vargas',
-    email: 'sofia.vargas@gmail.com',
-    phone: '+54 11 2345-6781',
-    plan: 'Stretching Global Activo',
-    status: 'Activo',
-    lastPayment: '2026-01-12',
-    nextExpiry: '2026-02-12',
-    debt: 0,
-    daysOverdue: 0,
-    joinDate: '2024-07-30',
-  }
-];
-
-// Helper functions for dashboard stats
-export function getDashboardStats() {
-  const activeMembers = mockMembers.filter(m => m.status === 'Activo').length;
-  const totalMembers = 200; // Total registered members
-  const paidMembers = 120; // Members who have paid this month
-  const debtors = mockMembers.filter(m => m.status === 'Deudor');
-  const totalDebt = debtors.reduce((acc, m) => acc + m.debt, 0);
-  
-  const monthlyRevenue = revenueData[revenueData.length - 1].revenue;
-  const newMembersThisMonth = 12; // Simulacion de ingresos nuevos este mes
-  const growthPercentage = 6.4;
-
-  return {
-    monthlyRevenue,
-    totalMembers,
-    paidMembers,
-    totalDebt,
-    newMembersThisMonth,
-    growthPercentage,
-    todayExpiries: todayExpiringMembers.length,
-    upcomingExpiries: upcomingExpiringMembers.length,
-    debtors: debtors.sort((a, b) => b.daysOverdue - a.daysOverdue),
-  };
-}
-
-// Get upcoming members
-export function getUpcomingExpiries(): Member[] {
-  return upcomingExpiringMembers;
-}
+// Membresías que no vencen hoy pero vencen en X días
+export const getUpcomingExpiries = (days: number = 2): Member[] => {
+  const actives = mockMembers.filter(m => m.status === 'Activo');
+  // Simulación: devolvemos distinta cantidad según el filtro
+  if (days === 2) return actives.slice(0, 3);
+  if (days === 5) return actives.slice(0, 5);
+  return actives.slice(0, 8); // esta semana (7 dias)
+};
 
 // Format currency in Argentine Pesos with dot separator
 export function formatCurrency(amount: number): string {
@@ -464,3 +397,29 @@ export function getOverdueMembers(): Member[] {
     .filter(m => m.status === 'Deudor')
     .sort((a, b) => b.daysOverdue - a.daysOverdue);
 }
+
+// Helper functions for dashboard stats
+export function getDashboardStats() {
+  const activeMembers = mockMembers.filter(m => m.status === 'Activo').length;
+  const totalMembers = 200; // Total registered members
+  const paidMembers = 120; // Members who have paid this month
+  const debtors = mockMembers.filter(m => m.status === 'Deudor');
+  const totalDebt = debtors.reduce((acc, m) => acc + m.debt, 0);
+  
+  const monthlyRevenue = revenueData[revenueData.length - 1].revenue;
+  const newMembersThisMonth = 12; // Simulacion de ingresos nuevos este mes
+  const growthPercentage = 6.4;
+
+  return {
+    monthlyRevenue,
+    totalMembers,
+    paidMembers,
+    totalDebt,
+    newMembersThisMonth,
+    growthPercentage,
+    todayExpiries: todayExpiringMembers.length,
+    upcomingExpiries: getUpcomingExpiries().length,
+    debtors: debtors.sort((a, b) => b.daysOverdue - a.daysOverdue),
+  };
+}
+

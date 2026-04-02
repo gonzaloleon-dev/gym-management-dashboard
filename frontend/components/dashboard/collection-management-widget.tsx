@@ -1,10 +1,18 @@
 'use client';
 
+import { useState, useMemo } from 'react';
 import { MessageCircle, AlertTriangle, CalendarClock, Clock, CheckCircle } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   Table,
   TableBody,
@@ -14,7 +22,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import type { Member } from '@/lib/mock-data';
-import { formatCurrency, formatDate, PLAN_PRICES } from '@/lib/mock-data';
+import { formatCurrency, formatDate, PLAN_PRICES, getUpcomingExpiries } from '@/lib/mock-data';
 
 interface CollectionManagementWidgetProps {
   overdueMembers: Member[];
@@ -25,8 +33,15 @@ interface CollectionManagementWidgetProps {
 export function CollectionManagementWidget({
   overdueMembers,
   todayExpiries,
-  upcomingExpiries,
+  upcomingExpiries: initialUpcomingExpiries,
 }: CollectionManagementWidgetProps) {
+  const [contactCounts, setContactCounts] = useState<Record<string, number>>({});
+  const [upcomingDaysFilter, setUpcomingDaysFilter] = useState<string>('2');
+  const [activeTab, setActiveTab] = useState<string>('overdue');
+
+  const upcomingExpiriesFiltered = useMemo(() => {
+    return getUpcomingExpiries(parseInt(upcomingDaysFilter));
+  }, [upcomingDaysFilter]);
   const handleWhatsApp = (member: Member, type: 'overdue' | 'today' | 'upcoming') => {
     const gymName = process.env.NEXT_PUBLIC_GYM_NAME || 'el gimnasio';
     let message = '';
@@ -41,6 +56,11 @@ export function CollectionManagementWidget({
       message = encodeURIComponent(`Hola ${member.name.split(' ')[0]}! Te contamos desde ${gymName} que tu membresía vence pronto (${formatDate(member.nextExpiry)}). Podés renovarla por ${formatCurrency(planPrice)}. ¡Te esperamos!`);
     }
 
+    setContactCounts(prev => ({
+      ...prev,
+      [member.id]: (prev[member.id] || 0) + 1
+    }));
+    
     const phone = member.phone.replace(/\D/g, '');
     window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
   };
@@ -62,8 +82,10 @@ export function CollectionManagementWidget({
             <TableRow className="bg-muted/20 hover:bg-muted/20">
               <TableHead className="font-bold text-foreground">Alumno</TableHead>
               <TableHead className="font-bold text-foreground hidden sm:table-cell">Plan</TableHead>
-              {type === 'overdue' && (
-                <TableHead className="font-bold text-foreground">Deuda</TableHead>
+              {type === 'overdue' ? (
+                <TableHead className="font-bold text-foreground w-[120px]">Deuda</TableHead>
+              ) : (
+                <TableHead className="font-bold text-foreground w-[120px]">A Pagar</TableHead>
               )}
               <TableHead className="font-bold text-foreground">Vencimiento</TableHead>
               <TableHead className="font-bold text-foreground text-right w-[140px]">Contactar</TableHead>
@@ -90,10 +112,16 @@ export function CollectionManagementWidget({
                     {member.plan}
                   </Badge>
                 </TableCell>
-                {type === 'overdue' && (
+                {type === 'overdue' ? (
                   <TableCell>
                     <span className="font-bold text-destructive">
                       {formatCurrency(member.debt)}
+                    </span>
+                  </TableCell>
+                ) : (
+                  <TableCell>
+                    <span className="font-semibold text-foreground">
+                      {formatCurrency(PLAN_PRICES[member.plan])}
                     </span>
                   </TableCell>
                 )}
@@ -110,6 +138,11 @@ export function CollectionManagementWidget({
                   >
                     <MessageCircle className="h-4 w-4" />
                     <span className="hidden sm:inline">WhatsApp</span>
+                    {contactCounts[member.id] && (
+                      <Badge className="ml-1 h-5 w-5 p-0 bg-white/20 text-white hover:bg-white/30 flex items-center justify-center border-0 rounded-full">
+                        {contactCounts[member.id]}
+                      </Badge>
+                    )}
                   </Button>
                 </TableCell>
               </TableRow>
@@ -123,8 +156,8 @@ export function CollectionManagementWidget({
   return (
     <Card className="border-border shadow-sm w-full">
       <CardContent className="p-0 sm:p-5">
-        <Tabs defaultValue="overdue" className="w-full">
-          <div className="p-4 sm:p-0 border-b border-border sm:border-0">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <div className="p-4 sm:p-0 border-b border-border sm:border-0 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
              <TabsList className="w-full sm:w-auto flex flex-col sm:flex-row h-auto gap-2 bg-transparent p-0">
               {/* Overdue Tab */}
               <TabsTrigger 
@@ -159,10 +192,42 @@ export function CollectionManagementWidget({
                 Próximos 
                 <span className="hidden sm:inline ml-1">Vencimientos</span>
                 <Badge className="ml-2 h-5 px-1.5 min-w-[20px] bg-cyan-500 text-white hover:bg-cyan-600 flex items-center justify-center border-0 font-bold">
-                  {upcomingExpiries.length}
+                  {upcomingExpiriesFiltered.length}
                 </Badge>
               </TabsTrigger>
             </TabsList>
+            
+            {/* Filter Dropdown for Upcoming */}
+            {activeTab === 'upcoming' && (
+              <div className="hidden sm:flex ml-auto items-center">
+                <Select value={upcomingDaysFilter} onValueChange={setUpcomingDaysFilter}>
+                  <SelectTrigger className="w-[160px] h-[44px] px-4 text-sm font-medium rounded-lg bg-background border-border shadow-sm hover:bg-muted/50 transition-colors">
+                    <SelectValue placeholder="Periodo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="2">En 2 días</SelectItem>
+                    <SelectItem value="5">En 5 días</SelectItem>
+                    <SelectItem value="7">Esta semana</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+            
+            {/* Mobile Filter */}
+            {activeTab === 'upcoming' && (
+              <div className="sm:hidden mt-3 px-4 w-full">
+                <Select value={upcomingDaysFilter} onValueChange={setUpcomingDaysFilter}>
+                  <SelectTrigger className="w-full h-[44px] px-4 text-sm font-medium rounded-lg bg-background border-border shadow-sm">
+                    <SelectValue placeholder="Periodo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="2">En 2 días</SelectItem>
+                    <SelectItem value="5">En 5 días</SelectItem>
+                    <SelectItem value="7">Esta semana</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
           </div>
 
           <div className="px-4 pb-4 sm:p-0">
@@ -173,7 +238,7 @@ export function CollectionManagementWidget({
               {renderTable(todayExpiries, 'today')}
             </TabsContent>
             <TabsContent value="upcoming" className="m-0 focus-visible:outline-none focus-visible:ring-0">
-              {renderTable(upcomingExpiries, 'upcoming')}
+              {renderTable(upcomingExpiriesFiltered, 'upcoming')}
             </TabsContent>
           </div>
         </Tabs>
