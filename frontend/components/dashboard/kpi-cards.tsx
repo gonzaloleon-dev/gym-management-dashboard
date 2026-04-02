@@ -13,7 +13,8 @@ import { cn } from '@/lib/utils';
 
 interface KPICardsProps {
   monthlyRevenue: number;
-  activeMembers: number;
+  newMembersThisMonth: number;
+  growthPercentage: number;
   totalMembers: number;
   paidMembers: number;
   totalDebt: number;
@@ -21,7 +22,8 @@ interface KPICardsProps {
 
 export function KPICards({
   monthlyRevenue,
-  activeMembers,
+  newMembersThisMonth,
+  growthPercentage,
   totalMembers,
   paidMembers,
   totalDebt,
@@ -48,8 +50,8 @@ export function KPICards({
       progress: paymentProgress,
     },
     {
-      title: 'Miembros Activos',
-      value: activeMembers.toString(),
+      title: 'Nuevos Alumnos',
+      value: newMembersThisMonth.toString(),
       icon: Users,
       iconBg: 'bg-secondary/10',
       iconColor: 'text-secondary',

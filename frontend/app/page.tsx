@@ -4,10 +4,8 @@ import { useState } from 'react';
 import { SidebarNav } from '@/components/dashboard/sidebar-nav';
 import { KPICards } from '@/components/dashboard/kpi-cards';
 import { RevenueChart } from '@/components/dashboard/revenue-chart';
-import { PlanDistributionChart } from '@/components/dashboard/plan-distribution-chart';
-import { TodayExpiries } from '@/components/dashboard/today-expiries';
-import { OverdueMembersTable } from '@/components/dashboard/overdue-members-table';
-import { PaymentMethodsChart } from '@/components/dashboard/payment-methods-chart';
+import { PaymentProgressChart } from '@/components/dashboard/payment-progress-chart';
+import { CollectionManagementWidget } from '@/components/dashboard/collection-management-widget';
 import { MembersTable } from '@/components/dashboard/members-table';
 import { QuickActions } from '@/components/dashboard/quick-actions';
 import { PaymentsView } from '@/components/dashboard/payments-view';
@@ -19,13 +17,15 @@ import {
   paymentMethodsData,
   todayExpiringMembers,
   getDashboardStats,
-  getOverdueMembers 
+  getOverdueMembers,
+  getUpcomingExpiries
 } from '@/lib/mock-data';
 
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const stats = getDashboardStats();
   const overdueMembers = getOverdueMembers();
+  const upcomingExpiries = getUpcomingExpiries();
 
   return (
     <div className="min-h-screen bg-background">
@@ -59,27 +59,26 @@ export default function DashboardPage() {
               {/* KPI Cards */}
               <KPICards
                 monthlyRevenue={stats.monthlyRevenue}
-                activeMembers={stats.activeMembers}
+                newMembersThisMonth={stats.newMembersThisMonth}
+                growthPercentage={stats.growthPercentage}
                 totalMembers={stats.totalMembers}
                 paidMembers={stats.paidMembers}
                 totalDebt={stats.totalDebt}
               />
 
-              {/* Analytics Row: Revenue Chart and Plan Distribution */}
-              <div className="grid gap-6 lg:grid-cols-2">
-                <RevenueChart data={revenueData} />
-                <PlanDistributionChart />
+              {/* Central Collection Management Widget */}
+              <div className="mt-6 mb-6">
+                <CollectionManagementWidget 
+                  overdueMembers={overdueMembers}
+                  todayExpiries={todayExpiringMembers}
+                  upcomingExpiries={upcomingExpiries}
+                />
               </div>
 
-              {/* Today's Expiries */}
-              <TodayExpiries members={todayExpiringMembers} />
-
-              {/* Overdue Members Table */}
-              <OverdueMembersTable members={overdueMembers} />
-
-              {/* Payment Methods Chart */}
-              <div className="max-w-md">
-                <PaymentMethodsChart data={paymentMethodsData} />
+              {/* Analytics Row: Revenue Chart and Payment Progress */}
+              <div className="grid gap-6 lg:grid-cols-2 mt-6">
+                <RevenueChart data={revenueData} />
+                <PaymentProgressChart />
               </div>
             </div>
           )}
@@ -102,8 +101,6 @@ export default function DashboardPage() {
         </div>
       </main>
 
-      {/* Quick Actions FAB */}
-      <QuickActions />
     </div>
   );
 }

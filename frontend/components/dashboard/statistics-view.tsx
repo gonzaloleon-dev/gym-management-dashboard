@@ -13,7 +13,8 @@ import {
   Cell,
 } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { mockMembers, revenueData, formatCurrency, PLAN_PRICES, type MembershipPlan } from '@/lib/mock-data';
+import { mockMembers, revenueData, formatCurrency, PLAN_PRICES, paymentMethodsData, type MembershipPlan } from '@/lib/mock-data';
+import { PaymentMethodsChart } from '@/components/dashboard/payment-methods-chart';
 
 // Define colors directly for light mode - teal primary palette
 const COLORS = {
@@ -218,6 +219,11 @@ export function StatisticsView() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Payment Methods Chart */}
+        <div className="lg:col-span-2 max-w-md mx-auto w-full">
+          <PaymentMethodsChart data={paymentMethodsData} />
+        </div>
       </div>
     </div>
   );
