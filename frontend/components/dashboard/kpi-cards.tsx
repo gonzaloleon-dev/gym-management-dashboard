@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import {
   DollarSign,
   Users,
@@ -28,7 +29,13 @@ export function KPICards({
   paidMembers,
   totalDebt,
 }: KPICardsProps) {
-  const paymentProgress = Math.round((paidMembers / totalMembers) * 100);
+  const targetPaymentProgress = Math.round((paidMembers / totalMembers) * 100);
+  const [paymentProgress, setPaymentProgress] = useState(0);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setPaymentProgress(targetPaymentProgress), 150);
+    return () => clearTimeout(timer);
+  }, [targetPaymentProgress]);
 
   const kpis = [
     {
@@ -42,7 +49,7 @@ export function KPICards({
     {
       title: 'Progreso de Pagos',
       value: `${paidMembers} / ${totalMembers}`,
-      subtitle: `${paymentProgress}% pagaron`,
+      subtitle: `${targetPaymentProgress}% pagaron`,
       icon: CheckCircle2,
       iconBg: 'bg-primary/10',
       iconColor: 'text-primary',

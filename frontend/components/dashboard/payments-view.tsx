@@ -14,7 +14,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { recentPayments, formatCurrency, formatDate } from '@/lib/mock-data';
+import { recentPayments, formatCurrency, formatDate, revenueData } from '@/lib/mock-data';
+import { RevenueChart } from '@/components/dashboard/revenue-chart';
 
 // Extended payments for demo
 const allPayments = [
@@ -108,6 +109,11 @@ export function PaymentsView() {
             </div>
           </CardContent>
         </Card>
+      </div>
+
+      {/* Revenue Chart Widget */}
+      <div className="grid">
+        <RevenueChart data={revenueData} />
       </div>
 
       {/* Payments Table */}

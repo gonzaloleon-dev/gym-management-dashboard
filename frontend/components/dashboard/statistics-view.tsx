@@ -15,7 +15,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { mockMembers, revenueData, formatCurrency, PLAN_PRICES, paymentMethodsData, type MembershipPlan } from '@/lib/mock-data';
 import { PaymentMethodsChart } from '@/components/dashboard/payment-methods-chart';
-
+import { MembersGrowthChart } from '@/components/dashboard/members-growth-chart';
 // Define colors directly for light mode - teal primary palette
 const COLORS = {
   primary: '#14b8a6', // teal
@@ -54,25 +54,7 @@ export function StatisticsView() {
     members: d.members,
   }));
 
-  function CustomTooltip({
-    active,
-    payload,
-    label,
-  }: {
-    active?: boolean;
-    payload?: Array<{ value: number; name?: string }>;
-    label?: string;
-  }) {
-    if (active && payload && payload.length) {
-      return (
-        <div className="rounded-lg border border-border bg-card px-3 py-2 shadow-lg">
-          <p className="text-xs text-muted-foreground">{label}</p>
-          <p className="text-sm font-semibold text-foreground">{payload[0].value} miembros</p>
-        </div>
-      );
-    }
-    return null;
-  }
+  // CustomTooltip was extracted
 
   return (
     <div className="space-y-6">
@@ -107,36 +89,7 @@ export function StatisticsView() {
       {/* Charts Grid */}
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Members Growth Chart */}
-        <Card className="border-border bg-card shadow-sm">
-          <CardHeader>
-            <CardTitle className="text-base font-semibold text-card-foreground">
-              Crecimiento de Miembros
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="h-[280px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={membersGrowth}>
-                  <CartesianGrid strokeDasharray="3 3" stroke={COLORS.grid} vertical={false} />
-                  <XAxis
-                    dataKey="month"
-                    tick={{ fill: COLORS.text, fontSize: 12 }}
-                    tickLine={false}
-                    axisLine={false}
-                  />
-                  <YAxis
-                    tick={{ fill: COLORS.text, fontSize: 12 }}
-                    tickLine={false}
-                    axisLine={false}
-                    width={35}
-                  />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Bar dataKey="members" fill={COLORS.primary} radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
+        <MembersGrowthChart data={membersGrowth} />
 
         {/* Plan Distribution */}
         <Card className="border-border bg-card shadow-sm">

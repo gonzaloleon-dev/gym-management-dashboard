@@ -3,17 +3,16 @@
 import { useState } from 'react';
 import { SidebarNav } from '@/components/dashboard/sidebar-nav';
 import { KPICards } from '@/components/dashboard/kpi-cards';
-import { RevenueChart } from '@/components/dashboard/revenue-chart';
-import { PaymentProgressChart } from '@/components/dashboard/payment-progress-chart';
+import { MembersGrowthChart } from '@/components/dashboard/members-growth-chart';
 import { CollectionManagementWidget } from '@/components/dashboard/collection-management-widget';
 import { MembersTable } from '@/components/dashboard/members-table';
 import { QuickActions } from '@/components/dashboard/quick-actions';
 import { PaymentsView } from '@/components/dashboard/payments-view';
 import { StatisticsView } from '@/components/dashboard/statistics-view';
 import { SettingsView } from '@/components/dashboard/settings-view';
-import { 
-  mockMembers, 
-  revenueData, 
+import {
+  mockMembers,
+  revenueData,
   paymentMethodsData,
   todayExpiringMembers,
   getDashboardStats,
@@ -27,6 +26,11 @@ export default function DashboardPage() {
   const overdueMembers = getOverdueMembers();
   const upcomingExpiries = getUpcomingExpiries();
 
+  const membersGrowth = revenueData.map((d) => ({
+    month: d.month,
+    members: d.members,
+  }));
+
   return (
     <div className="min-h-screen bg-background">
       {/* Sidebar */}
@@ -38,7 +42,7 @@ export default function DashboardPage() {
           {/* Header */}
           <header className="mb-8 pt-12 lg:pt-0">
             <h1 className="text-3xl font-bold text-foreground tracking-tight">
-              {activeTab === 'dashboard' && 'Dashboard'}
+              {activeTab === 'dashboard' && 'Panel Principal'}
               {activeTab === 'members' && 'Miembros'}
               {activeTab === 'payments' && 'Pagos'}
               {activeTab === 'statistics' && 'Estadísticas'}
@@ -46,9 +50,9 @@ export default function DashboardPage() {
             </h1>
             <p className="text-base text-muted-foreground mt-1">
               {activeTab === 'dashboard' && "Vista general"}
-              {activeTab === 'members' && 'Gestiona tus miembros y membresías'}
+              {activeTab === 'members' && 'Administración de miembros'}
               {activeTab === 'payments' && 'Historial y registro de pagos'}
-              {activeTab === 'statistics' && 'Análisis y métricas de rendimiento'}
+              {activeTab === 'statistics' && 'Reportes y balance general'}
               {activeTab === 'settings' && 'Configura tu gimnasio'}
             </p>
           </header>
@@ -68,17 +72,11 @@ export default function DashboardPage() {
 
               {/* Central Collection Management Widget */}
               <div className="mt-6 mb-6">
-                <CollectionManagementWidget 
+                <CollectionManagementWidget
                   overdueMembers={overdueMembers}
                   todayExpiries={todayExpiringMembers}
                   upcomingExpiries={upcomingExpiries}
                 />
-              </div>
-
-              {/* Analytics Row: Revenue Chart and Payment Progress */}
-              <div className="grid gap-6 lg:grid-cols-2 mt-6">
-                <RevenueChart data={revenueData} />
-                <PaymentProgressChart />
               </div>
             </div>
           )}
@@ -86,6 +84,9 @@ export default function DashboardPage() {
           {/* Members View */}
           {activeTab === 'members' && (
             <div className="space-y-6">
+              <div className="grid gap-6">
+                <MembersGrowthChart data={membersGrowth} />
+              </div>
               <MembersTable members={mockMembers} />
             </div>
           )}

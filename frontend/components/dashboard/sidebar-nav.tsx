@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import {
-  LayoutDashboard,
+  Home,
   Users,
   CreditCard,
   BarChart3,
@@ -17,7 +17,7 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
 const navItems = [
-  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { id: 'dashboard', label: 'Inicio', icon: Home },
   { id: 'members', label: 'Miembros', icon: Users },
   { id: 'payments', label: 'Pagos', icon: CreditCard },
   { id: 'statistics', label: 'Estadísticas', icon: BarChart3 },
