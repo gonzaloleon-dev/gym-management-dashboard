@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import {
   LayoutDashboard,
@@ -10,6 +11,7 @@ import {
   Settings,
   Menu,
   X,
+  LogOut,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -28,7 +30,13 @@ interface SidebarNavProps {
 }
 
 export function SidebarNav({ activeTab, onTabChange }: SidebarNavProps) {
+  const router = useRouter();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+
+  const handleLogout = () => {
+    sessionStorage.removeItem('auth');
+    router.push('/login');
+  };
 
   return (
     <>
@@ -61,11 +69,12 @@ export function SidebarNav({ activeTab, onTabChange }: SidebarNavProps) {
           {/* Logo */}
           <div className="flex items-center gap-3 border-b border-sidebar-border px-6 py-5">
             <Image
-              src={process.env.NEXT_PUBLIC_GYM_LOGO_PATH || "/images/default-logo.png"}
+              src="/images/gym-logo.png"
               alt={process.env.NEXT_PUBLIC_GYM_NAME || "Gym Logo"}
               width={140}
               height={40}
               className="h-10 w-auto"
+              priority
             />
           </div>
 
@@ -97,7 +106,7 @@ export function SidebarNav({ activeTab, onTabChange }: SidebarNavProps) {
           </nav>
 
           {/* Footer */}
-          <div className="border-t border-sidebar-border p-4">
+          <div className="border-t border-sidebar-border p-4 space-y-3">
             <div className="flex items-center gap-3">
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/15 text-sm font-semibold text-primary">
                 AD
@@ -107,6 +116,13 @@ export function SidebarNav({ activeTab, onTabChange }: SidebarNavProps) {
                 <p className="text-xs text-muted-foreground">Administrador</p>
               </div>
             </div>
+            <button
+              onClick={handleLogout}
+              className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-destructive/8 hover:text-destructive transition-colors"
+            >
+              <LogOut className="h-4 w-4" />
+              Cerrar sesión
+            </button>
           </div>
         </div>
       </aside>
