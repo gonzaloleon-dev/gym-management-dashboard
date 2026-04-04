@@ -84,9 +84,6 @@ export default function DashboardPage() {
           {/* Members View */}
           {activeTab === 'members' && (
             <div className="space-y-6">
-              <div className="grid gap-6">
-                <MembersGrowthChart data={membersGrowth} />
-              </div>
               <MembersTable members={mockMembers} />
             </div>
           )}

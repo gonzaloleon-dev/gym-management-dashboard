@@ -29,6 +29,12 @@ export interface Member {
   debt: number;
   daysOverdue: number;
   joinDate: string;
+  medicalNotes?: string;
+  emergencyContactName?: string;
+  emergencyContactPhone?: string;
+  personalObjective?: string;
+  origin?: string;
+  initialPlan?: MembershipPlan;
 }
 
 export interface Payment {
@@ -62,6 +68,12 @@ export const mockMembers: Member[] = [
     debt: 0,
     daysOverdue: 0,
     joinDate: '2024-06-10',
+    medicalNotes: 'Apto médico al día. Sin lesiones.',
+    emergencyContactName: 'Familiar de Contacto',
+    emergencyContactPhone: '+54 11 0000-0000',
+    personalObjective: 'Salud y bienestar',
+    origin: 'Instagram',
+    initialPlan: '3 veces x semana',
   },
   {
     id: '2',
@@ -76,6 +88,12 @@ export const mockMembers: Member[] = [
     debt: 0,
     daysOverdue: 0,
     joinDate: '2023-08-22',
+    medicalNotes: 'Apto médico al día. Sin lesiones.',
+    emergencyContactName: 'Familiar de Contacto',
+    emergencyContactPhone: '+54 11 0000-0000',
+    personalObjective: 'Salud y bienestar',
+    origin: 'Instagram',
+    initialPlan: '3 veces x semana',
   },
   {
     id: '3',
@@ -90,6 +108,12 @@ export const mockMembers: Member[] = [
     debt: 50000,
     daysOverdue: 20,
     joinDate: '2025-03-15',
+    medicalNotes: 'Apto médico al día. Sin lesiones.',
+    emergencyContactName: 'Familiar de Contacto',
+    emergencyContactPhone: '+54 11 0000-0000',
+    personalObjective: 'Salud y bienestar',
+    origin: 'Instagram',
+    initialPlan: '3 veces x semana',
   },
   {
     id: '4',
@@ -104,6 +128,12 @@ export const mockMembers: Member[] = [
     debt: 0,
     daysOverdue: 0,
     joinDate: '2022-01-05',
+    medicalNotes: 'Apto médico al día. Sin lesiones.',
+    emergencyContactName: 'Familiar de Contacto',
+    emergencyContactPhone: '+54 11 0000-0000',
+    personalObjective: 'Salud y bienestar',
+    origin: 'Instagram',
+    initialPlan: '3 veces x semana',
   },
   {
     id: '5',
@@ -118,6 +148,12 @@ export const mockMembers: Member[] = [
     debt: 0,
     daysOverdue: 0,
     joinDate: '2024-11-20',
+    medicalNotes: 'Apto médico al día. Sin lesiones.',
+    emergencyContactName: 'Familiar de Contacto',
+    emergencyContactPhone: '+54 11 0000-0000',
+    personalObjective: 'Salud y bienestar',
+    origin: 'Instagram',
+    initialPlan: '3 veces x semana',
   },
   {
     id: '6',
@@ -132,6 +168,12 @@ export const mockMembers: Member[] = [
     debt: 0,
     daysOverdue: 0,
     joinDate: '2021-05-18',
+    medicalNotes: 'Apto médico al día. Sin lesiones.',
+    emergencyContactName: 'Familiar de Contacto',
+    emergencyContactPhone: '+54 11 0000-0000',
+    personalObjective: 'Salud y bienestar',
+    origin: 'Instagram',
+    initialPlan: '3 veces x semana',
   },
   {
     id: '7',
@@ -146,6 +188,12 @@ export const mockMembers: Member[] = [
     debt: 70000,
     daysOverdue: 46,
     joinDate: '2025-07-01',
+    medicalNotes: 'Apto médico al día. Sin lesiones.',
+    emergencyContactName: 'Familiar de Contacto',
+    emergencyContactPhone: '+54 11 0000-0000',
+    personalObjective: 'Salud y bienestar',
+    origin: 'Instagram',
+    initialPlan: '3 veces x semana',
   },
   {
     id: '8',
@@ -160,6 +208,12 @@ export const mockMembers: Member[] = [
     debt: 0,
     daysOverdue: 0,
     joinDate: '2024-02-14',
+    medicalNotes: 'Apto médico al día. Sin lesiones.',
+    emergencyContactName: 'Familiar de Contacto',
+    emergencyContactPhone: '+54 11 0000-0000',
+    personalObjective: 'Salud y bienestar',
+    origin: 'Instagram',
+    initialPlan: '3 veces x semana',
   },
   {
     id: '9',
@@ -174,6 +228,12 @@ export const mockMembers: Member[] = [
     debt: 60000,
     daysOverdue: 25,
     joinDate: '2025-04-22',
+    medicalNotes: 'Apto médico al día. Sin lesiones.',
+    emergencyContactName: 'Familiar de Contacto',
+    emergencyContactPhone: '+54 11 0000-0000',
+    personalObjective: 'Salud y bienestar',
+    origin: 'Instagram',
+    initialPlan: '3 veces x semana',
   },
   {
     id: '10',
@@ -188,6 +248,12 @@ export const mockMembers: Member[] = [
     debt: 0,
     daysOverdue: 0,
     joinDate: '2023-06-15',
+    medicalNotes: 'Apto médico al día. Sin lesiones.',
+    emergencyContactName: 'Familiar de Contacto',
+    emergencyContactPhone: '+54 11 0000-0000',
+    personalObjective: 'Salud y bienestar',
+    origin: 'Instagram',
+    initialPlan: '3 veces x semana',
   },
   {
     id: '11',
@@ -202,6 +268,12 @@ export const mockMembers: Member[] = [
     debt: 0,
     daysOverdue: 0,
     joinDate: '2025-09-10',
+    medicalNotes: 'Apto médico al día. Sin lesiones.',
+    emergencyContactName: 'Familiar de Contacto',
+    emergencyContactPhone: '+54 11 0000-0000',
+    personalObjective: 'Salud y bienestar',
+    origin: 'Instagram',
+    initialPlan: '3 veces x semana',
   },
   {
     id: '12',
@@ -216,6 +288,18 @@ export const mockMembers: Member[] = [
     debt: 0,
     daysOverdue: 0,
     joinDate: '2020-12-01',
+    medicalNotes: 'Apto médico al día. Sin lesiones.',
+    emergencyContactName: 'Familiar de Contacto',
+    emergencyContactPhone: '+54 11 0000-0000',
+    personalObjective: 'Salud y bienestar',
+    origin: 'Instagram',
+    initialPlan: '3 veces x semana',
+    medicalNotes: 'Apto médico al día. Sin lesiones.',
+    emergencyContactName: 'Familiar de Contacto',
+    emergencyContactPhone: '+54 11 0000-0000',
+    personalObjective: 'Salud y bienestar',
+    origin: 'Instagram',
+    initialPlan: '3 veces x semana',
   },
   {
     id: '13',
@@ -230,6 +314,12 @@ export const mockMembers: Member[] = [
     debt: 140000,
     daysOverdue: 66,
     joinDate: '2025-01-08',
+    medicalNotes: 'Apto médico al día. Sin lesiones.',
+    emergencyContactName: 'Familiar de Contacto',
+    emergencyContactPhone: '+54 11 0000-0000',
+    personalObjective: 'Salud y bienestar',
+    origin: 'Instagram',
+    initialPlan: '3 veces x semana',
   },
   {
     id: '14',
@@ -244,6 +334,12 @@ export const mockMembers: Member[] = [
     debt: 0,
     daysOverdue: 0,
     joinDate: '2024-07-30',
+    medicalNotes: 'Apto médico al día. Sin lesiones.',
+    emergencyContactName: 'Familiar de Contacto',
+    emergencyContactPhone: '+54 11 0000-0000',
+    personalObjective: 'Salud y bienestar',
+    origin: 'Instagram',
+    initialPlan: '3 veces x semana',
   },
   {
     id: '15',
@@ -258,6 +354,12 @@ export const mockMembers: Member[] = [
     debt: 100000,
     daysOverdue: 41,
     joinDate: '2025-02-28',
+    medicalNotes: 'Apto médico al día. Sin lesiones.',
+    emergencyContactName: 'Familiar de Contacto',
+    emergencyContactPhone: '+54 11 0000-0000',
+    personalObjective: 'Salud y bienestar',
+    origin: 'Instagram',
+    initialPlan: '3 veces x semana',
   },
 ];
 
@@ -350,6 +452,12 @@ export const todayExpiringMembers: Member[] = [
     debt: 0,
     daysOverdue: 0,
     joinDate: '2024-11-20',
+    medicalNotes: 'Apto médico al día. Sin lesiones.',
+    emergencyContactName: 'Familiar de Contacto',
+    emergencyContactPhone: '+54 11 0000-0000',
+    personalObjective: 'Salud y bienestar',
+    origin: 'Instagram',
+    initialPlan: '3 veces x semana',
   },
   {
     id: '11',
@@ -364,6 +472,12 @@ export const todayExpiringMembers: Member[] = [
     debt: 0,
     daysOverdue: 0,
     joinDate: '2025-09-10',
+    medicalNotes: 'Apto médico al día. Sin lesiones.',
+    emergencyContactName: 'Familiar de Contacto',
+    emergencyContactPhone: '+54 11 0000-0000',
+    personalObjective: 'Salud y bienestar',
+    origin: 'Instagram',
+    initialPlan: '3 veces x semana',
   },
 ];
 
