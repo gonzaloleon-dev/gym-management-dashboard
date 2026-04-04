@@ -46,7 +46,7 @@ export function CollectionManagementWidget({
   const handleWhatsApp = (member: Member, type: 'overdue' | 'today' | 'upcoming') => {
     const gymName = process.env.NEXT_PUBLIC_GYM_NAME || 'el gimnasio';
     let message = '';
-    
+
     if (type === 'overdue') {
       message = encodeURIComponent(`Hola ${member.name.split(' ')[0]}, te escribimos desde ${gymName}. Notamos que tenés un saldo pendiente de ${formatCurrency(member.debt)}. ¿Podemos ayudarte a regularizar tu situación?`);
     } else if (type === 'today') {
@@ -61,7 +61,7 @@ export function CollectionManagementWidget({
       ...prev,
       [member.id]: (prev[member.id] || 0) + 1
     }));
-    
+
     const phone = member.phone.replace(/\D/g, '');
     window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
   };
@@ -82,14 +82,14 @@ export function CollectionManagementWidget({
           <TableHeader>
             <TableRow className="bg-muted/20 hover:bg-muted/20">
               <TableHead className="font-bold text-foreground">Alumno</TableHead>
-              <TableHead className="font-bold text-foreground hidden sm:table-cell text-left">Plan</TableHead>
+              <TableHead className="font-bold text-foreground hidden sm:table-cell text-left w-[150px]">Plan</TableHead>
+              {type !== 'today' && (
+                <TableHead className="font-bold text-foreground w-[130px] text-left">Vencimiento</TableHead>
+              )}
               {type === 'overdue' ? (
                 <TableHead className="font-bold text-foreground w-[120px] text-left">Deuda</TableHead>
               ) : (
                 <TableHead className="font-bold text-foreground w-[120px] text-left">A Pagar</TableHead>
-              )}
-              {type !== 'today' && (
-                <TableHead className="font-bold text-foreground w-[130px] text-left">Vencimiento</TableHead>
               )}
               <TableHead className="font-bold text-foreground w-[230px] text-center">Acciones</TableHead>
             </TableRow>
@@ -99,10 +99,7 @@ export function CollectionManagementWidget({
               <TableRow key={member.id} className="hover:bg-muted/30 border-border/50">
                 <TableCell className="py-3">
                   <div className="flex items-center gap-3">
-                    <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-bold
-                      ${type === 'overdue' ? 'bg-destructive/10 text-destructive' : 
-                        type === 'today' ? 'bg-amber-500/10 text-amber-600' : 
-                        'bg-cyan-500/10 text-cyan-600'}`}>
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-bold bg-muted text-muted-foreground">
                       {member.name.split(' ').map(n => n[0]).join('')}
                     </div>
                     <div>
@@ -111,13 +108,20 @@ export function CollectionManagementWidget({
                   </div>
                 </TableCell>
                 <TableCell className="hidden sm:table-cell text-left">
-                  <Badge variant="outline" className="font-medium text-xs border-muted-foreground/30 text-foreground">
+                  <span className="text-sm text-muted-foreground font-medium">
                     {member.plan}
-                  </Badge>
+                  </span>
                 </TableCell>
+                {type !== 'today' && (
+                  <TableCell className="text-left">
+                    <span className="text-sm font-medium text-muted-foreground">
+                      {formatRelativeDate(member.nextExpiry, type, member.daysOverdue)}
+                    </span>
+                  </TableCell>
+                )}
                 {type === 'overdue' ? (
                   <TableCell className="text-left">
-                    <span className="font-bold text-destructive">
+                    <span className="font-semibold text-red-600">
                       {formatCurrency(member.debt)}
                     </span>
                   </TableCell>
@@ -128,18 +132,11 @@ export function CollectionManagementWidget({
                     </span>
                   </TableCell>
                 )}
-                {type !== 'today' && (
-                  <TableCell className="text-left">
-                    <span className={`text-sm font-medium ${type === 'overdue' ? 'text-destructive' : 'text-muted-foreground'}`}>
-                      {formatRelativeDate(member.nextExpiry, type, member.daysOverdue)}
-                    </span>
-                  </TableCell>
-                )}
                 <TableCell className="w-[230px]">
                   <div className="flex items-center justify-center gap-2">
-                    {/* Cobrar: izquierda — slate oscuro, diferenciado del verde */}
+                    {/* Cobrar: izquierda — neutral oscuro para jerarquía profesional */}
                     <button
-                      className="h-8 flex items-center gap-1.5 px-3 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors shadow-sm text-sm font-semibold"
+                      className="h-8 flex items-center gap-1.5 px-3 rounded-lg bg-slate-800 text-white hover:bg-slate-700 transition-colors shadow-sm text-sm font-semibold"
                       onClick={() => alert(`Iniciando cobro a ${member.name}`)}
                       title="Registrar cobro"
                     >
@@ -177,45 +174,45 @@ export function CollectionManagementWidget({
       <CardContent className="p-0 sm:p-5">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <div className="p-4 sm:p-0 border-b border-border sm:border-0 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-             <TabsList className="w-full sm:w-auto flex flex-col sm:flex-row h-auto gap-2 bg-transparent p-0">
-              {/* Overdue Tab */}
-              <TabsTrigger 
-                value="overdue" 
-                className="w-full sm:w-auto data-[state=active]:bg-destructive/10 data-[state=active]:text-destructive data-[state=active]:border-destructive/20 data-[state=active]:shadow-none justify-start sm:justify-center border border-border sm:border-transparent px-4 py-2.5 rounded-lg transition-all font-medium"
+            <TabsList className="w-full sm:w-auto flex flex-col sm:flex-row h-auto gap-2 bg-transparent p-0">
+              {/* Overdue Tab - Rose (Alerta) */}
+              <TabsTrigger
+                value="overdue"
+                className="group w-full sm:w-auto data-[state=active]:bg-red-50 data-[state=active]:text-red-700 data-[state=active]:border-red-200 data-[state=active]:shadow-sm justify-start sm:justify-center border border-transparent px-4 py-2.5 rounded-lg transition-all font-medium text-muted-foreground cursor-pointer hover:bg-muted/50"
               >
-                <AlertTriangle className="w-4 h-4 mr-2 opacity-70" />
+                <AlertTriangle className="w-4 h-4 mr-2" />
                 Pagos Vencidos
-                <Badge variant="destructive" className="ml-2 h-5 px-1.5 min-w-[20px] flex items-center justify-center font-bold">
+                <Badge variant="secondary" className="ml-2 h-5 px-1.5 min-w-[20px] flex items-center justify-center font-bold border-0 bg-muted-foreground/15 text-muted-foreground group-data-[state=active]:bg-red-600 group-data-[state=active]:text-white">
                   {overdueMembers.length}
                 </Badge>
               </TabsTrigger>
-              
-              {/* Today Tab */}
-              <TabsTrigger 
-                value="today" 
-                className="w-full sm:w-auto data-[state=active]:bg-amber-500/10 data-[state=active]:text-amber-600 data-[state=active]:border-amber-500/20 data-[state=active]:shadow-none justify-start sm:justify-center border border-border sm:border-transparent px-4 py-2.5 rounded-lg transition-all font-medium"
+
+              {/* Today Tab - Teal */}
+              <TabsTrigger
+                value="today"
+                className="group w-full sm:w-auto data-[state=active]:bg-teal-50 data-[state=active]:text-teal-800 data-[state=active]:border-teal-200 data-[state=active]:shadow-sm justify-start sm:justify-center border border-transparent px-4 py-2.5 rounded-lg transition-all font-medium text-muted-foreground cursor-pointer hover:bg-muted/50"
               >
-                <CalendarClock className="w-4 h-4 mr-2 opacity-70" />
+                <CalendarClock className="w-4 h-4 mr-2" />
                 Vencen Hoy
-                <Badge className="ml-2 h-5 px-1.5 min-w-[20px] bg-amber-500 text-white hover:bg-amber-600 flex items-center justify-center border-0 font-bold">
+                <Badge variant="secondary" className="ml-2 h-5 px-1.5 min-w-[20px] flex items-center justify-center font-bold border-0 bg-muted-foreground/15 text-muted-foreground group-data-[state=active]:bg-teal-600 group-data-[state=active]:text-white">
                   {todayExpiries.length}
                 </Badge>
               </TabsTrigger>
-              
-              {/* Upcoming Tab */}
-              <TabsTrigger 
-                value="upcoming" 
-                className="w-full sm:w-auto data-[state=active]:bg-cyan-500/10 data-[state=active]:text-cyan-700 data-[state=active]:border-cyan-500/20 data-[state=active]:shadow-none justify-start sm:justify-center border border-border sm:border-transparent px-4 py-2.5 rounded-lg transition-all font-medium"
+
+              {/* Upcoming Tab - Teal */}
+              <TabsTrigger
+                value="upcoming"
+                className="group w-full sm:w-auto data-[state=active]:bg-teal-50 data-[state=active]:text-teal-800 data-[state=active]:border-teal-200 data-[state=active]:shadow-sm justify-start sm:justify-center border border-transparent px-4 py-2.5 rounded-lg transition-all font-medium text-muted-foreground cursor-pointer hover:bg-muted/50"
               >
-                <Clock className="w-4 h-4 mr-2 opacity-70" />
-                Próximos 
+                <Clock className="w-4 h-4 mr-2" />
+                Próximos
                 <span className="hidden sm:inline ml-1">Vencimientos</span>
-                <Badge className="ml-2 h-5 px-1.5 min-w-[20px] bg-cyan-500 text-white hover:bg-cyan-600 flex items-center justify-center border-0 font-bold">
+                <Badge variant="secondary" className="ml-2 h-5 px-1.5 min-w-[20px] flex items-center justify-center font-bold border-0 bg-muted-foreground/15 text-muted-foreground group-data-[state=active]:bg-teal-600 group-data-[state=active]:text-white">
                   {upcomingExpiriesFiltered.length}
                 </Badge>
               </TabsTrigger>
             </TabsList>
-            
+
             {/* Filter Dropdown for Upcoming */}
             {activeTab === 'upcoming' && (
               <div className="hidden sm:flex ml-auto items-center">
@@ -231,7 +228,7 @@ export function CollectionManagementWidget({
                 </Select>
               </div>
             )}
-            
+
             {/* Mobile Filter */}
             {activeTab === 'upcoming' && (
               <div className="sm:hidden mt-3 px-4 w-full">

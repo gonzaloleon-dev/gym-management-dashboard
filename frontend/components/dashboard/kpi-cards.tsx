@@ -68,9 +68,9 @@ export function KPICards({
       title: 'Deuda Total Pendiente',
       value: formatCurrency(totalDebt),
       icon: AlertTriangle,
-      iconBg: 'bg-destructive/10',
-      iconColor: 'text-destructive',
-      valueColor: 'text-destructive',
+      iconBg: 'bg-red-50',
+      iconColor: 'text-red-600',
+      valueColor: 'text-red-600',
       showProgress: false,
     },
   ];
