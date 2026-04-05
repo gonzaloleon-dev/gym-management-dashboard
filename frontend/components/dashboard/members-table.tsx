@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Search, ChevronLeft, ChevronRight, Plus, Pencil, Trash2 } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, Plus, SquarePen, Trash2, CircleDollarSign } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -25,7 +25,7 @@ interface MembersTableProps {
   members: Member[];
 }
 
-const ITEMS_PER_PAGE = 15;
+const ITEMS_PER_PAGE = 10;
 
 export function MembersTable({ members }: MembersTableProps) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -195,7 +195,7 @@ export function MembersTable({ members }: MembersTableProps) {
                 <TableHead className="font-bold text-slate-900 w-[150px] hidden sm:table-cell text-left">Plan</TableHead>
                 <TableHead className="font-bold text-slate-900">Vencimiento</TableHead>
                 <TableHead className="font-bold text-slate-900">Estado</TableHead>
-                <TableHead className="font-bold text-slate-900 text-right w-[100px]">Acciones</TableHead>
+                <TableHead className="font-bold text-slate-900 text-center">Acciones</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -231,22 +231,49 @@ export function MembersTable({ members }: MembersTableProps) {
                   <TableCell className="py-4 text-sm">
                     {getStatusBadge(member.status)}
                   </TableCell>
-                  <TableCell className="py-4 text-right">
-                    <div className="flex items-center justify-end gap-1">
-                      <button 
-                        onClick={(e) => { e.stopPropagation(); handleEditMember(member); }}
-                        className="text-slate-400 hover:text-slate-700 hover:bg-slate-100 p-2 rounded-md transition-colors"
-                        title="Editar alumno"
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </button>
-                      <button 
-                        onClick={(e) => { e.stopPropagation(); alert(`¿Eliminar al alumno ${member.name}?`); }}
-                        className="text-slate-400 hover:text-red-600 hover:bg-red-50 p-2 rounded-md transition-colors"
-                        title="Eliminar alumno"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
+                  <TableCell className="py-4">
+                    <div className="flex items-center justify-center gap-2">
+                      {/* Cobrar */}
+                      <div className="relative group/tooltip">
+                        <button
+                          onClick={(e) => { e.stopPropagation(); alert(`Registrar pago para ${member.name}`); }}
+                          className="text-slate-400 hover:text-teal-600 hover:bg-teal-50 p-2 rounded-md transition-all"
+                        >
+                          <CircleDollarSign className="h-5 w-5" />
+                        </button>
+                        <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-900 text-white text-[10px] font-medium rounded opacity-0 group-hover/tooltip:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-30 shadow-sm">
+                          Registrar Cobro
+                          <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900"></span>
+                        </span>
+                      </div>
+
+                      {/* Editar */}
+                      <div className="relative group/tooltip">
+                        <button
+                          onClick={(e) => { e.stopPropagation(); handleEditMember(member); }}
+                          className="text-slate-400 hover:text-slate-800 hover:bg-slate-100 p-2 rounded-md transition-all"
+                        >
+                          <SquarePen className="h-5 w-5" />
+                        </button>
+                        <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-900 text-white text-[10px] font-medium rounded opacity-0 group-hover/tooltip:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-30 shadow-sm">
+                          Editar Alumno
+                          <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900"></span>
+                        </span>
+                      </div>
+
+                      {/* Eliminar */}
+                      <div className="relative group/tooltip">
+                        <button
+                          onClick={(e) => { e.stopPropagation(); alert(`¿Eliminar al alumno ${member.name}?`); }}
+                          className="text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-2 rounded-md transition-all"
+                        >
+                          <Trash2 className="h-5 w-5" />
+                        </button>
+                        <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-900 text-white text-[10px] font-medium rounded opacity-0 group-hover/tooltip:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-30 shadow-sm">
+                          Eliminar Alumno
+                          <span className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900"></span>
+                        </span>
+                      </div>
                     </div>
                   </TableCell>
                 </TableRow>

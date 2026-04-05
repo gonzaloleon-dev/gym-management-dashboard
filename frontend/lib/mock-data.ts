@@ -67,14 +67,12 @@ const generateMockMembers = (count: number): Member[] => {
     const name = `${firstName} ${lastName}`;
     const plan = plans[i % plans.length];
     
-    // Generar fechas con logica de status
     let nextExpiryDate: Date;
     let status: 'Activo' | 'Vencido' | 'Deudor';
     let debt = 0;
     let daysOverdue = 0;
 
     if (i % 5 === 0) {
-      // Deudores: Vencieron hace tiempo (1 a 3 meses atras)
       const monthsBack = (i % 3) + 1;
       nextExpiryDate = new Date(today);
       nextExpiryDate.setMonth(today.getMonth() - monthsBack);
@@ -82,11 +80,9 @@ const generateMockMembers = (count: number): Member[] => {
       debt = PLAN_PRICES[plan] * monthsBack;
       daysOverdue = Math.floor((today.getTime() - nextExpiryDate.getTime()) / (1000 * 60 * 60 * 24));
     } else if (i % 7 === 0) {
-      // Vencidos hoy: Vencen exactamente hoy
       nextExpiryDate = new Date(today);
       status = 'Vencido';
     } else {
-      // Activos: Vencen en el futuro (1 a 25 dias adelante)
       const daysAhead = (i % 25) + 1;
       nextExpiryDate = new Date(today);
       nextExpiryDate.setDate(today.getDate() + daysAhead);
@@ -98,7 +94,7 @@ const generateMockMembers = (count: number): Member[] => {
     lastPaymentDate.setMonth(nextExpiryDate.getMonth() - 1);
     const lastPayment = lastPaymentDate.toISOString().split('T')[0];
     
-    const joinDate = '2024-01-15'; // Fecha de ingreso fija para simplificar
+    const joinDate = '2024-01-15'; 
     
     members.push({
       id: i.toString(),
@@ -124,7 +120,7 @@ const generateMockMembers = (count: number): Member[] => {
   return members;
 };
 
-export const mockMembers = generateMockMembers(50);
+export const mockMembers = generateMockMembers(60);
 
 // Revenue data for the last 6 months
 export const revenueData: RevenueData[] = [
@@ -141,15 +137,19 @@ export const paymentMethodsData = [
   { method: 'Transferencia', amount: 2400000, count: 85 },
 ];
 
-export const recentPayments: Payment[] = mockMembers.slice(0, 8).map(m => ({
-  id: `p${m.id}`,
-  memberId: m.id,
-  memberName: m.name,
-  amount: PLAN_PRICES[m.plan],
-  date: '2026-01-20',
-  method: Math.random() > 0.5 ? 'Transferencia' : 'Efectivo',
-  concept: `${m.plan} - Enero`,
-}));
+// Recientes: Miembros activos que pagaron hace poco
+export const recentPayments: Payment[] = mockMembers
+  .filter(m => m.status === 'Activo')
+  .slice(0, 15)
+  .map(m => ({
+    id: `p${m.id}`,
+    memberId: m.id,
+    memberName: m.name,
+    amount: PLAN_PRICES[m.plan],
+    date: '2026-02-01',
+    method: Math.random() > 0.5 ? 'Transferencia' : 'Efectivo',
+    concept: `${m.plan} - Febrero`,
+  }));
 
 export const todayExpiringMembers: Member[] = mockMembers.filter(m => m.status === 'Vencido');
 
@@ -179,7 +179,7 @@ export function formatRelativeDate(dateStr: string, type: 'overdue' | 'today' | 
     return months === 1 ? 'Hace 1 mes' : `Hace ${months} meses`;
   }
   const targetDate = new Date(dateStr);
-  const now = new Date('2026-02-13'); // Hoy simulado
+  const now = new Date('2026-02-13'); 
   const diffTime = Math.max(0, targetDate.getTime() - now.getTime());
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   if (diffDays === 0) return 'Mañana';
@@ -191,18 +191,42 @@ export function getOverdueMembers(): Member[] {
   return mockMembers.filter(m => m.status === 'Deudor').sort((a, b) => b.daysOverdue - a.daysOverdue);
 }
 
+export function getPaymentStats() {
+  const totalRevenue = recentPayments.reduce((acc, p) => acc + p.amount, 0);
+  const monthlyRevenue = recentPayments
+    .filter(p => p.date.startsWith('2026-02'))
+    .reduce((acc, p) => acc + p.amount, 0);
+  
+  return {
+    totalRevenue,
+    monthlyRevenue,
+    monthlyCount: recentPayments.filter(p => p.date.startsWith('2026-02')).length,
+  };
+}
+
 export function getDashboardStats() {
+  const activeMembers = mockMembers.filter(m => m.status === 'Activo').length;
   const debtors = mockMembers.filter(m => m.status === 'Deudor');
   const totalDebt = debtors.reduce((acc, m) => acc + m.debt, 0);
+  
+  // Tasa de retención simulada basada en activos vs deudores
+  const retentionRate = Math.round((activeMembers / (activeMembers + debtors.length)) * 100);
+  
+  // Promedio por miembro
+  const avgPerMember = Math.round(activeMembers > 0 ? PLAN_PRICES['LIBRE'] : 0);
+
   return {
     monthlyRevenue: 5200000,
-    totalMembers: mockMembers.length * 4,
-    paidMembers: mockMembers.length * 2,
+    totalMembers: mockMembers.length,
+    activeMembers,
+    paidMembers: recentPayments.length,
     totalDebt,
+    retentionRate,
+    avgPerMember,
     newMembersThisMonth: 15,
     growthPercentage: 6.4,
     todayExpiries: todayExpiringMembers.length,
-    upcomingExpiries: 8,
+    upcomingExpiries: getUpcomingExpiries().length,
     debtors: debtors.sort((a, b) => b.daysOverdue - a.daysOverdue),
   };
 }

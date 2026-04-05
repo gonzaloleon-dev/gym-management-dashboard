@@ -14,33 +14,12 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { recentPayments, formatCurrency, formatDate, revenueData } from '@/lib/mock-data';
+import { mockMembers, recentPayments, formatCurrency, formatDate, revenueData, getPaymentStats } from '@/lib/mock-data';
 import { RevenueChart } from '@/components/dashboard/revenue-chart';
 
-// Extended payments for demo
-const allPayments = [
-  ...recentPayments,
-  {
-    id: 'p7',
-    memberId: '10',
-    memberName: 'Carolina Álvarez',
-    amount: 50000,
-    date: '2026-01-10',
-    method: 'Efectivo' as const,
-    concept: 'Funcional - Enero',
-  },
-  {
-    id: 'p8',
-    memberId: '14',
-    memberName: 'Sofía Vargas',
-    amount: 30000,
-    date: '2026-01-12',
-    method: 'Transferencia' as const,
-    concept: 'Stretching Global Activo - Enero',
-  },
-];
-
 export function PaymentsView() {
+  const paymentStats = getPaymentStats();
+  const allPayments = recentPayments;
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredPayments = searchQuery
@@ -51,9 +30,9 @@ export function PaymentsView() {
       )
     : allPayments;
 
-  const totalIncome = allPayments.reduce((acc, p) => acc + p.amount, 0);
-  const thisMonthPayments = allPayments.filter((p) => p.date.startsWith('2026-01'));
-  const thisMonthIncome = thisMonthPayments.reduce((acc, p) => acc + p.amount, 0);
+  const totalIncome = paymentStats.totalRevenue;
+  const thisMonthIncome = paymentStats.monthlyRevenue;
+  const thisMonthPaymentsCount = paymentStats.monthlyCount;
 
   const getMethodColor = (method: string) => {
     switch (method) {
@@ -88,7 +67,7 @@ export function PaymentsView() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Pagos Este Mes</p>
-                <p className="text-2xl font-bold text-card-foreground">{thisMonthPayments.length}</p>
+                <p className="text-2xl font-bold text-card-foreground">{thisMonthPaymentsCount}</p>
               </div>
               <div className="rounded-lg bg-secondary/10 p-2.5">
                 <Calendar className="h-5 w-5 text-secondary" />

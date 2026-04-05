@@ -13,7 +13,7 @@ import {
   Cell,
 } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { mockMembers, revenueData, formatCurrency, PLAN_PRICES, paymentMethodsData, type MembershipPlan } from '@/lib/mock-data';
+import { mockMembers, revenueData, formatCurrency, PLAN_PRICES, paymentMethodsData, type MembershipPlan, getDashboardStats } from '@/lib/mock-data';
 import { PaymentMethodsChart } from '@/components/dashboard/payment-methods-chart';
 import { MembersGrowthChart } from '@/components/dashboard/members-growth-chart';
 // Define colors directly for light mode - teal primary palette
@@ -28,6 +28,7 @@ const COLORS = {
 };
 
 export function StatisticsView() {
+  const stats = getDashboardStats();
   // Plan distribution using new plans
   const planCounts: Record<string, number> = {};
   Object.keys(PLAN_PRICES).forEach(plan => {
@@ -54,8 +55,6 @@ export function StatisticsView() {
     members: d.members,
   }));
 
-  // CustomTooltip was extracted
-
   return (
     <div className="space-y-6">
       {/* Summary Stats */}
@@ -63,25 +62,25 @@ export function StatisticsView() {
         <Card className="border-border bg-card shadow-sm">
           <CardContent className="p-5">
             <p className="text-sm text-muted-foreground">Total Miembros</p>
-            <p className="text-3xl font-bold text-card-foreground">{mockMembers.length}</p>
+            <p className="text-3xl font-bold text-card-foreground">{stats.totalMembers}</p>
           </CardContent>
         </Card>
         <Card className="border-border bg-card shadow-sm">
           <CardContent className="p-5">
             <p className="text-sm text-muted-foreground">Tasa de Retención</p>
-            <p className="text-3xl font-bold text-primary">87%</p>
+            <p className="text-3xl font-bold text-primary">{stats.retentionRate}%</p>
           </CardContent>
         </Card>
         <Card className="border-border bg-card shadow-sm">
           <CardContent className="p-5">
             <p className="text-sm text-muted-foreground">Promedio por Miembro</p>
-            <p className="text-3xl font-bold text-card-foreground">{formatCurrency(52000)}</p>
+            <p className="text-3xl font-bold text-card-foreground">{formatCurrency(stats.avgPerMember)}</p>
           </CardContent>
         </Card>
         <Card className="border-border bg-card shadow-sm">
           <CardContent className="p-5">
             <p className="text-sm text-muted-foreground">Crecimiento Mensual</p>
-            <p className="text-3xl font-bold text-primary">+6.4%</p>
+            <p className="text-3xl font-bold text-primary">+{stats.growthPercentage}%</p>
           </CardContent>
         </Card>
       </div>
