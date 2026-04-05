@@ -153,8 +153,17 @@ export const recentPayments: Payment[] = mockMembers
 
 export const todayExpiringMembers: Member[] = mockMembers.filter(m => m.status === 'Vencido');
 
-export const getUpcomingExpiries = (days: number = 2): Member[] => {
-  return mockMembers.filter(m => m.status === 'Activo').slice(0, 10);
+export const getUpcomingExpiries = (days: number = 3): Member[] => {
+  const today = new Date('2026-02-13');
+  const limitDate = new Date(today);
+  limitDate.setDate(today.getDate() + days);
+  
+  return mockMembers.filter(m => {
+    if (m.status !== 'Activo') return false;
+    const expiryDate = new Date(m.nextExpiry);
+    // Vencimiento posterior a hoy pero dentro del límite de días
+    return expiryDate > today && expiryDate <= limitDate;
+  }).sort((a, b) => new Date(a.nextExpiry).getTime() - new Date(b.nextExpiry).getTime());
 };
 
 export function formatCurrency(amount: number): string {
@@ -188,7 +197,7 @@ export function formatRelativeDate(dateStr: string, type: 'overdue' | 'today' | 
 }
 
 export function getOverdueMembers(): Member[] {
-  return mockMembers.filter(m => m.status === 'Deudor').sort((a, b) => b.daysOverdue - a.daysOverdue);
+  return mockMembers.filter(m => m.status === 'Deudor').sort((a, b) => a.daysOverdue - b.daysOverdue);
 }
 
 export function getPaymentStats() {

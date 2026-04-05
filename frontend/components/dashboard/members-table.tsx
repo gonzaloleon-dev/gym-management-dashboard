@@ -27,6 +27,8 @@ interface MembersTableProps {
 
 const ITEMS_PER_PAGE = 10;
 
+import { HighlightedText } from '@/components/ui/highlighted-text';
+
 export function MembersTable({ members }: MembersTableProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('Todos');
@@ -49,10 +51,13 @@ export function MembersTable({ members }: MembersTableProps) {
     let filtered = [...members]; // Creamos una copia para poder mutarla en sort
 
     if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
+      const normalize = (str: string) =>
+        str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+      
+      const query = normalize(searchQuery.trim());
       filtered = filtered.filter(
         (m) =>
-          m.name.toLowerCase().includes(query) ||
+          normalize(m.name).includes(query) ||
           m.phone.toLowerCase().includes(query) ||
           m.dni.includes(query)
       );
@@ -148,11 +153,11 @@ export function MembersTable({ members }: MembersTableProps) {
 
           <div className="flex flex-col gap-1.5 w-full sm:w-[200px]">
             <Label className="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1">Ordenar por</Label>
-            <Select value={sortBy} onValueChange={(val) => { 
-                setSortBy(val); 
-                if (val === 'expiryAsc') setStatusFilter('Todos'); // Si ordena por vencimiento, mostrar panorama completo
-                setCurrentPage(1); 
-              }}>
+            <Select value={sortBy} onValueChange={(val) => {
+              setSortBy(val);
+              if (val === 'expiryAsc') setStatusFilter('Todos'); // Si ordena por vencimiento, mostrar panorama completo
+              setCurrentPage(1);
+            }}>
               <SelectTrigger className="w-full bg-white border border-stone-200 hover:bg-stone-50 text-sm h-10">
                 <SelectValue placeholder="Ordenar por" />
               </SelectTrigger>
@@ -168,11 +173,11 @@ export function MembersTable({ members }: MembersTableProps) {
 
           <div className="flex flex-col gap-1.5 w-full sm:w-[150px]">
             <Label className="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1">Filtrar por</Label>
-            <Select value={statusFilter} onValueChange={(val) => { 
-                setStatusFilter(val); 
-                setSortBy('nameAsc'); // Resetear orden al filtrar para evitar confusiones
-                setCurrentPage(1); 
-              }}>
+            <Select value={statusFilter} onValueChange={(val) => {
+              setStatusFilter(val);
+              setSortBy('nameAsc'); // Resetear orden al filtrar para evitar confusiones
+              setCurrentPage(1);
+            }}>
               <SelectTrigger className="w-full bg-white border border-stone-200 hover:bg-stone-50 text-sm h-10">
                 <SelectValue placeholder="Estado" />
               </SelectTrigger>
@@ -208,7 +213,7 @@ export function MembersTable({ members }: MembersTableProps) {
                       </div>
                       <div className="min-w-0">
                         <p className="truncate text-sm font-semibold text-slate-700 group-hover:text-primary transition-colors">
-                          {member.name}
+                          <HighlightedText text={member.name} query={searchQuery} />
                         </p>
                         <p className="truncate text-xs text-slate-500 font-sans md:hidden">
                           {member.phone}

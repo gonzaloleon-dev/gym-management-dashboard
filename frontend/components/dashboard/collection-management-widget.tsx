@@ -37,7 +37,7 @@ export function CollectionManagementWidget({
   upcomingExpiries: initialUpcomingExpiries,
 }: CollectionManagementWidgetProps) {
   const [contactCounts, setContactCounts] = useState<Record<string, number>>({});
-  const [upcomingDaysFilter, setUpcomingDaysFilter] = useState<string>('2');
+  const [upcomingDaysFilter, setUpcomingDaysFilter] = useState<string>('3');
   const [activeTab, setActiveTab] = useState<string>('overdue');
 
   const upcomingExpiriesFiltered = useMemo(() => {
@@ -217,13 +217,13 @@ export function CollectionManagementWidget({
             {activeTab === 'upcoming' && (
               <div className="hidden sm:flex ml-auto items-center">
                 <Select value={upcomingDaysFilter} onValueChange={setUpcomingDaysFilter}>
-                  <SelectTrigger className="w-[160px] h-[44px] px-4 text-sm font-medium rounded-lg bg-background border-border shadow-sm hover:bg-muted/50 transition-colors">
+                  <SelectTrigger className="w-[185px] h-[44px] px-4 text-sm font-medium rounded-lg bg-background border-border shadow-sm hover:bg-muted/50 transition-colors">
                     <SelectValue placeholder="Periodo" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="2">En 2 días</SelectItem>
-                    <SelectItem value="5">En 5 días</SelectItem>
-                    <SelectItem value="7">Esta semana</SelectItem>
+                    <SelectItem value="3">Próximos 3 días</SelectItem>
+                    <SelectItem value="7">Próximos 7 días</SelectItem>
+                    <SelectItem value="15">Próximos 15 días</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -237,9 +237,9 @@ export function CollectionManagementWidget({
                     <SelectValue placeholder="Periodo" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="2">En 2 días</SelectItem>
-                    <SelectItem value="5">En 5 días</SelectItem>
-                    <SelectItem value="7">Esta semana</SelectItem>
+                    <SelectItem value="3">Próximos 3 días</SelectItem>
+                    <SelectItem value="7">Próximos 7 días</SelectItem>
+                    <SelectItem value="15">Próximos 15 días</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

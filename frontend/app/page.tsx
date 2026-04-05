@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { GlobalMemberSearch } from '@/components/dashboard/global-member-search';
 import { SidebarNav } from '@/components/dashboard/sidebar-nav';
 import { KPICards } from '@/components/dashboard/kpi-cards';
 import { MembersGrowthChart } from '@/components/dashboard/members-growth-chart';
@@ -41,20 +42,28 @@ export default function DashboardPage() {
         <div className="px-4 py-6 sm:px-6 lg:px-8">
           {/* Header */}
           <header className="mb-8 pt-12 lg:pt-0">
-            <h1 className="text-3xl font-bold text-foreground tracking-tight">
-              {activeTab === 'dashboard' && 'Panel Principal'}
-              {activeTab === 'members' && 'Miembros'}
-              {activeTab === 'payments' && 'Pagos'}
-              {activeTab === 'statistics' && 'Estadísticas'}
-              {activeTab === 'settings' && 'Configuración'}
-            </h1>
-            <p className="text-base text-muted-foreground mt-1">
-              {activeTab === 'dashboard' && "Vista general"}
-              {activeTab === 'members' && 'Administración de miembros'}
-              {activeTab === 'payments' && 'Historial y registro de pagos'}
-              {activeTab === 'statistics' && 'Reportes y balance general'}
-              {activeTab === 'settings' && 'Configura tu gimnasio'}
-            </p>
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h1 className="text-3xl font-bold text-foreground tracking-tight">
+                  {activeTab === 'dashboard' && 'Panel Principal'}
+                  {activeTab === 'members' && 'Miembros'}
+                  {activeTab === 'payments' && 'Pagos'}
+                  {activeTab === 'statistics' && 'Estadísticas'}
+                  {activeTab === 'settings' && 'Configuración'}
+                </h1>
+                <p className="text-base text-muted-foreground mt-1">
+                  {activeTab === 'dashboard' && "Vista general"}
+                  {activeTab === 'members' && 'Administración de miembros'}
+                  {activeTab === 'payments' && 'Historial y registro de pagos'}
+                  {activeTab === 'statistics' && 'Reportes y balance general'}
+                  {activeTab === 'settings' && 'Configura tu gimnasio'}
+                </p>
+              </div>
+              {/* Buscador global */}
+              <div className="mt-1 shrink-0">
+                <GlobalMemberSearch />
+              </div>
+            </div>
           </header>
 
           {/* Dashboard View */}
