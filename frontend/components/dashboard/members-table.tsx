@@ -20,6 +20,7 @@ import { formatDate } from '@/lib/mock-data';
 import { cn } from '@/lib/utils';
 import { Label } from '@/components/ui/label';
 import { MemberDetailsModal } from './member-details-modal';
+import { PaymentModal } from './payment-modal';
 
 interface MembersTableProps {
   members: Member[];
@@ -36,6 +37,9 @@ export function MembersTable({ members }: MembersTableProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
+
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [paymentMember, setPaymentMember] = useState<Member | null>(null);
 
   const handleEditMember = (member: Member) => {
     setSelectedMember(member);
@@ -127,7 +131,7 @@ export function MembersTable({ members }: MembersTableProps) {
           <CardTitle className="text-base font-semibold text-card-foreground">
             Listado de Miembros
           </CardTitle>
-          <Button onClick={handleNewMember} className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90 w-full sm:w-auto">
+          <Button onClick={handleNewMember} className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90 w-full sm:w-auto cursor-pointer">
             <Plus className="h-4 w-4" />
             Nuevo Miembro
           </Button>
@@ -241,8 +245,8 @@ export function MembersTable({ members }: MembersTableProps) {
                       {/* Cobrar */}
                       <div className="relative group/tooltip">
                         <button
-                          onClick={(e) => { e.stopPropagation(); alert(`Registrar pago para ${member.name}`); }}
-                          className="text-slate-400 hover:text-teal-600 hover:bg-teal-50 p-2 rounded-md transition-all"
+                          onClick={(e) => { e.stopPropagation(); setPaymentMember(member); setIsPaymentModalOpen(true); }}
+                          className="text-slate-400 hover:text-teal-600 hover:bg-teal-50 p-2 rounded-md transition-all cursor-pointer"
                         >
                           <CircleDollarSign className="h-5 w-5" />
                         </button>
@@ -256,7 +260,7 @@ export function MembersTable({ members }: MembersTableProps) {
                       <div className="relative group/tooltip">
                         <button
                           onClick={(e) => { e.stopPropagation(); handleEditMember(member); }}
-                          className="text-slate-400 hover:text-slate-800 hover:bg-slate-100 p-2 rounded-md transition-all"
+                          className="text-slate-400 hover:text-slate-800 hover:bg-slate-100 p-2 rounded-md transition-all cursor-pointer"
                         >
                           <SquarePen className="h-5 w-5" />
                         </button>
@@ -270,7 +274,7 @@ export function MembersTable({ members }: MembersTableProps) {
                       <div className="relative group/tooltip">
                         <button
                           onClick={(e) => { e.stopPropagation(); alert(`¿Eliminar al alumno ${member.name}?`); }}
-                          className="text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-2 rounded-md transition-all"
+                          className="text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-2 rounded-md transition-all cursor-pointer"
                         >
                           <Trash2 className="h-5 w-5" />
                         </button>
@@ -333,6 +337,11 @@ export function MembersTable({ members }: MembersTableProps) {
         open={isModalOpen}
         onOpenChange={setIsModalOpen}
         member={selectedMember}
+      />
+      <PaymentModal
+        open={isPaymentModalOpen}
+        onOpenChange={setIsPaymentModalOpen}
+        member={paymentMember}
       />
     </Card>
   );

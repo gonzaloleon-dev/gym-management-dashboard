@@ -40,7 +40,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   );
 }
 
-const inputClass = "h-10 bg-white border-stone-200 text-slate-900 placeholder:text-slate-300 text-[14px] font-sans focus-visible:ring-1 focus-visible:ring-teal-600/50 focus-visible:border-teal-600 transition-colors";
+const inputClass = "h-10 bg-white border-stone-200 text-slate-900 placeholder:text-slate-300 text-[14px] font-sans focus-visible:ring-1 focus-visible:ring-teal-600/50 focus-visible:border-teal-600 transition-colors pointer-events-auto cursor-pointer";
 
 export function MemberDetailsModal({ open, onOpenChange, member }: MemberDetailsModalProps) {
   const isEditing = !!member;
@@ -108,7 +108,7 @@ export function MemberDetailsModal({ open, onOpenChange, member }: MemberDetails
               <div className="space-y-4">
                 <Field label="Plan Actual">
                   <Select defaultValue={member?.plan ?? '3 veces x semana'}>
-                    <SelectTrigger className={`${inputClass} w-full`}>
+                    <SelectTrigger className={`${inputClass} w-full cursor-pointer text-slate-900`}>
                       <SelectValue placeholder="Seleccionar Plan" />
                     </SelectTrigger>
                     <SelectContent>
@@ -136,7 +136,7 @@ export function MemberDetailsModal({ open, onOpenChange, member }: MemberDetails
                 </Field>
                 <Field label="Objetivo Personal">
                   <Select defaultValue={member?.personalObjective ?? 'Salud y bienestar'}>
-                    <SelectTrigger className={`${inputClass} w-full`}>
+                    <SelectTrigger className={`${inputClass} w-full cursor-pointer text-slate-900`}>
                       <SelectValue placeholder="Seleccionar Objetivo" />
                     </SelectTrigger>
                     <SelectContent>
@@ -165,7 +165,7 @@ export function MemberDetailsModal({ open, onOpenChange, member }: MemberDetails
                 </div>
                 <Field label="¿Cómo nos conoció?">
                   <Select value={selectedOrigin} onValueChange={setSelectedOrigin}>
-                    <SelectTrigger className={`${inputClass} w-full`}>
+                    <SelectTrigger className={`${inputClass} w-full cursor-pointer text-slate-900`}>
                       <SelectValue placeholder="Seleccionar Origen" />
                     </SelectTrigger>
                     <SelectContent>
@@ -194,14 +194,14 @@ export function MemberDetailsModal({ open, onOpenChange, member }: MemberDetails
             <Button
               type="button"
               variant="outline"
-              className="flex-1 h-10 border-stone-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all text-[13px] font-sans"
+              className="flex-1 h-10 border-stone-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all text-[13px] font-sans cursor-pointer"
               onClick={() => onOpenChange(false)}
             >
               Cerrar
             </Button>
             <Button
               type="submit"
-              className="flex-1 h-10 gap-2 bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm text-[13px] font-sans"
+              className="flex-1 h-10 gap-2 bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm text-[13px] font-sans cursor-pointer"
             >
               <Save className="w-4 h-4" />
               {isEditing ? 'Guardar Cambios' : 'Registrar Alumno'}

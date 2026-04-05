@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { AlertTriangle, CalendarClock, Clock, CheckCircle, CreditCard } from 'lucide-react';
+import { AlertTriangle, CalendarClock, Clock, CheckCircle, CircleDollarSign } from 'lucide-react';
 import { FaWhatsapp } from 'react-icons/fa';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -24,6 +24,7 @@ import {
 } from '@/components/ui/table';
 import type { Member } from '@/lib/mock-data';
 import { formatCurrency, formatDate, formatRelativeDate, PLAN_PRICES, getUpcomingExpiries } from '@/lib/mock-data';
+import { PaymentModal } from '@/components/dashboard/payment-modal';
 
 interface CollectionManagementWidgetProps {
   overdueMembers: Member[];
@@ -39,6 +40,8 @@ export function CollectionManagementWidget({
   const [contactCounts, setContactCounts] = useState<Record<string, number>>({});
   const [upcomingDaysFilter, setUpcomingDaysFilter] = useState<string>('3');
   const [activeTab, setActiveTab] = useState<string>('overdue');
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [paymentMember, setPaymentMember] = useState<Member | null>(null);
 
   const upcomingExpiriesFiltered = useMemo(() => {
     return getUpcomingExpiries(parseInt(upcomingDaysFilter));
@@ -136,17 +139,16 @@ export function CollectionManagementWidget({
                   <div className="flex items-center justify-center gap-2">
                     {/* Cobrar: izquierda — neutral oscuro para jerarquía profesional */}
                     <button
-                      className="h-8 flex items-center gap-1.5 px-3 rounded-lg bg-slate-800 text-white hover:bg-slate-700 transition-colors shadow-sm text-sm font-semibold"
-                      onClick={() => alert(`Iniciando cobro a ${member.name}`)}
-                      title="Registrar cobro"
+                      className="h-8 flex items-center gap-1.5 px-3 rounded-lg bg-slate-800 text-white hover:bg-slate-700 transition-colors shadow-sm text-sm font-semibold cursor-pointer"
+                      onClick={() => { setPaymentMember(member); setIsPaymentModalOpen(true); }}
                     >
-                      <CreditCard className="h-3.5 w-3.5" />
+                      <CircleDollarSign className="h-3.5 w-3.5" />
                       Cobrar
                     </button>
                     {/* WhatsApp: derecha — verde oficial sólido */}
                     <div className="relative">
                       <button
-                        className="h-8 flex items-center gap-1.5 px-3 rounded-lg bg-[#25D366] text-white hover:bg-[#20bc5a] transition-colors shadow-sm text-sm font-semibold"
+                        className="h-8 flex items-center gap-1.5 px-3 rounded-lg bg-[#25D366] text-white hover:bg-[#20bc5a] transition-colors shadow-sm text-sm font-semibold cursor-pointer"
                         onClick={() => handleWhatsApp(member, type)}
                         title="Contactar por WhatsApp"
                       >
@@ -259,6 +261,11 @@ export function CollectionManagementWidget({
           </div>
         </Tabs>
       </CardContent>
+      <PaymentModal
+        open={isPaymentModalOpen}
+        onOpenChange={setIsPaymentModalOpen}
+        member={paymentMember}
+      />
     </Card>
   );
 }
