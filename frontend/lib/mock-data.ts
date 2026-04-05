@@ -53,315 +53,78 @@ export interface RevenueData {
   members: number;
 }
 
-// Mock Members Data - Argentine names and DNI-style IDs
-export const mockMembers: Member[] = [
-  {
-    id: '1',
-    dni: '35.456.789',
-    name: 'Martín González',
-    email: 'martin.gonzalez@gmail.com',
-    phone: '+54 11 4567-8901',
-    plan: 'LIBRE',
-    status: 'Activo',
-    lastPayment: '2026-01-15',
-    nextExpiry: '2026-02-15',
-    debt: 0,
-    daysOverdue: 0,
-    joinDate: '2024-06-10',
-    medicalNotes: 'Apto médico al día. Sin lesiones.',
-    emergencyContactName: 'Familiar de Contacto',
-    emergencyContactPhone: '+54 11 0000-0000',
-    personalObjective: 'Salud y bienestar',
-    origin: 'Instagram',
-    initialPlan: '3 veces x semana',
-  },
-  {
-    id: '2',
-    dni: '28.123.456',
-    name: 'Lucía Fernández',
-    email: 'lucia.fernandez@hotmail.com',
-    phone: '+54 11 2345-6789',
-    plan: 'M+F',
-    status: 'Activo',
-    lastPayment: '2026-01-20',
-    nextExpiry: '2026-02-20',
-    debt: 0,
-    daysOverdue: 0,
-    joinDate: '2023-08-22',
-    medicalNotes: 'Apto médico al día. Sin lesiones.',
-    emergencyContactName: 'Familiar de Contacto',
-    emergencyContactPhone: '+54 11 0000-0000',
-    personalObjective: 'Salud y bienestar',
-    origin: 'Instagram',
-    initialPlan: '3 veces x semana',
-  },
-  {
-    id: '3',
-    dni: '40.987.654',
-    name: 'Santiago Rodríguez',
-    email: 'santi.rod@gmail.com',
-    phone: '+54 11 6789-0123',
-    plan: '3 veces x semana',
-    status: 'Deudor',
-    lastPayment: '2025-12-10',
-    nextExpiry: '2026-01-10',
-    debt: 50000,
-    daysOverdue: 20,
-    joinDate: '2025-03-15',
-    medicalNotes: 'Apto médico al día. Sin lesiones.',
-    emergencyContactName: 'Familiar de Contacto',
-    emergencyContactPhone: '+54 11 0000-0000',
-    personalObjective: 'Salud y bienestar',
-    origin: 'Instagram',
-    initialPlan: '3 veces x semana',
-  },
-  {
-    id: '4',
-    dni: '33.456.123',
-    name: 'Camila López',
-    email: 'camila.lopez@yahoo.com',
-    phone: '+54 11 3456-7890',
-    plan: 'Funcional',
-    status: 'Activo',
-    lastPayment: '2026-01-25',
-    nextExpiry: '2026-02-25',
-    debt: 0,
-    daysOverdue: 0,
-    joinDate: '2022-01-05',
-    medicalNotes: 'Apto médico al día. Sin lesiones.',
-    emergencyContactName: 'Familiar de Contacto',
-    emergencyContactPhone: '+54 11 0000-0000',
-    personalObjective: 'Salud y bienestar',
-    origin: 'Instagram',
-    initialPlan: '3 veces x semana',
-  },
-  {
-    id: '5',
-    dni: '37.890.234',
-    name: 'Tomás Martínez',
-    email: 'tomas.martinez@gmail.com',
-    phone: '+54 11 7890-1234',
-    plan: 'LIBRE',
-    status: 'Vencido',
-    lastPayment: '2025-12-30',
-    nextExpiry: '2026-01-30',
-    debt: 0,
-    daysOverdue: 0,
-    joinDate: '2024-11-20',
-    medicalNotes: 'Apto médico al día. Sin lesiones.',
-    emergencyContactName: 'Familiar de Contacto',
-    emergencyContactPhone: '+54 11 0000-0000',
-    personalObjective: 'Salud y bienestar',
-    origin: 'Instagram',
-    initialPlan: '3 veces x semana',
-  },
-  {
-    id: '6',
-    dni: '29.567.891',
-    name: 'Valentina Pérez',
-    email: 'vale.perez@outlook.com',
-    phone: '+54 11 5678-9012',
-    plan: 'Stretching Global Activo',
-    status: 'Activo',
-    lastPayment: '2026-01-18',
-    nextExpiry: '2026-02-18',
-    debt: 0,
-    daysOverdue: 0,
-    joinDate: '2021-05-18',
-    medicalNotes: 'Apto médico al día. Sin lesiones.',
-    emergencyContactName: 'Familiar de Contacto',
-    emergencyContactPhone: '+54 11 0000-0000',
-    personalObjective: 'Salud y bienestar',
-    origin: 'Instagram',
-    initialPlan: '3 veces x semana',
-  },
-  {
-    id: '7',
-    dni: '42.234.567',
-    name: 'Nicolás Díaz',
-    email: 'nico.diaz@gmail.com',
-    phone: '+54 11 2345-6780',
-    plan: 'M+F',
-    status: 'Deudor',
-    lastPayment: '2025-11-15',
-    nextExpiry: '2025-12-15',
-    debt: 70000,
-    daysOverdue: 46,
-    joinDate: '2025-07-01',
-    medicalNotes: 'Apto médico al día. Sin lesiones.',
-    emergencyContactName: 'Familiar de Contacto',
-    emergencyContactPhone: '+54 11 0000-0000',
-    personalObjective: 'Salud y bienestar',
-    origin: 'Instagram',
-    initialPlan: '3 veces x semana',
-  },
-  {
-    id: '8',
-    dni: '31.678.901',
-    name: 'Florencia Sánchez',
-    email: 'flor.sanchez@gmail.com',
-    phone: '+54 11 6789-0124',
-    plan: 'Feldenkrais/GPG',
-    status: 'Activo',
-    lastPayment: '2026-01-22',
-    nextExpiry: '2026-02-22',
-    debt: 0,
-    daysOverdue: 0,
-    joinDate: '2024-02-14',
-    medicalNotes: 'Apto médico al día. Sin lesiones.',
-    emergencyContactName: 'Familiar de Contacto',
-    emergencyContactPhone: '+54 11 0000-0000',
-    personalObjective: 'Salud y bienestar',
-    origin: 'Instagram',
-    initialPlan: '3 veces x semana',
-  },
-  {
-    id: '9',
-    dni: '38.901.234',
-    name: 'Agustín Romero',
-    email: 'agus.romero@hotmail.com',
-    phone: '+54 11 9012-3456',
-    plan: 'LIBRE',
-    status: 'Deudor',
-    lastPayment: '2025-12-05',
-    nextExpiry: '2026-01-05',
-    debt: 60000,
-    daysOverdue: 25,
-    joinDate: '2025-04-22',
-    medicalNotes: 'Apto médico al día. Sin lesiones.',
-    emergencyContactName: 'Familiar de Contacto',
-    emergencyContactPhone: '+54 11 0000-0000',
-    personalObjective: 'Salud y bienestar',
-    origin: 'Instagram',
-    initialPlan: '3 veces x semana',
-  },
-  {
-    id: '10',
-    dni: '34.345.678',
-    name: 'Carolina Álvarez',
-    email: 'caro.alvarez@gmail.com',
-    phone: '+54 11 3456-7891',
-    plan: 'Funcional',
-    status: 'Activo',
-    lastPayment: '2026-01-10',
-    nextExpiry: '2026-02-10',
-    debt: 0,
-    daysOverdue: 0,
-    joinDate: '2023-06-15',
-    medicalNotes: 'Apto médico al día. Sin lesiones.',
-    emergencyContactName: 'Familiar de Contacto',
-    emergencyContactPhone: '+54 11 0000-0000',
-    personalObjective: 'Salud y bienestar',
-    origin: 'Instagram',
-    initialPlan: '3 veces x semana',
-  },
-  {
-    id: '11',
-    dni: '41.456.789',
-    name: 'Federico Torres',
-    email: 'fede.torres@yahoo.com',
-    phone: '+54 11 4567-8902',
-    plan: '3 veces x semana',
-    status: 'Vencido',
-    lastPayment: '2025-12-30',
-    nextExpiry: '2026-01-30',
-    debt: 0,
-    daysOverdue: 0,
-    joinDate: '2025-09-10',
-    medicalNotes: 'Apto médico al día. Sin lesiones.',
-    emergencyContactName: 'Familiar de Contacto',
-    emergencyContactPhone: '+54 11 0000-0000',
-    personalObjective: 'Salud y bienestar',
-    origin: 'Instagram',
-    initialPlan: '3 veces x semana',
-  },
-  {
-    id: '12',
-    dni: '30.789.012',
-    name: 'María José Herrera',
-    email: 'majo.herrera@gmail.com',
-    phone: '+54 11 7890-1235',
-    plan: 'LIBRE',
-    status: 'Activo',
-    lastPayment: '2026-01-28',
-    nextExpiry: '2026-02-28',
-    debt: 0,
-    daysOverdue: 0,
-    joinDate: '2020-12-01',
-    medicalNotes: 'Apto médico al día. Sin lesiones.',
-    emergencyContactName: 'Familiar de Contacto',
-    emergencyContactPhone: '+54 11 0000-0000',
-    personalObjective: 'Salud y bienestar',
-    origin: 'Instagram',
-    initialPlan: '3 veces x semana',
-    medicalNotes: 'Apto médico al día. Sin lesiones.',
-    emergencyContactName: 'Familiar de Contacto',
-    emergencyContactPhone: '+54 11 0000-0000',
-    personalObjective: 'Salud y bienestar',
-    origin: 'Instagram',
-    initialPlan: '3 veces x semana',
-  },
-  {
-    id: '13',
-    dni: '36.012.345',
-    name: 'Juan Pablo Morales',
-    email: 'jp.morales@outlook.com',
-    phone: '+54 11 0123-4567',
-    plan: 'M+F',
-    status: 'Deudor',
-    lastPayment: '2025-10-25',
-    nextExpiry: '2025-11-25',
-    debt: 140000,
-    daysOverdue: 66,
-    joinDate: '2025-01-08',
-    medicalNotes: 'Apto médico al día. Sin lesiones.',
-    emergencyContactName: 'Familiar de Contacto',
-    emergencyContactPhone: '+54 11 0000-0000',
-    personalObjective: 'Salud y bienestar',
-    origin: 'Instagram',
-    initialPlan: '3 veces x semana',
-  },
-  {
-    id: '14',
-    dni: '39.234.567',
-    name: 'Sofía Vargas',
-    email: 'sofia.vargas@gmail.com',
-    phone: '+54 11 2345-6781',
-    plan: 'Stretching Global Activo',
-    status: 'Activo',
-    lastPayment: '2026-01-12',
-    nextExpiry: '2026-02-12',
-    debt: 0,
-    daysOverdue: 0,
-    joinDate: '2024-07-30',
-    medicalNotes: 'Apto médico al día. Sin lesiones.',
-    emergencyContactName: 'Familiar de Contacto',
-    emergencyContactPhone: '+54 11 0000-0000',
-    personalObjective: 'Salud y bienestar',
-    origin: 'Instagram',
-    initialPlan: '3 veces x semana',
-  },
-  {
-    id: '15',
-    dni: '32.567.890',
-    name: 'Ezequiel Castro',
-    email: 'eze.castro@hotmail.com',
-    phone: '+54 11 5678-9013',
-    plan: 'Funcional',
-    status: 'Deudor',
-    lastPayment: '2025-11-20',
-    nextExpiry: '2025-12-20',
-    debt: 100000,
-    daysOverdue: 41,
-    joinDate: '2025-02-28',
-    medicalNotes: 'Apto médico al día. Sin lesiones.',
-    emergencyContactName: 'Familiar de Contacto',
-    emergencyContactPhone: '+54 11 0000-0000',
-    personalObjective: 'Salud y bienestar',
-    origin: 'Instagram',
-    initialPlan: '3 veces x semana',
-  },
-];
+const firstNames = ['Martín', 'Lucía', 'Santiago', 'Camila', 'Tomás', 'Valentina', 'Nicolás', 'Florencia', 'Agustín', 'Carolina', 'Federico', 'María José', 'Juan Pablo', 'Sofía', 'Ezequiel', 'Mateo', 'Isabella', 'Facundo', 'Delfina', 'Bautista', 'Julia', 'Benjamín', 'Catalina', 'Joaquín', 'Victoria', 'Felipe', 'Pilar', 'Gastón', 'Milagros', 'Bruno'];
+const lastNames = ['González', 'Fernández', 'Rodríguez', 'López', 'Martínez', 'Pérez', 'Díaz', 'Sánchez', 'Romero', 'Álvarez', 'Torres', 'Herrera', 'Morales', 'Vargas', 'Castro', 'Ruiz', 'Gómez', 'Blanco', 'Paz', 'Sosa', 'Siri', 'Méndez', 'Guzmán', 'García', 'Lombardi', 'Navarro', 'Rojas', 'Luna', 'Acosta', 'Benitez'];
+const plans: MembershipPlan[] = ['3 veces x semana', 'LIBRE', 'Funcional', 'M+F', 'Stretching Global Activo', 'Feldenkrais/GPG'];
+
+const generateMockMembers = (count: number): Member[] => {
+  const members: Member[] = [];
+  const today = new Date('2026-02-13'); // Hoy simulado
+  
+  for (let i = 1; i <= count; i++) {
+    const firstName = firstNames[i % firstNames.length];
+    const lastName = lastNames[Math.floor(i / firstNames.length) % lastNames.length];
+    const name = `${firstName} ${lastName}`;
+    const plan = plans[i % plans.length];
+    
+    // Generar fechas con logica de status
+    let nextExpiryDate: Date;
+    let status: 'Activo' | 'Vencido' | 'Deudor';
+    let debt = 0;
+    let daysOverdue = 0;
+
+    if (i % 5 === 0) {
+      // Deudores: Vencieron hace tiempo (1 a 3 meses atras)
+      const monthsBack = (i % 3) + 1;
+      nextExpiryDate = new Date(today);
+      nextExpiryDate.setMonth(today.getMonth() - monthsBack);
+      status = 'Deudor';
+      debt = PLAN_PRICES[plan] * monthsBack;
+      daysOverdue = Math.floor((today.getTime() - nextExpiryDate.getTime()) / (1000 * 60 * 60 * 24));
+    } else if (i % 7 === 0) {
+      // Vencidos hoy: Vencen exactamente hoy
+      nextExpiryDate = new Date(today);
+      status = 'Vencido';
+    } else {
+      // Activos: Vencen en el futuro (1 a 25 dias adelante)
+      const daysAhead = (i % 25) + 1;
+      nextExpiryDate = new Date(today);
+      nextExpiryDate.setDate(today.getDate() + daysAhead);
+      status = 'Activo';
+    }
+
+    const nextExpiry = nextExpiryDate.toISOString().split('T')[0];
+    const lastPaymentDate = new Date(nextExpiryDate);
+    lastPaymentDate.setMonth(nextExpiryDate.getMonth() - 1);
+    const lastPayment = lastPaymentDate.toISOString().split('T')[0];
+    
+    const joinDate = '2024-01-15'; // Fecha de ingreso fija para simplificar
+    
+    members.push({
+      id: i.toString(),
+      dni: `${25 + (i % 20)}.${Math.floor(Math.random() * 900) + 100}.${Math.floor(Math.random() * 900) + 100}`,
+      name,
+      email: `${firstName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")}.${lastName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")}${i}@gmail.com`,
+      phone: `+54 11 ${Math.floor(Math.random() * 9000) + 1000}-${Math.floor(Math.random() * 9000) + 1000}`,
+      plan,
+      status,
+      lastPayment,
+      nextExpiry,
+      debt,
+      daysOverdue,
+      joinDate,
+      medicalNotes: 'Apto médico al día. Sin lesiones.',
+      emergencyContactName: 'Familiar de Contacto',
+      emergencyContactPhone: '+54 11 0000-0000',
+      personalObjective: 'Salud y bienestar',
+      origin: i % 3 === 0 ? 'Instagram' : i % 3 === 1 ? 'Facebook' : 'Recomendación',
+      initialPlan: '3 veces x semana',
+    });
+  }
+  return members;
+};
+
+export const mockMembers = generateMockMembers(50);
 
 // Revenue data for the last 6 months
 export const revenueData: RevenueData[] = [
@@ -373,129 +136,31 @@ export const revenueData: RevenueData[] = [
   { month: 'Ene', revenue: 5200000, members: 200 },
 ];
 
-// Payment methods distribution this month
 export const paymentMethodsData = [
   { method: 'Efectivo', amount: 2800000, count: 95 },
   { method: 'Transferencia', amount: 2400000, count: 85 },
 ];
 
-// Recent payments
-export const recentPayments: Payment[] = [
-  {
-    id: 'p1',
-    memberId: '1',
-    memberName: 'Martín González',
-    amount: 60000,
-    date: '2026-01-15',
-    method: 'Transferencia',
-    concept: 'LIBRE - Enero',
-  },
-  {
-    id: 'p2',
-    memberId: '6',
-    memberName: 'Valentina Pérez',
-    amount: 30000,
-    date: '2026-01-18',
-    method: 'Efectivo',
-    concept: 'Stretching Global Activo - Enero',
-  },
-  {
-    id: 'p3',
-    memberId: '12',
-    memberName: 'María José Herrera',
-    amount: 60000,
-    date: '2026-01-28',
-    method: 'Transferencia',
-    concept: 'LIBRE - Enero',
-  },
-  {
-    id: 'p4',
-    memberId: '2',
-    memberName: 'Lucía Fernández',
-    amount: 70000,
-    date: '2026-01-20',
-    method: 'Transferencia',
-    concept: 'M+F - Enero',
-  },
-  {
-    id: 'p5',
-    memberId: '4',
-    memberName: 'Camila López',
-    amount: 50000,
-    date: '2026-01-25',
-    method: 'Efectivo',
-    concept: 'Funcional - Enero',
-  },
-  {
-    id: 'p6',
-    memberId: '8',
-    memberName: 'Florencia Sánchez',
-    amount: 30000,
-    date: '2026-01-22',
-    method: 'Transferencia',
-    concept: 'Feldenkrais/GPG - Enero',
-  },
-];
+export const recentPayments: Payment[] = mockMembers.slice(0, 8).map(m => ({
+  id: `p${m.id}`,
+  memberId: m.id,
+  memberName: m.name,
+  amount: PLAN_PRICES[m.plan],
+  date: '2026-01-20',
+  method: Math.random() > 0.5 ? 'Transferencia' : 'Efectivo',
+  concept: `${m.plan} - Enero`,
+}));
 
-// Members expiring today
-export const todayExpiringMembers: Member[] = [
-  {
-    id: '5',
-    dni: '37.890.234',
-    name: 'Tomás Martínez',
-    email: 'tomas.martinez@gmail.com',
-    phone: '+54 11 7890-1234',
-    plan: 'LIBRE',
-    status: 'Vencido',
-    lastPayment: '2025-12-30',
-    nextExpiry: '2026-01-30',
-    debt: 0,
-    daysOverdue: 0,
-    joinDate: '2024-11-20',
-    medicalNotes: 'Apto médico al día. Sin lesiones.',
-    emergencyContactName: 'Familiar de Contacto',
-    emergencyContactPhone: '+54 11 0000-0000',
-    personalObjective: 'Salud y bienestar',
-    origin: 'Instagram',
-    initialPlan: '3 veces x semana',
-  },
-  {
-    id: '11',
-    dni: '41.456.789',
-    name: 'Federico Torres',
-    email: 'fede.torres@yahoo.com',
-    phone: '+54 11 4567-8902',
-    plan: '3 veces x semana',
-    status: 'Vencido',
-    lastPayment: '2025-12-30',
-    nextExpiry: '2026-01-30',
-    debt: 0,
-    daysOverdue: 0,
-    joinDate: '2025-09-10',
-    medicalNotes: 'Apto médico al día. Sin lesiones.',
-    emergencyContactName: 'Familiar de Contacto',
-    emergencyContactPhone: '+54 11 0000-0000',
-    personalObjective: 'Salud y bienestar',
-    origin: 'Instagram',
-    initialPlan: '3 veces x semana',
-  },
-];
+export const todayExpiringMembers: Member[] = mockMembers.filter(m => m.status === 'Vencido');
 
-// Membresías que no vencen hoy pero vencen en X días
 export const getUpcomingExpiries = (days: number = 2): Member[] => {
-  const actives = mockMembers.filter(m => m.status === 'Activo');
-  // Simulación: devolvemos distinta cantidad según el filtro
-  if (days === 2) return actives.slice(0, 3);
-  if (days === 5) return actives.slice(0, 5);
-  return actives.slice(0, 8); // esta semana (7 dias)
+  return mockMembers.filter(m => m.status === 'Activo').slice(0, 10);
 };
 
-// Format currency in Argentine Pesos with dot separator
 export function formatCurrency(amount: number): string {
   return '$ ' + amount.toLocaleString('es-AR');
 }
 
-// Format date in Spanish
 export function formatDate(dateStr: string): string {
   const date = new Date(dateStr);
   return new Intl.DateTimeFormat('es-AR', {
@@ -505,58 +170,39 @@ export function formatDate(dateStr: string): string {
   }).format(date);
 }
 
-// Format relative date (Hace X días, En X días)
 export function formatRelativeDate(dateStr: string, type: 'overdue' | 'today' | 'upcoming', daysOverdue: number): string {
   if (type === 'today') return 'Hoy';
-  
   if (type === 'overdue') {
     if (daysOverdue === 1) return 'Hace 1 día';
     if (daysOverdue < 30) return `Hace ${daysOverdue} días`;
     const months = Math.floor(daysOverdue / 30);
     return months === 1 ? 'Hace 1 mes' : `Hace ${months} meses`;
   }
-  
-  // For upcoming, calculate roughly based on date diff from today
-  // Mock environment, so we just use the daysOverdue logic inverted or parse
   const targetDate = new Date(dateStr);
-  const now = new Date('2026-02-13'); // Simulated 'today' to match mock data
+  const now = new Date('2026-02-13'); // Hoy simulado
   const diffTime = Math.max(0, targetDate.getTime() - now.getTime());
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  
   if (diffDays === 0) return 'Mañana';
   if (diffDays === 1) return 'En 1 día';
   return `En ${diffDays} días`;
 }
 
-// Get overdue members sorted by days overdue
 export function getOverdueMembers(): Member[] {
-  return mockMembers
-    .filter(m => m.status === 'Deudor')
-    .sort((a, b) => b.daysOverdue - a.daysOverdue);
+  return mockMembers.filter(m => m.status === 'Deudor').sort((a, b) => b.daysOverdue - a.daysOverdue);
 }
 
-// Helper functions for dashboard stats
 export function getDashboardStats() {
-  const activeMembers = mockMembers.filter(m => m.status === 'Activo').length;
-  const totalMembers = 200; // Total registered members
-  const paidMembers = 120; // Members who have paid this month
   const debtors = mockMembers.filter(m => m.status === 'Deudor');
   const totalDebt = debtors.reduce((acc, m) => acc + m.debt, 0);
-  
-  const monthlyRevenue = revenueData[revenueData.length - 1].revenue;
-  const newMembersThisMonth = 12; // Simulacion de ingresos nuevos este mes
-  const growthPercentage = 6.4;
-
   return {
-    monthlyRevenue,
-    totalMembers,
-    paidMembers,
+    monthlyRevenue: 5200000,
+    totalMembers: mockMembers.length * 4,
+    paidMembers: mockMembers.length * 2,
     totalDebt,
-    newMembersThisMonth,
-    growthPercentage,
+    newMembersThisMonth: 15,
+    growthPercentage: 6.4,
     todayExpiries: todayExpiringMembers.length,
-    upcomingExpiries: getUpcomingExpiries().length,
+    upcomingExpiries: 8,
     debtors: debtors.sort((a, b) => b.daysOverdue - a.daysOverdue),
   };
 }
-

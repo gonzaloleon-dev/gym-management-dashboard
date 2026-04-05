@@ -148,7 +148,11 @@ export function MembersTable({ members }: MembersTableProps) {
 
           <div className="flex flex-col gap-1.5 w-full sm:w-[200px]">
             <Label className="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1">Ordenar por</Label>
-            <Select value={sortBy} onValueChange={(val) => { setSortBy(val); setCurrentPage(1); }}>
+            <Select value={sortBy} onValueChange={(val) => { 
+                setSortBy(val); 
+                if (val === 'expiryAsc') setStatusFilter('Todos'); // Si ordena por vencimiento, mostrar panorama completo
+                setCurrentPage(1); 
+              }}>
               <SelectTrigger className="w-full bg-white border border-stone-200 hover:bg-stone-50 text-sm h-10">
                 <SelectValue placeholder="Ordenar por" />
               </SelectTrigger>
