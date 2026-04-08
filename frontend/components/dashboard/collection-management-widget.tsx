@@ -83,24 +83,24 @@ export function CollectionManagementWidget({
       <div className="rounded-lg border border-border overflow-hidden mt-4 bg-background shadow-xs">
         <Table>
           <TableHeader>
-            <TableRow className="bg-muted/20 hover:bg-muted/20">
-              <TableHead className="font-bold text-foreground">Alumno</TableHead>
-              <TableHead className="font-bold text-foreground hidden sm:table-cell text-left w-[150px]">Plan</TableHead>
+            <TableRow className="bg-slate-50 hover:bg-slate-50 border-b border-slate-200">
+              <TableHead className="text-xs font-semibold text-slate-500 uppercase tracking-wider text-left px-6 py-3">Alumno</TableHead>
+              <TableHead className="text-xs font-semibold text-slate-500 uppercase tracking-wider text-left px-6 py-3 hidden sm:table-cell w-[150px]">Plan</TableHead>
               {type !== 'today' && (
-                <TableHead className="font-bold text-foreground w-[130px] text-left">Vencimiento</TableHead>
+                <TableHead className="text-xs font-semibold text-slate-500 uppercase tracking-wider text-left px-6 py-3 w-[130px]">Vencimiento</TableHead>
               )}
               {type === 'overdue' ? (
-                <TableHead className="font-bold text-foreground w-[120px] text-left">Deuda</TableHead>
+                <TableHead className="text-xs font-semibold text-slate-500 uppercase tracking-wider text-left px-6 py-3 w-[120px]">Deuda</TableHead>
               ) : (
-                <TableHead className="font-bold text-foreground w-[120px] text-left">A Pagar</TableHead>
+                <TableHead className="text-xs font-semibold text-slate-500 uppercase tracking-wider text-left px-6 py-3 w-[120px]">A Pagar</TableHead>
               )}
-              <TableHead className="font-bold text-foreground w-[230px] text-center">Acciones</TableHead>
+              <TableHead className="text-xs font-semibold text-slate-500 uppercase tracking-wider text-center px-6 py-3 w-[230px]">Acciones</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {members.map((member) => (
-              <TableRow key={member.id} className="hover:bg-muted/30 border-border/50">
-                <TableCell className="py-3">
+              <TableRow key={member.id} className="border-b border-slate-200 hover:bg-slate-50 transition-colors">
+                <TableCell className="bg-white px-6 py-4 whitespace-nowrap">
                   <div className="flex items-center gap-3">
                     <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-bold bg-muted text-muted-foreground">
                       {member.name.split(' ').map(n => n[0]).join('')}
@@ -110,32 +110,32 @@ export function CollectionManagementWidget({
                     </div>
                   </div>
                 </TableCell>
-                <TableCell className="hidden sm:table-cell text-left">
+                <TableCell className="bg-white px-6 py-4 whitespace-nowrap hidden sm:table-cell text-left">
                   <span className="text-sm text-muted-foreground font-medium">
                     {member.plan}
                   </span>
                 </TableCell>
                 {type !== 'today' && (
-                  <TableCell className="text-left">
+                  <TableCell className="bg-white px-6 py-4 whitespace-nowrap text-left">
                     <span className="text-sm font-medium text-muted-foreground">
                       {formatRelativeDate(member.nextExpiry, type, member.daysOverdue)}
                     </span>
                   </TableCell>
                 )}
                 {type === 'overdue' ? (
-                  <TableCell className="text-left">
+                  <TableCell className="bg-white px-6 py-4 whitespace-nowrap text-left">
                     <span className="font-semibold text-red-600">
                       {formatCurrency(member.debt)}
                     </span>
                   </TableCell>
                 ) : (
-                  <TableCell className="text-left">
+                  <TableCell className="bg-white px-6 py-4 whitespace-nowrap text-left">
                     <span className="font-semibold text-foreground">
                       {formatCurrency(PLAN_PRICES[member.plan])}
                     </span>
                   </TableCell>
                 )}
-                <TableCell className="w-[230px]">
+                <TableCell className="bg-white px-6 py-4 whitespace-nowrap text-center">
                   <div className="flex items-center justify-center gap-2">
                     {/* Cobrar: izquierda — neutral oscuro para jerarquía profesional */}
                     <button

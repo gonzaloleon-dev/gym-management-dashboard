@@ -148,7 +148,7 @@ export function PaymentsView() {
   return (
     <div className="space-y-6">
       {/* ── Panel 'Cierre de Caja' ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
         {[
           { name: 'Efectivo',      icon: Banknote,   color: 'text-emerald-600', bg: 'bg-emerald-50' },
           { name: 'Transferencia', icon: Landmark,   color: 'text-blue-600',    bg: 'bg-blue-50' },
@@ -158,12 +158,12 @@ export function PaymentsView() {
         ].map((method) => {
           const Icon = method.icon;
           return (
-            <Card key={method.name} className="border-slate-200 bg-white shadow-sm">
+            <Card key={method.name} className="border-border bg-white shadow-sm">
               <CardContent className="p-5">
                 <div className="flex items-start justify-between">
-                  <div>
+                  <div className="space-y-1 flex-1">
                     <p className="text-sm font-medium text-slate-500">{method.name}</p>
-                    <p className="text-xl font-bold text-slate-900 mt-1">
+                    <p className="text-xl font-bold text-slate-900">
                       {formatCurrency(countByMethod[method.name] || 0)}
                     </p>
                   </div>
@@ -254,13 +254,13 @@ export function PaymentsView() {
           <div className="rounded-lg border border-slate-100 overflow-hidden">
             <Table>
               <TableHeader>
-                <TableRow className="border-slate-100 bg-slate-50 hover:bg-slate-50">
-                  <TableHead className="text-slate-600 font-semibold text-xs uppercase tracking-wider w-[110px]">Fecha</TableHead>
-                  <TableHead className="text-slate-600 font-semibold text-xs uppercase tracking-wider">Alumno</TableHead>
-                  <TableHead className="text-slate-600 font-semibold text-xs uppercase tracking-wider hidden sm:table-cell">Plan</TableHead>
-                  <TableHead className="text-slate-600 font-semibold text-xs uppercase tracking-wider w-[140px]">Medio</TableHead>
-                  <TableHead className="text-slate-600 font-semibold text-xs uppercase tracking-wider w-[110px]">Monto</TableHead>
-                  <TableHead className="text-slate-600 font-semibold text-xs uppercase tracking-wider text-center w-[80px]">Acciones</TableHead>
+                <TableRow className="bg-slate-50 hover:bg-slate-50 border-b border-slate-200">
+                  <TableHead className="text-xs font-semibold text-slate-500 uppercase tracking-wider px-6 py-3">Fecha</TableHead>
+                  <TableHead className="text-xs font-semibold text-slate-500 uppercase tracking-wider px-6 py-3">Alumno</TableHead>
+                  <TableHead className="text-xs font-semibold text-slate-500 uppercase tracking-wider px-6 py-3 hidden sm:table-cell">Plan</TableHead>
+                  <TableHead className="text-xs font-semibold text-slate-500 uppercase tracking-wider px-6 py-3">Medio</TableHead>
+                  <TableHead className="text-xs font-semibold text-slate-500 uppercase tracking-wider px-6 py-3">Monto</TableHead>
+                  <TableHead className="text-xs font-semibold text-slate-500 uppercase tracking-wider text-center px-6 py-3">Acciones</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -274,26 +274,26 @@ export function PaymentsView() {
                   paginatedResults.map((payment) => (
                     <TableRow
                       key={payment.id}
-                      className="border-slate-100 hover:bg-slate-50/70 transition-colors"
+                      className="border-b border-slate-100 hover:bg-slate-50/70 transition-colors"
                     >
-                      <TableCell className="py-4 font-medium text-slate-600">
+                      <TableCell className="px-6 py-4 whitespace-nowrap font-medium text-slate-600">
                         {(() => {
                           const [y, m, d] = payment.date.split('-');
                           const displayDate = `${d}/${m}/${y}`;
                           return <HighlightedText text={displayDate} query={searchQuery} />;
                         })()}
                       </TableCell>
-                      <TableCell className="py-4 font-semibold text-slate-900">
+                      <TableCell className="px-6 py-4 whitespace-nowrap font-semibold text-slate-900">
                         <HighlightedText text={payment.memberName} query={searchQuery} />
                       </TableCell>
 
                       {/* Plan — con resaltado */}
-                      <TableCell className="text-slate-500 text-sm hidden sm:table-cell">
+                      <TableCell className="px-6 py-4 whitespace-nowrap text-slate-500 text-sm hidden sm:table-cell">
                         <HighlightedText text={payment.concept} query={searchQuery} />
                       </TableCell>
 
                       {/* Medio de pago */}
-                      <TableCell>
+                      <TableCell className="px-6 py-4 whitespace-nowrap">
                         <Badge
                           variant="outline"
                           className={`text-xs font-medium ${METHOD_COLORS[payment.method] ?? 'bg-slate-100 text-slate-600 border-slate-200'}`}
@@ -303,12 +303,12 @@ export function PaymentsView() {
                       </TableCell>
 
                       {/* Monto — left aligned */}
-                      <TableCell className="font-semibold text-teal-700 tabular-nums">
+                      <TableCell className="px-6 py-4 whitespace-nowrap font-semibold text-teal-700 tabular-nums">
                         {formatCurrency(payment.amount)}
                       </TableCell>
 
                       {/* Acciones — centrado */}
-                      <TableCell className="text-center">
+                      <TableCell className="px-6 py-4 whitespace-nowrap text-center">
                         <div className="flex justify-center">
                           <button
                             onClick={() => setPaymentToVoid(payment.id)}

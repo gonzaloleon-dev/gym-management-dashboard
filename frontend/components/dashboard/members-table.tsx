@@ -198,19 +198,19 @@ export function MembersTable({ members }: MembersTableProps) {
         <div className="rounded-lg border border-border overflow-hidden">
           <Table>
             <TableHeader>
-              <TableRow className="bg-white hover:bg-white border-b border-gray-100">
-                <TableHead className="font-bold text-slate-900">Alumno</TableHead>
-                <TableHead className="font-bold text-slate-900 hidden md:table-cell">Contacto</TableHead>
-                <TableHead className="font-bold text-slate-900 w-[150px] hidden sm:table-cell text-left">Plan</TableHead>
-                <TableHead className="font-bold text-slate-900">Vencimiento</TableHead>
-                <TableHead className="font-bold text-slate-900">Estado</TableHead>
-                <TableHead className="font-bold text-slate-900 text-center">Acciones</TableHead>
+              <TableRow className="bg-slate-50 hover:bg-slate-50 border-b border-slate-200">
+                <TableHead className="text-xs font-semibold text-slate-500 uppercase tracking-wider text-left px-6 py-3">Alumno</TableHead>
+                <TableHead className="text-xs font-semibold text-slate-500 uppercase tracking-wider text-left px-6 py-3 hidden md:table-cell">Contacto</TableHead>
+                <TableHead className="text-xs font-semibold text-slate-500 uppercase tracking-wider text-left px-6 py-3 w-[150px] hidden sm:table-cell">Plan</TableHead>
+                <TableHead className="text-xs font-semibold text-slate-500 uppercase tracking-wider text-left px-6 py-3">Vencimiento</TableHead>
+                <TableHead className="text-xs font-semibold text-slate-500 uppercase tracking-wider text-left px-6 py-3">Estado</TableHead>
+                <TableHead className="text-xs font-semibold text-slate-500 uppercase tracking-wider text-center px-6 py-3">Acciones</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {paginatedMembers.map((member) => (
-                <TableRow key={member.id} className="border-border/50 hover:bg-slate-100 transition-colors">
-                  <TableCell className="py-4">
+                <TableRow key={member.id} className="border-b border-slate-200 hover:bg-slate-50 transition-colors">
+                  <TableCell className="bg-white px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center gap-3 cursor-pointer group" onClick={() => handleEditMember(member)}>
                       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-bold text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-colors">
                         {member.name.split(' ').map((n) => n[0]).join('').slice(0, 2)}
@@ -225,22 +225,22 @@ export function MembersTable({ members }: MembersTableProps) {
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell className="py-4 text-sm hidden md:table-cell">
-                    <p className="text-slate-700 font-medium">{member.phone}</p>
+                  <TableCell className="bg-white px-6 py-4 whitespace-nowrap hidden md:table-cell">
+                    <p className="text-slate-700 font-medium text-sm">{member.phone}</p>
                     <p className="text-slate-500 text-xs">{member.email}</p>
                   </TableCell>
-                  <TableCell className="py-4 hidden sm:table-cell">
+                  <TableCell className="bg-white px-6 py-4 whitespace-nowrap hidden sm:table-cell">
                     <span className="text-sm text-slate-600 font-medium">
                       {member.plan}
                     </span>
                   </TableCell>
-                  <TableCell className="py-4 text-slate-600 font-medium text-sm">
+                  <TableCell className="bg-white px-6 py-4 whitespace-nowrap text-slate-600 font-medium text-sm">
                     {formatDate(member.nextExpiry)}
                   </TableCell>
-                  <TableCell className="py-4 text-sm">
+                  <TableCell className="bg-white px-6 py-4 whitespace-nowrap text-sm">
                     {getStatusBadge(member.status)}
                   </TableCell>
-                  <TableCell className="py-4">
+                  <TableCell className="bg-white px-6 py-4 whitespace-nowrap text-center">
                     <div className="flex items-center justify-center gap-2">
                       {/* Cobrar */}
                       <div className="relative group/tooltip">
