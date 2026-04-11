@@ -12,6 +12,7 @@ import {
   Menu,
   X,
   LogOut,
+  TrendingDown,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -19,7 +20,8 @@ import { Button } from '@/components/ui/button';
 const navItems = [
   { id: 'dashboard', label: 'Inicio', icon: Home },
   { id: 'members', label: 'Miembros', icon: Users },
-  { id: 'payments', label: 'Pagos', icon: CreditCard },
+  { id: 'payments', label: 'Ingresos', icon: CreditCard },
+  { id: 'expenses', label: 'Gastos', icon: TrendingDown },
   { id: 'statistics', label: 'Estadísticas', icon: BarChart3 },
   { id: 'settings', label: 'Configuración', icon: Settings },
 ];

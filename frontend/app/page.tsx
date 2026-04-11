@@ -9,6 +9,7 @@ import { CollectionManagementWidget } from '@/components/dashboard/collection-ma
 import { MembersTable } from '@/components/dashboard/members-table';
 import { QuickActions } from '@/components/dashboard/quick-actions';
 import { PaymentsView } from '@/components/dashboard/payments-view';
+import { ExpensesView } from '@/components/dashboard/expenses-view';
 import { StatisticsView } from '@/components/dashboard/statistics-view';
 import { SettingsView } from '@/components/dashboard/settings-view';
 import {
@@ -47,7 +48,8 @@ export default function DashboardPage() {
                 <h1 className="text-3xl font-bold text-foreground tracking-tight">
                   {activeTab === 'dashboard' && 'Panel Principal'}
                   {activeTab === 'members' && 'Miembros'}
-                  {activeTab === 'payments' && 'Pagos'}
+                  {activeTab === 'payments' && 'Ingresos'}
+                  {activeTab === 'expenses' && 'Gastos'}
                   {activeTab === 'statistics' && 'Estadísticas'}
                   {activeTab === 'settings' && 'Configuración'}
                 </h1>
@@ -55,6 +57,7 @@ export default function DashboardPage() {
                   {activeTab === 'dashboard' && "Vista general"}
                   {activeTab === 'members' && 'Administración de miembros'}
                   {activeTab === 'payments' && 'Control de caja y registro de ingresos'}
+                  {activeTab === 'expenses' && 'Registro de egresos y control de operaciones'}
                   {activeTab === 'statistics' && 'Reportes y balance general'}
                   {activeTab === 'settings' && 'Configura tu gimnasio'}
                 </p>
@@ -99,6 +102,9 @@ export default function DashboardPage() {
 
           {/* Payments View */}
           {activeTab === 'payments' && <PaymentsView />}
+
+          {/* Expenses View */}
+          {activeTab === 'expenses' && <ExpensesView />}
 
           {/* Statistics View */}
           {activeTab === 'statistics' && <StatisticsView />}

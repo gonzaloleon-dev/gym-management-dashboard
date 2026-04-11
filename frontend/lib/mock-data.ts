@@ -1,4 +1,15 @@
 // Types for the Gym Management System
+export type ExpenseCategory = 'Alquiler' | 'Servicios' | 'Insumos / Mantenimiento' | 'Honorarios' | 'Varios';
+
+export interface Expense {
+  id: string;
+  concept: string;
+  amount: number;
+  date: string;
+  category: ExpenseCategory;
+  method: string;
+}
+
 export type MembershipPlan = 
   | '3 veces x semana'
   | 'LIBRE'
@@ -139,7 +150,6 @@ export const paymentMethodsData = [
 ];
 
 // Datos de pagos realistas (Simulando 15 alumnos y 6 meses de historial)
-// TODAY simulado = '2026-02-13'
 export const recentPayments: Payment[] = [
   // --- FEBRERO 2026 (Mes Actual) ---
   // HOY (13/02)
@@ -153,10 +163,10 @@ export const recentPayments: Payment[] = [
   // Otros Febrero
   { id: 'p507', memberId: '7',  memberName: 'Valentina Sánchez',    amount: 50000, date: '2026-02-10', method: 'Transferencia', concept: '3 veces x semana' },
   { id: 'p508', memberId: '8',  memberName: 'Nicolás Romero',       amount: 50000, date: '2026-02-08', method: 'Mercado Pago', concept: 'Funcional' },
-  { id: 'p509', memberId: '9',  memberName: 'Florencia Álvarez',    amount: 60000, date: '2026-02-05', method: 'Efectivo',     concept: 'LIBRE' }, // Cambió plan
-  { id: 'p510', memberId: '10', memberName: 'Agustín Torres',       amount: 50000, date: '2026-02-05', method: 'Mercado Pago', concept: 'Funcional' }, // Cambió método
-  { id: 'p511', memberId: '11', memberName: 'Carolina Herrera',     amount: 50000, date: '2026-02-03', method: 'Transferencia', concept: 'Funcional' }, // Cambió plan
-  { id: 'p512', memberId: '12', memberName: 'Federico Morales',     amount: 70000, date: '2026-02-01', method: 'Débito',       concept: 'M+F' }, // Cambió método
+  { id: 'p509', memberId: '9',  memberName: 'Florencia Álvarez',    amount: 60000, date: '2026-02-05', method: 'Efectivo',     concept: 'LIBRE' }, 
+  { id: 'p510', memberId: '10', memberName: 'Agustín Torres',       amount: 50000, date: '2026-02-05', method: 'Mercado Pago', concept: 'Funcional' }, 
+  { id: 'p511', memberId: '11', memberName: 'Carolina Herrera',     amount: 50000, date: '2026-02-03', method: 'Transferencia', concept: 'Funcional' }, 
+  { id: 'p512', memberId: '12', memberName: 'Federico Morales',     amount: 70000, date: '2026-02-01', method: 'Débito',       concept: 'M+F' }, 
 
   // --- ENERO 2026 ---
   { id: 'p401', memberId: '1',  memberName: 'Martín González',      amount: 50000, date: '2026-01-15', method: 'Efectivo',     concept: '3 veces x semana' },
@@ -181,7 +191,7 @@ export const recentPayments: Payment[] = [
   { id: 'p310', memberId: '10', memberName: 'Agustín Torres',       amount: 50000, date: '2025-12-05', method: 'Efectivo',     concept: 'Funcional' },
   { id: 'p311', memberId: '11', memberName: 'Carolina Herrera',     amount: 30000, date: '2025-12-03', method: 'Transferencia', concept: 'Stretching Global Activo' },
   { id: 'p312', memberId: '12', memberName: 'Federico Morales',     amount: 70000, date: '2025-12-01', method: 'Transferencia', concept: 'M+F' },
-  { id: 'p314', memberId: '14', memberName: 'Sofía Castro',         amount: 60000, date: '2025-12-01', method: 'Transferencia', concept: 'LIBRE' }, // Abandonador
+  { id: 'p314', memberId: '14', memberName: 'Sofía Castro',         amount: 60000, date: '2025-12-01', method: 'Transferencia', concept: 'LIBRE' }, 
 
   // --- NOVIEMBRE 2025 ---
   { id: 'p201', memberId: '1',  memberName: 'Martín González',      amount: 50000, date: '2025-11-15', method: 'Efectivo',     concept: '3 veces x semana' },
@@ -195,8 +205,8 @@ export const recentPayments: Payment[] = [
   { id: 'p210', memberId: '10', memberName: 'Agustín Torres',       amount: 50000, date: '2025-11-05', method: 'Efectivo',     concept: 'Funcional' },
   { id: 'p211', memberId: '11', memberName: 'Carolina Herrera',     amount: 30000, date: '2025-11-03', method: 'Transferencia', concept: 'Stretching Global Activo' },
   { id: 'p212', memberId: '12', memberName: 'Federico Morales',     amount: 70000, date: '2025-11-01', method: 'Transferencia', concept: 'M+F' },
-  { id: 'p213', memberId: '13', memberName: 'María Vargas',         amount: 50000, date: '2025-11-01', method: 'Efectivo',     concept: '3 veces x semana' }, // Abandonador
-  { id: 'p214', memberId: '14', memberName: 'Sofía Castro',         amount: 60000, date: '2025-11-01', method: 'Transferencia', concept: 'LIBRE' }, // Abandonador
+  { id: 'p213', memberId: '13', memberName: 'María Vargas',         amount: 50000, date: '2025-11-01', method: 'Efectivo',     concept: '3 veces x semana' }, 
+  { id: 'p214', memberId: '14', memberName: 'Sofía Castro',         amount: 60000, date: '2025-11-01', method: 'Transferencia', concept: 'LIBRE' }, 
 
   // --- OCTUBRE 2025 ---
   { id: 'p101', memberId: '1',  memberName: 'Martín González',      amount: 50000, date: '2025-10-15', method: 'Efectivo',     concept: '3 veces x semana' },
@@ -210,9 +220,17 @@ export const recentPayments: Payment[] = [
   { id: 'p110', memberId: '10', memberName: 'Agustín Torres',       amount: 50000, date: '2025-10-05', method: 'Efectivo',     concept: 'Funcional' },
   { id: 'p111', memberId: '11', memberName: 'Carolina Herrera',     amount: 30000, date: '2025-10-03', method: 'Transferencia', concept: 'Stretching Global Activo' },
   { id: 'p112', memberId: '12', memberName: 'Federico Morales',     amount: 70000, date: '2025-10-01', method: 'Transferencia', concept: 'M+F' },
-  { id: 'p113', memberId: '13', memberName: 'María Vargas',         amount: 50000, date: '2025-10-01', method: 'Efectivo',     concept: '3 veces x semana' }, // Abandonador
-  { id: 'p114', memberId: '14', memberName: 'Sofía Castro',         amount: 60000, date: '2025-10-01', method: 'Transferencia', concept: 'LIBRE' }, // Abandonador
-  { id: 'p115', memberId: '15', memberName: 'Ezequiel Ruiz',        amount: 30000, date: '2025-10-01', method: 'Efectivo',     concept: 'Stretching Global Activo' }, // Abandonador
+  { id: 'p113', memberId: '13', memberName: 'María Vargas',         amount: 50000, date: '2025-10-01', method: 'Efectivo',     concept: '3 veces x semana' }, 
+  { id: 'p114', memberId: '14', memberName: 'Sofía Castro',         amount: 60000, date: '2025-10-01', method: 'Transferencia', concept: 'LIBRE' }, 
+  { id: 'p115', memberId: '15', memberName: 'Ezequiel Ruiz',        amount: 30000, date: '2025-10-01', method: 'Efectivo',     concept: 'Stretching Global Activo' }, 
+];
+
+export const mockExpenses: Expense[] = [
+  { id: 'e1', concept: 'Alquiler del Local (Febrero)', amount: 450000, date: '2026-02-05', category: 'Alquiler', method: 'Transferencia' },
+  { id: 'e2', concept: 'Factura EDESUR', amount: 85000, date: '2026-02-10', category: 'Servicios', method: 'Transferencia' },
+  { id: 'e3', concept: 'Artículos de Limpieza', amount: 35000, date: '2026-02-12', category: 'Insumos / Mantenimiento', method: 'Efectivo' },
+  { id: 'e4', concept: 'Honorarios Profe Funcional', amount: 120000, date: '2026-02-02', category: 'Honorarios', method: 'Transferencia' },
+  { id: 'e5', concept: 'Lubricante para cintas', amount: 15000, date: '2026-02-11', category: 'Insumos / Mantenimiento', method: 'Efectivo' },
 ];
 
 export const todayExpiringMembers: Member[] = mockMembers.filter(m => m.status === 'Vencido');
