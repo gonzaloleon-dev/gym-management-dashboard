@@ -23,6 +23,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  TableFooter,
 } from '@/components/ui/table';
 import { HighlightedText } from '@/components/ui/highlighted-text';
 import { recentPayments, formatCurrency, formatDate } from '@/lib/mock-data';
@@ -77,7 +78,8 @@ export function PaymentsView() {
   const [methodFilter, setMethodFilter] = useState<MethodFilter>('Todos');
   const [voidedIds, setVoidedIds] = useState<Set<string>>(new Set());
   const [currentPage, setCurrentPage] = useState(1);
-  const [paymentToVoid, setPaymentToVoid] = useState<string | null>(null);
+  const [isVoidModalOpen, setIsVoidModalOpen] = useState(false);
+  const [paymentToVoid, setPaymentToVoid] = useState<typeof recentPayments[0] | null>(null);
   const [sortBy, setSortBy] = useState<'recent' | 'amount' | 'member'>('recent');
 
   const hasActiveFilters = searchQuery !== '' || dateFilter !== 'month' || methodFilter !== 'Todos';
@@ -95,7 +97,7 @@ export function PaymentsView() {
 
   const handleVoid = (id: string) => {
     setVoidedIds((prev) => new Set(prev).add(id));
-    setPaymentToVoid(null);
+    setIsVoidModalOpen(false);
   };
 
   const filtered = useMemo(() => {
@@ -212,7 +214,7 @@ export function PaymentsView() {
         <CardContent>
 
           {/* ── Barra de controles ── */}
-          <div className="flex flex-col sm:flex-row gap-3 mb-6 items-end">
+          <div className="flex flex-col sm:flex-row gap-4 mb-6 items-end">
 
             {/* Búsqueda */}
             <div className="flex flex-col gap-1.5 flex-1 w-full">
@@ -228,55 +230,54 @@ export function PaymentsView() {
               </div>
             </div>
 
-            {/* Filtro Fecha y Medio juntos para reducir espacio */}
-            <div className="flex gap-2 w-full sm:w-auto">
-              <div className="flex flex-col gap-1.5 w-full sm:w-[150px]">
-                <Label className="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1">Fecha</Label>
-                <Select value={dateFilter} onValueChange={(v) => handleDateChange(v as DateFilter)}>
-                  <SelectTrigger className="h-10 bg-white border-stone-200 text-sm text-slate-900 cursor-pointer">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="today">Hoy</SelectItem>
-                    <SelectItem value="yesterday">Ayer</SelectItem>
-                    <SelectItem value="week">Esta semana</SelectItem>
-                    <SelectItem value="month">Este mes</SelectItem>
-                    <SelectItem value="all">Todos</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="flex flex-col gap-1.5 w-full sm:w-[170px]">
-                <Label className="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1">Medio de pago</Label>
-                <Select value={methodFilter} onValueChange={(v) => handleMethodChange(v as MethodFilter)}>
-                  <SelectTrigger className="h-10 bg-white border-stone-200 text-sm text-slate-900 cursor-pointer">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Todos">Todos</SelectItem>
-                    <SelectItem value="Efectivo">Efectivo</SelectItem>
-                    <SelectItem value="Transferencia">Transferencia</SelectItem>
-                    <SelectItem value="Mercado Pago">Mercado Pago</SelectItem>
-                    <SelectItem value="Débito">Débito</SelectItem>
-                    <SelectItem value="Cuenta DNI">Cuenta DNI</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="flex flex-col gap-1.5 w-full sm:w-[150px]">
-                <Label className="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1">Ordenar</Label>
-                <Select value={sortBy} onValueChange={(v) => { setSortBy(v as any); setCurrentPage(1); }}>
-                  <SelectTrigger className="h-10 bg-white border-stone-200 text-sm text-slate-900 cursor-pointer">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="recent">Recientes</SelectItem>
-                    <SelectItem value="amount">Monto (Mayor)</SelectItem>
-                    <SelectItem value="member">Alumno (A-Z)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+            {/* Filtros */}
+            <div className="flex flex-col gap-1.5 w-full sm:w-[200px]">
+              <Label className="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1">Fecha</Label>
+              <Select value={dateFilter} onValueChange={(v) => handleDateChange(v as DateFilter)}>
+                <SelectTrigger className="w-full bg-white border border-stone-200 hover:bg-stone-50 text-sm h-10 cursor-pointer">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="today">Hoy</SelectItem>
+                  <SelectItem value="yesterday">Ayer</SelectItem>
+                  <SelectItem value="week">Esta semana</SelectItem>
+                  <SelectItem value="month">Este mes</SelectItem>
+                  <SelectItem value="all">Todos</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
+
+            <div className="flex flex-col gap-1.5 w-full sm:w-[150px]">
+              <Label className="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1">Medio de pago</Label>
+              <Select value={methodFilter} onValueChange={(v) => handleMethodChange(v as MethodFilter)}>
+                <SelectTrigger className="w-full bg-white border border-stone-200 hover:bg-stone-50 text-sm h-10 cursor-pointer">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Todos">Todos</SelectItem>
+                  <SelectItem value="Efectivo">Efectivo</SelectItem>
+                  <SelectItem value="Transferencia">Transferencia</SelectItem>
+                  <SelectItem value="Mercado Pago">Mercado Pago</SelectItem>
+                  <SelectItem value="Débito">Débito</SelectItem>
+                  <SelectItem value="Cuenta DNI">Cuenta DNI</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex flex-col gap-1.5 w-full sm:w-[150px]">
+              <Label className="text-xs font-semibold text-slate-500 uppercase tracking-wider ml-1">Ordenar</Label>
+              <Select value={sortBy} onValueChange={(v) => { setSortBy(v as any); setCurrentPage(1); }}>
+                <SelectTrigger className="w-full bg-white border border-stone-200 hover:bg-stone-50 text-sm h-10 cursor-pointer">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="recent">Recientes</SelectItem>
+                  <SelectItem value="amount">Monto (Mayor)</SelectItem>
+                  <SelectItem value="member">Alumno (A-Z)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
           </div>
 
           {/* ── Tabla ── */}
@@ -340,7 +341,10 @@ export function PaymentsView() {
                       <TableCell className="px-6 py-4 whitespace-nowrap text-center">
                         <div className="flex justify-center">
                           <button
-                            onClick={() => setPaymentToVoid(payment.id)}
+                            onClick={() => {
+                              setPaymentToVoid(payment);
+                              setIsVoidModalOpen(true);
+                            }}
                             title="Anular pago"
                             className="text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-2 rounded-md transition-all cursor-pointer"
                           >
@@ -352,22 +356,24 @@ export function PaymentsView() {
                   ))
                 )}
               </TableBody>
+              {filtered.length > 0 && (
+                <TableFooter className="bg-slate-50 border-t border-slate-200">
+                  <TableRow className="hover:bg-slate-50">
+                    <TableCell colSpan={6} className="px-6 py-4">
+                      <div className="flex justify-end items-center gap-3">
+                        <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Consolidado:</span>
+                        <span className="font-bold text-teal-700 tabular-nums text-lg">{formatCurrency(totalFiltered)}</span>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                </TableFooter>
+              )}
             </Table>
           </div>
 
-          {/* ── Desglose de caja por método ── */}
-          {filtered.length > 0 && (
-            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-end">
-              <div className="flex items-center gap-3 leading-tight">
-                <span className="text-sm text-slate-500 font-medium uppercase tracking-wide">Total:</span>
-                <span className="text-xl font-bold text-teal-700">{formatCurrency(totalFiltered)}</span>
-              </div>
-            </div>
-          )}
-
           {/* ── Paginación (Sincronizada con Miembros) ── */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between pt-4 border-t border-slate-50 mt-4">
+            <div className="flex items-center justify-between pt-4">
               <p className="text-sm text-muted-foreground">
                 Mostrando {startIndex + 1} -{' '}
                 {Math.min(startIndex + ITEMS_PER_PAGE, filtered.length)} de{' '}
@@ -400,7 +406,7 @@ export function PaymentsView() {
           )}
 
           {/* ── Modal de Confirmación de Anulación ── */}
-          <Dialog open={!!paymentToVoid} onOpenChange={(open) => !open && setPaymentToVoid(null)}>
+          <Dialog open={isVoidModalOpen} onOpenChange={setIsVoidModalOpen}>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
                 <DialogTitle className="text-xl font-bold text-slate-900">Confirmar Anulación</DialogTitle>
@@ -410,8 +416,7 @@ export function PaymentsView() {
               </DialogHeader>
 
               {paymentToVoid && (() => {
-                const p = recentPayments.find(x => x.id === paymentToVoid);
-                if (!p) return null;
+                const p = paymentToVoid;
                 const [y, m, d] = p.date.split('-');
                 return (
                   <div className="bg-slate-50 rounded-lg p-4 border border-slate-100 my-4 flex flex-col gap-3">
@@ -434,13 +439,13 @@ export function PaymentsView() {
               <DialogFooter className="gap-3 sm:gap-3 pt-2">
                 <Button
                   variant="outline"
-                  onClick={() => setPaymentToVoid(null)}
+                  onClick={() => setIsVoidModalOpen(false)}
                   className="cursor-pointer border-slate-300 text-slate-700 hover:bg-slate-100 hover:text-slate-900 font-medium px-6"
                 >
                   Mantener pago
                 </Button>
                 <Button
-                  onClick={() => paymentToVoid && handleVoid(paymentToVoid)}
+                  onClick={() => paymentToVoid && handleVoid(paymentToVoid.id)}
                   className="bg-rose-600 hover:bg-rose-700 text-white font-bold px-6 shadow-md transition-all cursor-pointer border-0"
                 >
                   Eliminar pago

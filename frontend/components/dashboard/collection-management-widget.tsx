@@ -173,7 +173,7 @@ export function CollectionManagementWidget({
 
   return (
     <Card className="border-border shadow-sm w-full">
-      <CardContent className="p-0 sm:p-5">
+      <CardContent className="p-0 sm:px-5 sm:pb-5 sm:pt-3">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <div className="p-4 sm:p-0 border-b border-border sm:border-0 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <TabsList className="w-full sm:w-auto flex flex-col sm:flex-row h-auto gap-2 bg-transparent p-0">

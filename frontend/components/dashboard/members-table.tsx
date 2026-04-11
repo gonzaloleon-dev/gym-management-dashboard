@@ -15,6 +15,14 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import type { Member, MembershipPlan } from '@/lib/mock-data';
 import { formatDate } from '@/lib/mock-data';
 import { cn } from '@/lib/utils';
@@ -40,6 +48,9 @@ export function MembersTable({ members }: MembersTableProps) {
 
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [paymentMember, setPaymentMember] = useState<Member | null>(null);
+
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [memberToDelete, setMemberToDelete] = useState<Member | null>(null);
 
   const handleEditMember = (member: Member) => {
     setSelectedMember(member);
@@ -273,7 +284,11 @@ export function MembersTable({ members }: MembersTableProps) {
                       {/* Eliminar */}
                       <div className="relative group/tooltip">
                         <button
-                          onClick={(e) => { e.stopPropagation(); alert(`¿Eliminar al alumno ${member.name}?`); }}
+                          onClick={(e) => { 
+                            e.stopPropagation(); 
+                            setMemberToDelete(member);
+                            setIsDeleteModalOpen(true);
+                          }}
                           className="text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-2 rounded-md transition-all cursor-pointer"
                         >
                           <Trash2 className="h-5 w-5" />
@@ -343,6 +358,60 @@ export function MembersTable({ members }: MembersTableProps) {
         onOpenChange={setIsPaymentModalOpen}
         member={paymentMember}
       />
+
+      {/* ── Modal de Confirmación de Eliminación ── */}
+      <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-slate-900">Confirmar Eliminación</DialogTitle>
+            <DialogDescription className="text-slate-500 pt-2">
+              ¿Estás seguro de que deseas eliminar este alumno? Todo su historial se archivará pero no será visible.
+            </DialogDescription>
+          </DialogHeader>
+
+          {memberToDelete && (() => {
+            const m = memberToDelete;
+            return (
+              <div className="bg-slate-50 rounded-lg p-4 border border-slate-100 my-4 flex flex-col gap-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Alumno</span>
+                  <span className="text-sm font-bold text-slate-700">{m.name}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Plan</span>
+                  <span className="text-sm font-bold text-slate-700">{m.plan}</span>
+                </div>
+                <div className="flex justify-between items-center pt-2 border-t border-slate-200">
+                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Estado</span>
+                  <span className={`text-sm font-bold ${m.status === 'Activo' ? 'text-emerald-600' : m.status === 'Deudor' ? 'text-rose-600' : 'text-orange-600'}`}>
+                    {m.status}
+                  </span>
+                </div>
+              </div>
+            );
+          })()}
+
+          <DialogFooter className="gap-3 sm:gap-3 pt-2">
+            <Button
+              variant="outline"
+              onClick={() => setIsDeleteModalOpen(false)}
+              className="cursor-pointer border-slate-300 text-slate-700 hover:bg-slate-100 hover:text-slate-900 font-medium px-6"
+            >
+              Mantener alumno
+            </Button>
+            <Button
+              onClick={() => {
+                // Aquí iría tu lógica real de anulación, simulada cerrando modal
+                setIsDeleteModalOpen(false);
+              }}
+              className="bg-rose-600 hover:bg-rose-700 text-white font-bold px-6 shadow-md transition-all cursor-pointer border-0"
+            >
+              Eliminar alumno
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
     </Card>
   );
 }

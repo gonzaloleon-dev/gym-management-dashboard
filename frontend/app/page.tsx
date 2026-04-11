@@ -54,7 +54,7 @@ export default function DashboardPage() {
                 <p className="text-base text-muted-foreground mt-1">
                   {activeTab === 'dashboard' && "Vista general"}
                   {activeTab === 'members' && 'Administración de miembros'}
-                  {activeTab === 'payments' && 'Historial y registro de pagos'}
+                  {activeTab === 'payments' && 'Control de caja y registro de ingresos'}
                   {activeTab === 'statistics' && 'Reportes y balance general'}
                   {activeTab === 'settings' && 'Configura tu gimnasio'}
                 </p>
