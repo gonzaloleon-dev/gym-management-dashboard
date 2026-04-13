@@ -185,7 +185,7 @@ export function ExpensesView() {
     const newExpense: Expense = {
       id: `e${Date.now()}`,
       concept: newExpenseName,
-      amount: Number(newAmount),
+      amount: Number(newAmount.toString().replace(',', '.')),
       date: new Date().toISOString().split('T')[0],
       category: newCategory as ExpenseCategory,
       method: newMethod
@@ -406,7 +406,7 @@ export function ExpensesView() {
       <Card className="border-border bg-white shadow-sm mb-6 rounded-2xl">
         <CardHeader className="pb-4">
           <CardTitle className="text-base font-semibold text-card-foreground">Registrar Nuevo Gasto</CardTitle>
-          <p className="text-sm text-muted-foreground mt-0.5">Ingresa rápidamente un egreso al sistema</p>
+          <p className="text-sm text-muted-foreground mt-0.5">Cargá un nuevo gasto de forma rápida</p>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
@@ -457,17 +457,21 @@ export function ExpensesView() {
               <Label className="text-sm font-medium" htmlFor="quick-amount">Monto ($)</Label>
               <Input
                 id="quick-amount"
-                type="number"
+                type="text"
+                inputMode="decimal"
                 placeholder="0.00"
                 className="w-full h-10 text-lg font-medium border-slate-200 bg-white"
                 value={newAmount}
-                onChange={(e) => setNewAmount(e.target.value)}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/[^0-9.,]/g, '');
+                  setNewAmount(val);
+                }}
               />
             </div>
 
             <div className="flex flex-col">
               <Button
-                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-10 shadow-sm gap-2 font-medium cursor-pointer"
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground h-10 shadow-sm flex items-center justify-center gap-2 font-medium cursor-pointer"
                 onClick={handleQuickSave}
               >
                 <Plus className="h-4 w-4" />
