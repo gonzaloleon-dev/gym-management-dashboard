@@ -1,5 +1,5 @@
 // Types for the Gym Management System
-export type ExpenseCategory = 'Alquiler' | 'Servicios' | 'Insumos / Mantenimiento' | 'Honorarios' | 'Varios';
+export type ExpenseCategory = 'Alquiler' | 'Servicios' | 'Mantenimiento / Reparaciones' | 'Limpieza' | 'Varios';
 
 export interface Expense {
   id: string;
@@ -228,9 +228,10 @@ export const recentPayments: Payment[] = [
 export const mockExpenses: Expense[] = [
   { id: 'e1', concept: 'Alquiler del Local (Febrero)', amount: 450000, date: '2026-02-05', category: 'Alquiler', method: 'Transferencia' },
   { id: 'e2', concept: 'Factura EDESUR', amount: 85000, date: '2026-02-10', category: 'Servicios', method: 'Transferencia' },
-  { id: 'e3', concept: 'Artículos de Limpieza', amount: 35000, date: '2026-02-12', category: 'Insumos / Mantenimiento', method: 'Efectivo' },
-  { id: 'e4', concept: 'Honorarios Profe Funcional', amount: 120000, date: '2026-02-02', category: 'Honorarios', method: 'Transferencia' },
-  { id: 'e5', concept: 'Lubricante para cintas', amount: 15000, date: '2026-02-11', category: 'Insumos / Mantenimiento', method: 'Efectivo' },
+  { id: 'e3', concept: 'Kit de Limpieza Profunda', amount: 35000, date: '2026-02-12', category: 'Limpieza', method: 'Efectivo' },
+  { id: 'e4', concept: 'Service de Cintas (Técnico)', amount: 60000, date: '2026-02-02', category: 'Mantenimiento / Reparaciones', method: 'Mercado Pago' },
+  { id: 'e5', concept: 'Reparación Polea Cable Cross', amount: 45000, date: '2026-02-11', category: 'Mantenimiento / Reparaciones', method: 'Efectivo' },
+  { id: 'e6', concept: 'Papelería y Librería', amount: 15000, date: '2026-02-01', category: 'Varios', method: 'Efectivo' },
 ];
 
 export const todayExpiringMembers: Member[] = mockMembers.filter(m => m.status === 'Vencido');

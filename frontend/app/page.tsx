@@ -57,7 +57,7 @@ export default function DashboardPage() {
                   {activeTab === 'dashboard' && "Vista general"}
                   {activeTab === 'members' && 'Administración de miembros'}
                   {activeTab === 'payments' && 'Control de caja y registro de ingresos'}
-                  {activeTab === 'expenses' && 'Registro de egresos y control de operaciones'}
+                  {activeTab === 'expenses' && 'Gestión y análisis de egresos'}
                   {activeTab === 'statistics' && 'Reportes y balance general'}
                   {activeTab === 'settings' && 'Configura tu gimnasio'}
                 </p>
