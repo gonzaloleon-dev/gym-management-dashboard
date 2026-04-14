@@ -345,7 +345,7 @@ export function PaymentsView() {
                               setPaymentToVoid(payment);
                               setIsVoidModalOpen(true);
                             }}
-                            title="Anular pago"
+                            title="Eliminar pago"
                             className="text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-2 rounded-md transition-all cursor-pointer"
                           >
                             <Trash2 className="h-4 w-4" />
@@ -409,9 +409,9 @@ export function PaymentsView() {
           <Dialog open={isVoidModalOpen} onOpenChange={setIsVoidModalOpen}>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
-                <DialogTitle className="text-xl font-bold text-slate-900">Confirmar Anulación</DialogTitle>
+                <DialogTitle className="text-xl font-bold text-slate-900">Eliminar Pago</DialogTitle>
                 <DialogDescription className="text-slate-500 pt-2">
-                  ¿Estás seguro de que deseas anular el siguiente pago? Esta acción es irreversible.
+                  ¿Estás seguro de que deseas eliminar el siguiente pago? Esta acción es irreversible.
                 </DialogDescription>
               </DialogHeader>
 

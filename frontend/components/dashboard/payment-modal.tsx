@@ -14,6 +14,11 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Member, PLAN_PRICES, MembershipPlan, formatCurrency, formatDate } from '@/lib/mock-data';
+import { Calendar } from "@/components/ui/calendar"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { format } from "date-fns"
+import { CalendarIcon } from 'lucide-react';
+import { cn } from "@/lib/utils"
 
 interface PaymentModalProps {
   open: boolean;
@@ -41,6 +46,7 @@ export function PaymentModal({ open, onOpenChange, member }: PaymentModalProps) 
   const [basePrice, setBasePrice] = useState(0);
   const [customPrice, setCustomPrice] = useState<string>('');
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('Efectivo');
+  const [paymentDate, setPaymentDate] = useState<Date | undefined>(undefined);
   const [otherDetails, setOtherDetails] = useState('');
   const [step, setStep] = useState<'form' | 'success'>('form');
 
@@ -55,6 +61,9 @@ export function PaymentModal({ open, onOpenChange, member }: PaymentModalProps) 
       const final = isOverdue ? Math.round(price * (1 + SURCHARGE_RATE)) : price;
       setCustomPrice(String(final));
       setPaymentMethod('Efectivo');
+      if (member.nextExpiry) {
+        setPaymentDate(new Date(member.nextExpiry + "T12:00:00"));
+      }
       setOtherDetails('');
       setStep('form');
     }
@@ -88,7 +97,7 @@ export function PaymentModal({ open, onOpenChange, member }: PaymentModalProps) 
     if (!member) return;
     const nombre = member.name.split(' ')[0];
     const monto = formatCurrency(numericPrice);
-    const fecha = formatDate(nextExpiry);
+    const fecha = paymentDate ? format(paymentDate, 'dd/MM/yyyy') : formatDate(nextExpiry);
     const message = encodeURIComponent(
       `¡Gracias ${nombre}! Recibimos tu pago de ${monto}. Tu próximo vencimiento es el ${fecha}.`
     );
@@ -113,7 +122,10 @@ export function PaymentModal({ open, onOpenChange, member }: PaymentModalProps) 
               <DialogTitle className="text-[16px] font-bold text-slate-900 leading-tight">
                 Registrar Pago
               </DialogTitle>
-              <p className="text-[13px] text-slate-400 mt-0.5">{member.name}</p>
+              <p className="text-[13px] text-slate-500 mt-0.5 font-medium">{member.name}</p>
+              <p className="text-[12px] text-muted-foreground mt-0.5">
+                Vencimiento anterior: {formatDate(member.nextExpiry)}
+              </p>
             </div>
           </div>
         </DialogHeader>
@@ -135,21 +147,50 @@ export function PaymentModal({ open, onOpenChange, member }: PaymentModalProps) 
 
           {step === 'form' ? (
             <>
-              {/* Plan */}
-              <div className="space-y-1.5">
-                <Label className="text-[13px] font-semibold text-slate-800">Plan</Label>
-                <Select value={selectedPlan} onValueChange={(v) => handlePlanChange(v as MembershipPlan)}>
-                  <SelectTrigger className={`${inputClass} w-full`}>
-                    <SelectValue placeholder="Seleccionar plan" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {(Object.keys(PLAN_PRICES) as MembershipPlan[]).map((plan) => (
-                      <SelectItem key={plan} value={plan}>
-                        {plan} — {formatCurrency(PLAN_PRICES[plan])}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              {/* Plan y Fecha */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label className="text-[13px] font-semibold text-slate-800">Plan</Label>
+                  <Select value={selectedPlan} onValueChange={(v) => handlePlanChange(v as MembershipPlan)}>
+                    <SelectTrigger className={`${inputClass} w-full`}>
+                      <SelectValue placeholder="Seleccionar plan" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {(Object.keys(PLAN_PRICES) as MembershipPlan[]).map((plan) => (
+                        <SelectItem key={plan} value={plan}>
+                          {plan} — {formatCurrency(PLAN_PRICES[plan])}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-1.5 focus-within:z-50">
+                  <Label className="text-[13px] font-semibold text-slate-800">Nuevo Vencimiento</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          inputClass,
+                          "w-full justify-start text-left font-normal pl-3 bg-white border-slate-200 hover:bg-slate-50 focus:bg-white text-slate-900 hover:text-slate-900",
+                          !paymentDate && "text-muted-foreground"
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4 text-slate-400" />
+                        {paymentDate ? format(paymentDate, "dd/MM/yyyy") : <span className="text-slate-400">Seleccionar fecha</span>}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={paymentDate}
+                        onSelect={setPaymentDate}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
               </div>
 
               {/* Precio */}

@@ -13,7 +13,11 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Member, PLAN_PRICES } from '@/lib/mock-data';
-import { Save, X } from 'lucide-react';
+import { Save, X, CalendarIcon } from 'lucide-react';
+import { Calendar } from "@/components/ui/calendar"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { format } from "date-fns"
+import { cn } from "@/lib/utils"
 
 interface MemberDetailsModalProps {
   open: boolean;
@@ -45,9 +49,13 @@ const inputClass = "h-10 bg-white border-stone-200 text-slate-900 placeholder:te
 export function MemberDetailsModal({ open, onOpenChange, member }: MemberDetailsModalProps) {
   const isEditing = !!member;
   const [selectedOrigin, setSelectedOrigin] = useState<string>(member?.origin ?? 'Instagram');
+  const [expiryDate, setExpiryDate] = useState<Date | undefined>(
+    member?.nextExpiry ? new Date(member.nextExpiry + "T12:00:00") : undefined
+  );
 
   useEffect(() => {
     setSelectedOrigin(member?.origin ?? 'Instagram');
+    setExpiryDate(member?.nextExpiry ? new Date(member.nextExpiry + "T12:00:00") : undefined);
   }, [member, open]);
 
   return (
@@ -106,18 +114,45 @@ export function MemberDetailsModal({ open, onOpenChange, member }: MemberDetails
             <section>
               <SectionTitle>Membresía</SectionTitle>
               <div className="space-y-4">
-                <Field label="Plan Actual">
-                  <Select defaultValue={member?.plan ?? '3 veces x semana'}>
-                    <SelectTrigger className={`${inputClass} w-full cursor-pointer text-slate-900`}>
-                      <SelectValue placeholder="Seleccionar Plan" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Object.keys(PLAN_PRICES).map(plan => (
-                        <SelectItem key={plan} value={plan}>{plan}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </Field>
+                <div className="grid grid-cols-1 gap-4">
+                  <Field label="Plan Actual">
+                    <Select defaultValue={member?.plan ?? '3 veces x semana'}>
+                      <SelectTrigger className={`${inputClass} w-full cursor-pointer text-slate-900`}>
+                        <SelectValue placeholder="Seleccionar Plan" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Object.keys(PLAN_PRICES).map(plan => (
+                          <SelectItem key={plan} value={plan}>{plan}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </Field>
+                  <Field label="Fecha de Inscripción">
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            inputClass,
+                            "w-full justify-start text-left font-normal pl-3 bg-white hover:bg-slate-50 border-slate-200 focus:bg-white text-slate-900 hover:text-slate-900",
+                            !expiryDate && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4 text-slate-400" />
+                          {expiryDate ? format(expiryDate, "dd/MM/yyyy") : <span className="text-slate-400">Seleccionar fecha</span>}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={expiryDate}
+                          onSelect={setExpiryDate}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </Field>
+                </div>
               </div>
             </section>
 

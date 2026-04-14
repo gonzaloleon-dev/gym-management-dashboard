@@ -363,7 +363,7 @@ export function MembersTable({ members }: MembersTableProps) {
       <Dialog open={isDeleteModalOpen} onOpenChange={setIsDeleteModalOpen}>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-slate-900">Confirmar Eliminación</DialogTitle>
+            <DialogTitle className="text-xl font-bold text-slate-900">Eliminar Alumno</DialogTitle>
             <DialogDescription className="text-slate-500 pt-2">
               ¿Estás seguro de que deseas eliminar este alumno? Todo su historial se archivará pero no será visible.
             </DialogDescription>

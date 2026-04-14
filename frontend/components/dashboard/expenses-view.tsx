@@ -508,7 +508,7 @@ export function ExpensesView() {
               <div className="relative w-full">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
-                  placeholder="Buscar por concepto o fecha (ej: alquiler o 05/02)..."
+                  placeholder="Buscar por descripción o fecha (ej: alquiler o 05/02)..."
                   value={searchQuery}
                   onChange={(e) => handleSearch(e.target.value)}
                   className="pl-10 pr-4 py-2 bg-white border border-stone-200 rounded-lg text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-400 transition-shadow w-full h-10"
@@ -591,9 +591,9 @@ export function ExpensesView() {
               <TableHeader className="bg-slate-50">
                 <TableRow className="hover:bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                   <TableHead className="px-6 py-3 h-auto">Fecha</TableHead>
-                  <TableHead className="px-6 py-3 h-auto">Concepto</TableHead>
+                  <TableHead className="px-6 py-3 h-auto">Descripción</TableHead>
                   <TableHead className="px-6 py-3 h-auto hidden sm:table-cell">Categoría</TableHead>
-                  <TableHead className="px-6 py-3 h-auto">Medio</TableHead>
+                  <TableHead className="px-6 py-3 h-auto">Medio de Pago</TableHead>
                   <TableHead className="px-6 py-3 h-auto text-right">Monto</TableHead>
                   <TableHead className="w-[80px] text-center px-6 py-3 h-auto">Acciones</TableHead>
                 </TableRow>
@@ -726,7 +726,7 @@ export function ExpensesView() {
                 return (
                   <div className="bg-slate-50 rounded-lg p-4 border border-slate-100 my-4 flex flex-col gap-3">
                     <div className="flex justify-between items-center">
-                      <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Concepto</span>
+                      <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Descripción</span>
                       <span className="text-sm font-bold text-slate-700 max-w-[200px] text-right truncate">{e.concept}</span>
                     </div>
                     <div className="flex justify-between items-center">
@@ -753,7 +753,7 @@ export function ExpensesView() {
                   onClick={() => expenseToDelete && handleDelete(expenseToDelete.id)}
                   className="bg-rose-600 hover:bg-rose-700 text-white font-bold px-6 shadow-md transition-all cursor-pointer border-0"
                 >
-                  Eliminar
+                  Eliminar gasto
                 </Button>
               </DialogFooter>
             </DialogContent>
