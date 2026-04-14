@@ -143,3 +143,14 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Animación progress bar — GPU-acelerada vía transform: scaleX */
+@keyframes growBar {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+.bar-animate {
+  transform-origin: left;
+  animation: growBar 0.7s cubic-bezier(0.25, 1, 0.5, 1) both;
+}

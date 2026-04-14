@@ -124,7 +124,14 @@ const generateMockMembers = (count: number): Member[] => {
       emergencyContactName: 'Familiar de Contacto',
       emergencyContactPhone: '+54 11 0000-0000',
       personalObjective: 'Salud y bienestar',
-      origin: i % 3 === 0 ? 'Instagram' : i % 3 === 1 ? 'Facebook' : 'Recomendación',
+      origin: (
+        i % 6 === 0 ? 'Instagram'
+        : i % 6 === 1 ? 'Recomendación'
+        : i % 6 === 2 ? 'Pasa por la puerta'
+        : i % 6 === 3 ? 'Facebook'
+        : i % 6 === 4 ? 'Google'
+        : 'Otro'
+      ),
       initialPlan: '3 veces x semana',
     });
   }
@@ -305,8 +312,9 @@ export function getDashboardStats() {
   // Tasa de retención simulada basada en activos vs deudores
   const retentionRate = Math.round((activeMembers / (activeMembers + debtors.length)) * 100);
   
-  // Promedio por miembro
-  const avgPerMember = Math.round(activeMembers > 0 ? PLAN_PRICES['LIBRE'] : 0);
+  // Promedio por miembro (promedio simple de todos los planes actuales)
+  const planPrices = Object.values(PLAN_PRICES);
+  const avgPerMember = Math.round(planPrices.reduce((a, b) => a + b, 0) / planPrices.length);
 
   return {
     monthlyRevenue: 5200000,

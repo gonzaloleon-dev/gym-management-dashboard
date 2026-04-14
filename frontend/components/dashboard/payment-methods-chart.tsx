@@ -66,7 +66,7 @@ export function PaymentMethodsChart({ data }: PaymentMethodsChartProps) {
         <p className="text-sm text-muted-foreground mt-1">Desglose de recaudación por canal.</p>
       </CardHeader>
       <CardContent className="flex-1 space-y-5 pt-2">
-        {data.map((item) => {
+        {data.map((item, idx) => {
           const percentage = (item.amount / totalAmount) * 100;
           return (
             <div key={item.method} className="space-y-2">
@@ -84,8 +84,8 @@ export function PaymentMethodsChart({ data }: PaymentMethodsChartProps) {
               </div>
               <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
                 <div 
-                  className={`h-full rounded-full ${getProgressColor(item.method)}`} 
-                  style={{ width: `${percentage}%` }} 
+                  className={`h-full rounded-full bar-animate ${getProgressColor(item.method)}`} 
+                  style={{ width: `${percentage}%`, animationDelay: `${idx * 80}ms` }} 
                 />
               </div>
             </div>
