@@ -14,7 +14,8 @@ import {
   Cell,
 } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowUpRight, ArrowDownRight, Activity } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ArrowUpRight, ArrowDownRight, Activity, Users, TrendingUp, PieChart as PieChartIcon, ShieldCheck } from 'lucide-react';
 import { mockMembers, revenueData, formatCurrency, PLAN_PRICES, paymentMethodsData, type MembershipPlan, getDashboardStats } from '@/lib/mock-data';
 import { PaymentMethodsChart } from '@/components/dashboard/payment-methods-chart';
 import { MembersGrowthChart } from '@/components/dashboard/members-growth-chart';
@@ -50,8 +51,8 @@ export function StatisticsView() {
     { name: 'Deudores', value: mockMembers.filter((m) => m.status === 'Deudor').length },
   ];
 
-  const PIE_COLORS = [COLORS.primary, '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4', '#22c55e'];
-  const STATUS_COLORS = [COLORS.primary, COLORS.chart4, COLORS.destructive];
+  const PIE_COLORS = ['#14b8a6', '#f59e0b', '#0ea5e9', '#6366f1'];
+  const STATUS_COLORS = [COLORS.primary, '#f59e0b', '#ef4444'];
 
   // Members growth data enriched with real flows
   const membersGrowthData = revenueData.map((d) => {
@@ -96,8 +97,34 @@ export function StatisticsView() {
         </Card>
       </div>
 
-      {/* Charts Grid */}
-      <div className="grid gap-6 lg:grid-cols-2">
+      {/* Tabs Layout for Widgets */}
+      <Tabs defaultValue="crecimiento" className="w-full space-y-6">
+        <TabsList className="w-full sm:w-auto overflow-x-auto flex flex-nowrap h-auto gap-2 bg-transparent p-0 border-b border-border pb-4 sm:pb-0 sm:border-0 justify-start">
+          <TabsTrigger
+            value="crecimiento"
+            className="group w-auto shrink-0 data-[state=active]:bg-teal-50 data-[state=active]:text-teal-800 data-[state=active]:border-teal-200 data-[state=active]:shadow-sm justify-center border border-transparent px-4 py-2.5 rounded-lg transition-all font-medium text-muted-foreground cursor-pointer hover:bg-muted/50"
+          >
+            <TrendingUp className="w-4 h-4 mr-2" />
+            Crecimiento y Flujo
+          </TabsTrigger>
+          <TabsTrigger
+            value="comercial"
+            className="group w-auto shrink-0 data-[state=active]:bg-teal-50 data-[state=active]:text-teal-800 data-[state=active]:border-teal-200 data-[state=active]:shadow-sm justify-center border border-transparent px-4 py-2.5 rounded-lg transition-all font-medium text-muted-foreground cursor-pointer hover:bg-muted/50"
+          >
+            <PieChartIcon className="w-4 h-4 mr-2" />
+            Bloque Comercial
+          </TabsTrigger>
+          <TabsTrigger
+            value="auditoria"
+            className="group w-auto shrink-0 data-[state=active]:bg-teal-50 data-[state=active]:text-teal-800 data-[state=active]:border-teal-200 data-[state=active]:shadow-sm justify-center border border-transparent px-4 py-2.5 rounded-lg transition-all font-medium text-muted-foreground cursor-pointer hover:bg-muted/50"
+          >
+            <ShieldCheck className="w-4 h-4 mr-2" />
+            Auditoría y Marketing
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="crecimiento" className="mt-0 outline-none">
+          <div className="grid gap-6 lg:grid-cols-2">
         {/* Members Growth Chart */}
         <MembersGrowthChart
           data={membersGrowthData}
@@ -161,15 +188,19 @@ export function StatisticsView() {
             </div>
           </CardContent>
         </Card>
+        </div> {/* Cierra grid crecimiento */}
+        </TabsContent>
 
-        {/* Plan Distribution */}
-        <Card className="border-border bg-card shadow-sm">
+        <TabsContent value="comercial" className="mt-0 outline-none">
+          <div className="grid gap-6 lg:grid-cols-2 lg:col-span-2">
+            {/* Plan Distribution */}
+        <Card className="border-border bg-card shadow-sm h-full flex flex-col">
           <CardHeader>
             <CardTitle className="text-base font-semibold text-card-foreground">
               Distribución por Plan
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex-1 flex flex-col justify-center">
             <div className="h-[280px]">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -177,10 +208,11 @@ export function StatisticsView() {
                     data={planData}
                     cx="50%"
                     cy="50%"
-                    innerRadius={50}
-                    outerRadius={80}
+                    innerRadius={75}
+                    outerRadius={95}
                     paddingAngle={3}
                     dataKey="value"
+                    isAnimationActive={false}
                   >
                     {planData.map((entry, index) => (
                       <Cell key={`cell-${entry.name}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
@@ -196,6 +228,11 @@ export function StatisticsView() {
                   />
                 </PieChart>
               </ResponsiveContainer>
+              {/* Centro de la dona con el Total */}
+              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                <span className="text-3xl font-bold text-slate-900">{stats.totalMembers}</span>
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Alumnos</span>
+              </div>
             </div>
             <div className="mt-4 grid grid-cols-2 gap-2">
               {planData.map((item, index) => (
@@ -212,8 +249,57 @@ export function StatisticsView() {
           </CardContent>
         </Card>
 
+        {/* Payment Methods Chart */}
+        <div className="h-full w-full">
+          <PaymentMethodsChart data={paymentMethodsData} />
+        </div>
+
+        </div>
+        </TabsContent>
+
+        <TabsContent value="auditoria" className="mt-0 outline-none">
+          <div className="grid gap-6 lg:grid-cols-2 lg:col-span-2">
+            {/* Origen de Alumnos */}
+        <Card className="border-border bg-card shadow-sm h-full flex flex-col">
+          <CardHeader className="pb-4">
+            <div className="flex items-center gap-2">
+              <div className="rounded-lg bg-emerald-50 p-2">
+                <Users className="h-5 w-5 text-emerald-600" />
+              </div>
+              <CardTitle className="text-base font-semibold text-card-foreground">
+                Origen de Alumnos
+              </CardTitle>
+            </div>
+            <p className="text-sm text-muted-foreground mt-1">¿Cómo te conocieron tus alumnos actuales?</p>
+          </CardHeader>
+          <CardContent className="flex-1 flex flex-col justify-center pt-2">
+            <div className="space-y-6">
+              {[
+                { name: 'Instagram', value: 85, color: '#14b8a6' },
+                { name: 'Recomendación', value: 60, color: '#0ea5e9' },
+                { name: 'Pasó por el local', value: 45, color: '#f59e0b' },
+                { name: 'Facebook / Folletos', value: 14, color: '#8b5cf6' },
+              ].map((item) => {
+                const total = 204; // Aproximado del total mockeado
+                const percentage = Math.round((item.value / total) * 100);
+                return (
+                  <div key={item.name} className="space-y-2">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="font-medium text-slate-700">{item.name}</span>
+                      <span className="font-bold text-slate-900">{percentage}% <span className="text-muted-foreground font-normal">({item.value})</span></span>
+                    </div>
+                    <div className="h-2.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                      <div className="h-full rounded-full" style={{ width: `${percentage}%`, backgroundColor: item.color }} />
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Status Distribution */}
-        <Card className="border-border bg-card shadow-sm">
+        <Card className="border-border bg-card shadow-sm h-full flex flex-col">
           <CardHeader>
             <CardTitle className="text-base font-semibold text-card-foreground">
               Estado de Membresías
@@ -243,12 +329,9 @@ export function StatisticsView() {
             </div>
           </CardContent>
         </Card>
-
-        {/* Payment Methods Chart */}
-        <div className="lg:col-span-2 max-w-md mx-auto w-full">
-          <PaymentMethodsChart data={paymentMethodsData} />
-        </div>
-      </div>
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

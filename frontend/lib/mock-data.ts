@@ -11,20 +11,16 @@ export interface Expense {
 }
 
 export type MembershipPlan = 
-  | '3 veces x semana'
-  | 'LIBRE'
+  | '3 veces por semana'
+  | 'Libre'
   | 'Funcional'
-  | 'M+F'
-  | 'Stretching Global Activo'
-  | 'Feldenkrais/GPG';
+  | 'Sala Musculación + Funcional';
 
 export const PLAN_PRICES: Record<MembershipPlan, number> = {
-  '3 veces x semana': 50000,
-  'LIBRE': 60000,
+  '3 veces por semana': 50000,
+  'Libre': 60000,
   'Funcional': 50000,
-  'M+F': 70000,
-  'Stretching Global Activo': 30000,
-  'Feldenkrais/GPG': 30000,
+  'Sala Musculación + Funcional': 70000,
 };
 
 export interface Member {
@@ -70,7 +66,7 @@ export interface RevenueData {
 
 const firstNames = ['Martín', 'Lucía', 'Santiago', 'Camila', 'Tomás', 'Valentina', 'Nicolás', 'Florencia', 'Agustín', 'Carolina', 'Federico', 'María José', 'Juan Pablo', 'Sofía', 'Ezequiel', 'Mateo', 'Isabella', 'Facundo', 'Delfina', 'Bautista', 'Julia', 'Benjamín', 'Catalina', 'Joaquín', 'Victoria', 'Felipe', 'Pilar', 'Gastón', 'Milagros', 'Bruno'];
 const lastNames = ['González', 'Fernández', 'Rodríguez', 'López', 'Martínez', 'Pérez', 'Díaz', 'Sánchez', 'Romero', 'Álvarez', 'Torres', 'Herrera', 'Morales', 'Vargas', 'Castro', 'Ruiz', 'Gómez', 'Blanco', 'Paz', 'Sosa', 'Siri', 'Méndez', 'Guzmán', 'García', 'Lombardi', 'Navarro', 'Rojas', 'Luna', 'Acosta', 'Benitez'];
-const plans: MembershipPlan[] = ['3 veces x semana', 'LIBRE', 'Funcional', 'M+F', 'Stretching Global Activo', 'Feldenkrais/GPG'];
+const plans: MembershipPlan[] = ['3 veces por semana', 'Libre', 'Funcional', 'Sala Musculación + Funcional'];
 
 const generateMockMembers = (count: number): Member[] => {
   const members: Member[] = [];
@@ -149,7 +145,10 @@ export const revenueData: RevenueData[] = [
 
 export const paymentMethodsData = [
   { method: 'Efectivo', amount: 2800000, count: 95 },
-  { method: 'Transferencia', amount: 2400000, count: 85 },
+  { method: 'Transferencia', amount: 1400000, count: 32 },
+  { method: 'Mercado Pago', amount: 950000, count: 18 },
+  { method: 'Cuenta DNI', amount: 650000, count: 14 },
+  { method: 'Débito', amount: 250000, count: 6 },
 ];
 
 // Datos de pagos realistas (Simulando 15 alumnos y 6 meses de historial)

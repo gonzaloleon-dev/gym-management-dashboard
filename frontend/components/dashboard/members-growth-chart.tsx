@@ -88,7 +88,7 @@ export function MembersGrowthChart({ data, selectedMonth, onMonthSelect }: Membe
                 width={35}
               />
               <Tooltip content={<CustomTooltip />} cursor={{ fill: 'transparent' }} position={{ y: -10 }} />
-              <Bar dataKey="members" radius={[4, 4, 0, 0]}>
+              <Bar dataKey="members" radius={[4, 4, 0, 0]} isAnimationActive={false}>
                 {data.map((entry, index) => (
                   <Cell
                     cursor="pointer"
