@@ -63,6 +63,9 @@ export interface RevenueData {
   month: string;
   revenue: number;
   members: number;
+  newMembers: number;
+  churnedMembers: number;
+  growth: number;
 }
 
 const firstNames = ['Martín', 'Lucía', 'Santiago', 'Camila', 'Tomás', 'Valentina', 'Nicolás', 'Florencia', 'Agustín', 'Carolina', 'Federico', 'María José', 'Juan Pablo', 'Sofía', 'Ezequiel', 'Mateo', 'Isabella', 'Facundo', 'Delfina', 'Bautista', 'Julia', 'Benjamín', 'Catalina', 'Joaquín', 'Victoria', 'Felipe', 'Pilar', 'Gastón', 'Milagros', 'Bruno'];
@@ -136,12 +139,12 @@ export const mockMembers = generateMockMembers(60);
 
 // Revenue data for the last 6 months
 export const revenueData: RevenueData[] = [
-  { month: 'Ago', revenue: 3250000, members: 142 },
-  { month: 'Sep', revenue: 3580000, members: 155 },
-  { month: 'Oct', revenue: 4120000, members: 168 },
-  { month: 'Nov', revenue: 4450000, members: 176 },
-  { month: 'Dic', revenue: 4880000, members: 188 },
-  { month: 'Ene', revenue: 5200000, members: 200 },
+  { month: 'Ago', revenue: 3250000, members: 140, newMembers: 15, churnedMembers: 5, growth: 10 },
+  { month: 'Sep', revenue: 3580000, members: 155, newMembers: 20, churnedMembers: 5, growth: 15 },
+  { month: 'Oct', revenue: 4120000, members: 168, newMembers: 18, churnedMembers: 5, growth: 13 },
+  { month: 'Nov', revenue: 3850000, members: 150, newMembers: 5, churnedMembers: 23, growth: -18 },
+  { month: 'Dic', revenue: 4880000, members: 175, newMembers: 30, churnedMembers: 5, growth: 25 },
+  { month: 'Ene', revenue: 5200000, members: 204, newMembers: 35, churnedMembers: 6, growth: 29 },
 ];
 
 export const paymentMethodsData = [

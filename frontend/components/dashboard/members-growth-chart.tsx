@@ -8,12 +8,23 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  Cell,
 } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Users } from 'lucide-react';
 
+export interface MembersGrowthData {
+  month: string;
+  members: number;
+  newMembers: number; // Altas
+  churnedMembers: number; // Bajas
+  growth: number; // Neto
+}
+
 interface MembersGrowthChartProps {
-  data: Array<{ month: string; members: number }>;
+  data: MembersGrowthData[];
+  selectedMonth?: string;
+  onMonthSelect?: (month: string) => void;
 }
 
 const CHART_COLORS = {
@@ -22,25 +33,31 @@ const CHART_COLORS = {
   text: 'rgba(0, 0, 0, 0.5)',
 };
 
-function CustomTooltip({ active, payload, label }: { active?: boolean; payload?: Array<{ value: number }>; label?: string }) {
+function CustomTooltip({ active, payload, label }: { active?: boolean; payload?: any; label?: string }) {
   if (active && payload && payload.length) {
+    const data = payload[0].payload as MembersGrowthData;
     return (
-      <div className="rounded-lg border border-border bg-card px-3 py-2 shadow-lg">
-        <p className="text-xs text-muted-foreground">{label}</p>
-        <p className="text-sm font-semibold text-foreground">{payload[0].value} miembros</p>
+      <div className="rounded-lg border border-border bg-card px-3 py-2 shadow-lg z-50">
+        <p className="text-xs font-semibold text-slate-800 uppercase tracking-wider mb-1">{label}</p>
+        <div className="flex items-center gap-2">
+          <p className="text-base font-bold text-teal-600">{data.members} <span className="text-sm font-medium text-slate-500">alumnos</span></p>
+          <span className={`text-xs font-bold px-1.5 py-0.5 rounded-full ${data.growth >= 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}`}>
+            {data.growth > 0 ? '+' : ''}{data.growth}
+          </span>
+        </div>
       </div>
     );
   }
   return null;
 }
 
-export function MembersGrowthChart({ data }: MembersGrowthChartProps) {
+export function MembersGrowthChart({ data, selectedMonth, onMonthSelect }: MembersGrowthChartProps) {
   return (
     <Card className="border-border bg-card shadow-sm h-full">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-             <div className="rounded-lg bg-primary/10 p-2">
+            <div className="rounded-lg bg-primary/10 p-2">
               <Users className="h-5 w-5 text-primary" />
             </div>
             <CardTitle className="text-base font-semibold text-card-foreground">
@@ -70,8 +87,18 @@ export function MembersGrowthChart({ data }: MembersGrowthChartProps) {
                 axisLine={false}
                 width={35}
               />
-              <Tooltip content={<CustomTooltip />} />
-              <Bar dataKey="members" fill={CHART_COLORS.primary} radius={[4, 4, 0, 0]} />
+              <Tooltip content={<CustomTooltip />} cursor={{ fill: 'transparent' }} position={{ y: -10 }} />
+              <Bar dataKey="members" radius={[4, 4, 0, 0]}>
+                {data.map((entry, index) => (
+                  <Cell
+                    cursor="pointer"
+                    fill={selectedMonth === entry.month ? '#0f766e' : CHART_COLORS.primary}
+                    key={`cell-${index}`}
+                    onClick={() => onMonthSelect?.(entry.month)}
+                    className="transition-colors duration-200"
+                  />
+                ))}
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>
