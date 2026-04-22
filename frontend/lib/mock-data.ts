@@ -70,7 +70,7 @@ const plans: MembershipPlan[] = ['3 veces por semana', 'Libre', 'Funcional', 'Sa
 
 const generateMockMembers = (count: number): Member[] => {
   const members: Member[] = [];
-  const today = new Date('2026-02-13'); // Hoy simulado
+  const today = new Date('2026-04-22'); // Hoy simulado
   
   for (let i = 1; i <= count; i++) {
     const firstName = firstNames[i % firstNames.length];
@@ -162,20 +162,20 @@ export const paymentMethodsData = [
 export const recentPayments: Payment[] = [
   // --- FEBRERO 2026 (Mes Actual) ---
   // HOY (13/02)
-  { id: 'p501', memberId: '1',  memberName: 'Martín González',      amount: 50000, date: '2026-02-13', method: 'Efectivo',     concept: '3 veces x semana' },
-  { id: 'p502', memberId: '2',  memberName: 'Martín Fernández',     amount: 60000, date: '2026-02-13', method: 'Mercado Pago', concept: 'LIBRE' },
-  { id: 'p503', memberId: '3',  memberName: 'Lucía Pérez',          amount: 50000, date: '2026-02-13', method: 'Transferencia', concept: 'Funcional' },
+  { id: 'p501', memberId: '1',  memberName: 'Martín González',      amount: 50000, date: '2026-04-22', method: 'Efectivo',     concept: '3 veces x semana' },
+  { id: 'p502', memberId: '2',  memberName: 'Martín Fernández',     amount: 60000, date: '2026-04-22', method: 'Mercado Pago', concept: 'LIBRE' },
+  { id: 'p503', memberId: '3',  memberName: 'Lucía Pérez',          amount: 50000, date: '2026-04-22', method: 'Transferencia', concept: 'Funcional' },
   // AYER (12/02)
-  { id: 'p504', memberId: '4',  memberName: 'Santiago Rodríguez',   amount: 70000, date: '2026-02-12', method: 'Débito',       concept: 'M+F' },
-  { id: 'p505', memberId: '5',  memberName: 'Camila Martínez',      amount: 30000, date: '2026-02-12', method: 'Cuenta DNI',   concept: 'Stretching Global Activo' },
-  { id: 'p506', memberId: '6',  memberName: 'Tomás Díaz',           amount: 60000, date: '2026-02-12', method: 'Efectivo',     concept: 'LIBRE' },
+  { id: 'p504', memberId: '4',  memberName: 'Santiago Rodríguez',   amount: 70000, date: '2026-04-12', method: 'Débito',       concept: 'M+F' },
+  { id: 'p505', memberId: '5',  memberName: 'Camila Martínez',      amount: 30000, date: '2026-04-12', method: 'Cuenta DNI',   concept: 'Stretching Global Activo' },
+  { id: 'p506', memberId: '6',  memberName: 'Tomás Díaz',           amount: 60000, date: '2026-04-12', method: 'Efectivo',     concept: 'LIBRE' },
   // Otros Febrero
-  { id: 'p507', memberId: '7',  memberName: 'Valentina Sánchez',    amount: 50000, date: '2026-02-10', method: 'Transferencia', concept: '3 veces x semana' },
-  { id: 'p508', memberId: '8',  memberName: 'Nicolás Romero',       amount: 50000, date: '2026-02-08', method: 'Mercado Pago', concept: 'Funcional' },
-  { id: 'p509', memberId: '9',  memberName: 'Florencia Álvarez',    amount: 60000, date: '2026-02-05', method: 'Efectivo',     concept: 'LIBRE' }, 
-  { id: 'p510', memberId: '10', memberName: 'Agustín Torres',       amount: 50000, date: '2026-02-05', method: 'Mercado Pago', concept: 'Funcional' }, 
-  { id: 'p511', memberId: '11', memberName: 'Carolina Herrera',     amount: 50000, date: '2026-02-03', method: 'Transferencia', concept: 'Funcional' }, 
-  { id: 'p512', memberId: '12', memberName: 'Federico Morales',     amount: 70000, date: '2026-02-01', method: 'Débito',       concept: 'M+F' }, 
+  { id: 'p507', memberId: '7',  memberName: 'Valentina Sánchez',    amount: 50000, date: '2026-04-10', method: 'Transferencia', concept: '3 veces x semana' },
+  { id: 'p508', memberId: '8',  memberName: 'Nicolás Romero',       amount: 50000, date: '2026-04-08', method: 'Mercado Pago', concept: 'Funcional' },
+  { id: 'p509', memberId: '9',  memberName: 'Florencia Álvarez',    amount: 60000, date: '2026-04-05', method: 'Efectivo',     concept: 'LIBRE' }, 
+  { id: 'p510', memberId: '10', memberName: 'Agustín Torres',       amount: 50000, date: '2026-04-05', method: 'Mercado Pago', concept: 'Funcional' }, 
+  { id: 'p511', memberId: '11', memberName: 'Carolina Herrera',     amount: 50000, date: '2026-04-03', method: 'Transferencia', concept: 'Funcional' }, 
+  { id: 'p512', memberId: '12', memberName: 'Federico Morales',     amount: 70000, date: '2026-04-01', method: 'Débito',       concept: 'M+F' }, 
 
   // --- ENERO 2026 ---
   { id: 'p401', memberId: '1',  memberName: 'Martín González',      amount: 50000, date: '2026-01-15', method: 'Efectivo',     concept: '3 veces x semana' },
@@ -235,18 +235,18 @@ export const recentPayments: Payment[] = [
 ];
 
 export const mockExpenses: Expense[] = [
-  { id: 'e1', concept: 'Alquiler del Local (Febrero)', amount: 450000, date: '2026-02-05', category: 'Alquiler', method: 'Transferencia' },
-  { id: 'e2', concept: 'Factura EDESUR', amount: 85000, date: '2026-02-10', category: 'Servicios', method: 'Transferencia' },
-  { id: 'e3', concept: 'Kit de Limpieza Profunda', amount: 35000, date: '2026-02-12', category: 'Limpieza', method: 'Efectivo' },
-  { id: 'e4', concept: 'Service de Cintas (Técnico)', amount: 60000, date: '2026-02-02', category: 'Mantenimiento / Reparaciones', method: 'Mercado Pago' },
-  { id: 'e5', concept: 'Reparación Polea Cable Cross', amount: 45000, date: '2026-02-11', category: 'Mantenimiento / Reparaciones', method: 'Efectivo' },
-  { id: 'e6', concept: 'Papelería y Librería', amount: 15000, date: '2026-02-01', category: 'Varios', method: 'Efectivo' },
+  { id: 'e1', concept: 'Alquiler del Local (Febrero)', amount: 450000, date: '2026-04-05', category: 'Alquiler', method: 'Transferencia' },
+  { id: 'e2', concept: 'Factura EDESUR', amount: 85000, date: '2026-04-10', category: 'Servicios', method: 'Transferencia' },
+  { id: 'e3', concept: 'Kit de Limpieza Profunda', amount: 35000, date: '2026-04-12', category: 'Limpieza', method: 'Efectivo' },
+  { id: 'e4', concept: 'Service de Cintas (Técnico)', amount: 60000, date: '2026-04-02', category: 'Mantenimiento / Reparaciones', method: 'Mercado Pago' },
+  { id: 'e5', concept: 'Reparación Polea Cable Cross', amount: 45000, date: '2026-04-11', category: 'Mantenimiento / Reparaciones', method: 'Efectivo' },
+  { id: 'e6', concept: 'Papelería y Librería', amount: 15000, date: '2026-04-01', category: 'Varios', method: 'Efectivo' },
 ];
 
 export const todayExpiringMembers: Member[] = mockMembers.filter(m => m.status === 'Vencido');
 
 export const getUpcomingExpiries = (days: number = 3): Member[] => {
-  const today = new Date('2026-02-13');
+  const today = new Date('2026-04-22');
   const limitDate = new Date(today);
   limitDate.setDate(today.getDate() + days);
   
@@ -279,7 +279,7 @@ export function formatRelativeDate(dateStr: string, type: 'overdue' | 'today' | 
     return months === 1 ? 'Hace 1 mes' : `Hace ${months} meses`;
   }
   const targetDate = new Date(dateStr);
-  const now = new Date('2026-02-13'); 
+  const now = new Date('2026-04-22'); 
   const diffTime = Math.max(0, targetDate.getTime() - now.getTime());
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   if (diffDays === 0) return 'Mañana';
@@ -294,13 +294,13 @@ export function getOverdueMembers(): Member[] {
 export function getPaymentStats() {
   const totalRevenue = recentPayments.reduce((acc, p) => acc + p.amount, 0);
   const monthlyRevenue = recentPayments
-    .filter(p => p.date.startsWith('2026-02'))
+    .filter(p => p.date.startsWith('2026-04'))
     .reduce((acc, p) => acc + p.amount, 0);
   
   return {
     totalRevenue,
     monthlyRevenue,
-    monthlyCount: recentPayments.filter(p => p.date.startsWith('2026-02')).length,
+    monthlyCount: recentPayments.filter(p => p.date.startsWith('2026-04')).length,
   };
 }
 

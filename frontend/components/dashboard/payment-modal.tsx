@@ -13,7 +13,8 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Member, PLAN_PRICES, MembershipPlan, formatCurrency, formatDate } from '@/lib/mock-data';
+import { Member, MembershipPlan, formatCurrency, formatDate } from '@/lib/mock-data';
+import { useAppContext, Plan } from '@/lib/app-context';
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { format } from "date-fns"
@@ -28,10 +29,10 @@ interface PaymentModalProps {
 
 const SURCHARGE_RATE = 0.10;
 
-function getNextExpiryAfterPayment(): string {
-  const today = new Date('2026-02-13');
-  today.setMonth(today.getMonth() + 1);
-  return today.toISOString().split('T')[0];
+function getNextExpiryAfterPayment(currentExpiryStr?: string): string {
+  const d = currentExpiryStr ? new Date(`${currentExpiryStr}T12:00:00`) : new Date();
+  d.setMonth(d.getMonth() + 1);
+  return d.toISOString().split('T')[0];
 }
 
 const inputClass =
@@ -50,32 +51,38 @@ export function PaymentModal({ open, onOpenChange, member }: PaymentModalProps) 
   const [otherDetails, setOtherDetails] = useState('');
   const [step, setStep] = useState<'form' | 'success'>('form');
 
+  const { plans, addPayment } = useAppContext();
   const PAYMENT_METHODS: PaymentMethod[] = ['Efectivo', 'Transferencia', 'Cuenta DNI', 'Mercado Pago', 'Débito', 'Otros'];
 
   // Reset al abrir o cambiar de miembro
   useEffect(() => {
     if (open && member) {
       setSelectedPlan(member.plan);
-      const price = PLAN_PRICES[member.plan];
+      const matchedPlan = plans.find(p => p.name === member.plan);
+      const price = matchedPlan ? matchedPlan.price : 0;
       setBasePrice(price);
       const final = isOverdue ? Math.round(price * (1 + SURCHARGE_RATE)) : price;
       setCustomPrice(String(final));
       setPaymentMethod('Efectivo');
       if (member.nextExpiry) {
-        setPaymentDate(new Date(member.nextExpiry + "T12:00:00"));
+        const nextDateStr = getNextExpiryAfterPayment(member.nextExpiry);
+        setPaymentDate(new Date(nextDateStr + "T12:00:00"));
+      } else {
+        const nextDateStr = getNextExpiryAfterPayment();
+        setPaymentDate(new Date(nextDateStr + "T12:00:00"));
       }
       setOtherDetails('');
       setStep('form');
     }
   }, [open, member]);
 
-  // Actualizar precio al cambiar de plan
-  const handlePlanChange = (plan: MembershipPlan) => {
-    setSelectedPlan(plan);
-    const price = PLAN_PRICES[plan];
-    setBasePrice(price);
-    const final = isOverdue ? Math.round(price * (1 + SURCHARGE_RATE)) : price;
-    setCustomPrice(String(final));
+  const handlePlanChange = (planName: MembershipPlan) => {
+      setSelectedPlan(planName);
+      const matchedPlan = plans.find(p => p.name === planName);
+      const price = matchedPlan ? matchedPlan.price : 0;
+      setBasePrice(price);
+      const final = isOverdue ? Math.round(price * (1 + SURCHARGE_RATE)) : price;
+      setCustomPrice(String(final));
   };
 
   // Formatear número con separadores de miles (es-AR)
@@ -87,9 +94,21 @@ export function PaymentModal({ open, onOpenChange, member }: PaymentModalProps) 
 
   const numericPrice = parseInt(customPrice.replace(/\D/g, '')) || 0;
   const surchargeAmount = isOverdue ? Math.round(basePrice * SURCHARGE_RATE) : 0;
-  const nextExpiry = getNextExpiryAfterPayment();
+  const nextExpiry = getNextExpiryAfterPayment(member?.nextExpiry);
 
   const handleRegister = () => {
+    if (!member) return;
+    const finalExpiry = paymentDate ? format(paymentDate, 'yyyy-MM-dd') : nextExpiry;
+    addPayment({
+      id: `p${Date.now()}`,
+      memberId: member.id,
+      memberName: member.name,
+      amount: numericPrice,
+      date: new Date().toISOString().split('T')[0],
+      method: paymentMethod as any,
+      concept: selectedPlan || member.plan
+    }, selectedPlan, finalExpiry);
+    
     setStep('success');
   };
 
@@ -156,9 +175,9 @@ export function PaymentModal({ open, onOpenChange, member }: PaymentModalProps) 
                       <SelectValue placeholder="Seleccionar plan" />
                     </SelectTrigger>
                     <SelectContent>
-                      {(Object.keys(PLAN_PRICES) as MembershipPlan[]).map((plan) => (
-                        <SelectItem key={plan} value={plan}>
-                          {plan} — {formatCurrency(PLAN_PRICES[plan])}
+                      {plans.map((plan) => (
+                        <SelectItem key={plan.id} value={plan.name}>
+                          {plan.name} — {formatCurrency(plan.price)}
                         </SelectItem>
                       ))}
                     </SelectContent>

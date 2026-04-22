@@ -27,8 +27,9 @@ import {
   TableFooter,
 } from '@/components/ui/table';
 import { HighlightedText } from '@/components/ui/highlighted-text';
-import { mockExpenses, formatCurrency, getPaymentStats, revenueData } from '@/lib/mock-data';
+import { formatCurrency, revenueData } from '@/lib/mock-data';
 import type { Expense, ExpenseCategory } from '@/lib/mock-data';
+import { useAppContext } from '@/lib/app-context';
 
 // ─── Tipos y Utilidades ────────────────────────────────────────────────────────
 
@@ -36,12 +37,12 @@ type DateFilter = 'today' | 'yesterday' | 'week' | 'month' | 'all';
 type MethodFilter = 'Todos' | 'Efectivo' | 'Transferencia' | 'Mercado Pago' | 'Débito' | 'Cuenta DNI';
 type CategoryFilter = 'Todas' | ExpenseCategory;
 
-const TODAY = new Date('2026-02-13');
-const CURRENT_MONTH_STR = '2026-02';
+const getToday = () => new Date();
+const getCurrentMonthStr = () => new Date().toISOString().slice(0, 7);
 
 function getDateRange(filter: DateFilter): { from: Date; to: Date } | null {
-  const from = new Date(TODAY);
-  const to = new Date(TODAY);
+  const from = getToday();
+  const to = getToday();
   to.setHours(23, 59, 59, 999);
 
   switch (filter) {
@@ -112,8 +113,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 // ─── Componente Principal ────────────────────────────────────────────────────────
 
 export function ExpensesView() {
-  const [expenses, setExpenses] = useState<Expense[]>(mockExpenses);
-
+  const { expenses, payments, addExpense, deleteExpense } = useAppContext();
   const [searchQuery, setSearchQuery] = useState('');
   const [dateFilter, setDateFilter] = useState<DateFilter>('month');
   const [methodFilter, setMethodFilter] = useState<MethodFilter>('Todos');
@@ -144,23 +144,36 @@ export function ExpensesView() {
 
   const handleSearch = (val: string) => { setSearchQuery(val); setCurrentPage(1); };
 
-  // Macro Estadísticas del mes actual
-  const monthlyExpenses = useMemo(() => expenses.filter(e => e.date.startsWith(CURRENT_MONTH_STR)), [expenses]);
-  const totalMonth = monthlyExpenses.reduce((acc, e) => acc + e.amount, 0);
+  // -- Métrica Mensual (Gastos Totales y Beneficio Neto) --
+  const { totalMonthlyExpenses, monthlyNetBenefit, monthlyRevenue } = useMemo(() => {
+    const currentMonthStr = getCurrentMonthStr();
+    const monthlyExps = expenses.filter(e => e.date.startsWith(currentMonthStr));
+    const totalExp = monthlyExps.reduce((acc, curr) => acc + curr.amount, 0);
+    
+    const monthlyRevs = payments.filter(p => !p.voided && p.date.startsWith(currentMonthStr));
+    const totalRev = monthlyRevs.reduce((acc, curr) => acc + curr.amount, 0);
+    
+    return {
+      totalMonthlyExpenses: totalExp,
+      monthlyRevenue: totalRev,
+      monthlyNetBenefit: totalRev - totalExp
+    };
+  }, [expenses, payments]);
 
-  const monthRevenue = getPaymentStats().monthlyRevenue;
-  const netProfit = monthRevenue - totalMonth;
-  const isProfit = netProfit >= 0;
+  const isProfit = monthlyNetBenefit >= 0;
 
+  const monthlyExpenses = useMemo(() => {
+    const currentMonthStr = getCurrentMonthStr();
+    return expenses.filter(e => e.date.startsWith(currentMonthStr));
+  }, [expenses]);
   const catAlquiler = monthlyExpenses.filter(e => e.category === 'Alquiler').reduce((acc, e) => acc + e.amount, 0);
   const catServicios = monthlyExpenses.filter(e => e.category === 'Servicios').reduce((acc, e) => acc + e.amount, 0);
   const catMantenimiento = monthlyExpenses.filter(e => e.category === 'Mantenimiento / Reparaciones').reduce((acc, e) => acc + e.amount, 0);
 
   // Evolución histórica (Últimos 6 meses). Se aseguran datos coherentes sin caída a cero.
   const balanceHistory = useMemo(() => {
-    // Desvinculamos de revenueData para forzar coherencia con la vista de MTD.
-    const baseRevenue = monthRevenue > 0 ? monthRevenue : 650000;
-    const baseExpenses = totalMonth > 0 ? totalMonth : 690000;
+    const baseRevenue = monthlyRevenue > 0 ? monthlyRevenue : 650000;
+    const baseExpenses = totalMonthlyExpenses > 0 ? totalMonthlyExpenses : 690000;
 
     const history = [
       { name: 'Sep', Ingresos: baseRevenue * 0.90, Gastos: baseRevenue * 0.65 },
@@ -172,25 +185,24 @@ export function ExpensesView() {
     // Mes actual
     history.push({
       name: 'Feb',
-      Ingresos: baseRevenue,
-      Gastos: baseExpenses,
+      Ingresos: monthlyRevenue,
+      Gastos: totalMonthlyExpenses,
     });
     return history;
-  }, [monthRevenue, totalMonth]);
+  }, [monthlyRevenue, totalMonthlyExpenses]);
 
   // Handlers para acciones
   const handleQuickSave = () => {
     if (!newExpenseName || !newCategory || !newMethod || !newAmount) return;
 
-    const newExpense: Expense = {
+    addExpense({
       id: `e${Date.now()}`,
       concept: newExpenseName,
       amount: Number(newAmount.toString().replace(',', '.')),
       date: new Date().toISOString().split('T')[0],
       category: newCategory as ExpenseCategory,
       method: newMethod
-    };
-    setExpenses(prev => [newExpense, ...prev]);
+    });
 
     // Reset inputs
     setNewExpenseName('');
@@ -200,7 +212,7 @@ export function ExpensesView() {
   };
 
   const handleDelete = (id: string) => {
-    setExpenses(prev => prev.filter(e => e.id !== id));
+    deleteExpense(id);
     setIsDeleteModalOpen(false);
   };
 
@@ -273,17 +285,17 @@ export function ExpensesView() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               <div className="bg-slate-50 rounded-xl p-4 border border-slate-100 flex flex-col justify-center">
                 <span className="text-sm font-medium text-muted-foreground mb-1">Ingresos</span>
-                <span className="text-2xl font-black text-slate-800 tracking-tight">{formatCurrency(monthRevenue)}</span>
+                <span className="text-2xl font-black text-slate-800 tracking-tight">{formatCurrency(monthlyRevenue)}</span>
               </div>
               <div className="bg-slate-50 rounded-xl p-4 border border-slate-100 flex flex-col justify-center">
                 <span className="text-sm font-medium text-muted-foreground mb-1">Gastos</span>
-                <span className="text-2xl font-black text-slate-800 tracking-tight">{formatCurrency(totalMonth)}</span>
+                <span className="text-2xl font-black text-slate-800 tracking-tight">{formatCurrency(totalMonthlyExpenses)}</span>
               </div>
               <div className={`${isProfit ? 'bg-emerald-50 border-emerald-100' : 'bg-rose-50 border-rose-100'} rounded-xl p-4 border flex flex-col justify-center transition-colors`}>
                 <span className={`text-sm font-medium mb-1 ${isProfit ? 'text-emerald-700' : 'text-rose-700'}`}>Ganancia Neta</span>
                 <div className="flex items-baseline gap-2">
-                  <span className={`text-2xl font-black tracking-tight ${isProfit ? 'text-emerald-900' : 'text-rose-900'}`}>{formatCurrency(netProfit)}</span>
-                  <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${isProfit ? 'text-emerald-700 bg-emerald-100/50' : 'text-rose-700 bg-rose-100/50'}`}>{monthRevenue > 0 ? ((Math.abs(netProfit) / monthRevenue) * 100).toFixed(1) : '0'}%</span>
+                  <span className={`text-2xl font-black tracking-tight ${isProfit ? 'text-emerald-900' : 'text-rose-900'}`}>{formatCurrency(monthlyNetBenefit)}</span>
+                  <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${isProfit ? 'text-emerald-700 bg-emerald-100/50' : 'text-rose-700 bg-rose-100/50'}`}>{monthlyRevenue > 0 ? ((Math.abs(monthlyNetBenefit) / monthlyRevenue) * 100).toFixed(1) : '0'}%</span>
                 </div>
               </div>
             </div>
@@ -342,7 +354,7 @@ export function ExpensesView() {
             <div className="relative h-[240px] w-full flex items-center justify-center mb-10 shrink-0">
               <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10">
                 <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-widest mb-1">Total Gastado</span>
-                <span className="text-2xl font-black text-slate-800">{formatCurrency(totalMonth)}</span>
+                <span className="text-2xl font-black text-slate-800">{formatCurrency(totalMonthlyExpenses)}</span>
               </div>
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -394,7 +406,7 @@ export function ExpensesView() {
                     <span className="font-bold text-slate-800">{formatCurrency(item.value)}</span>
                   </div>
                   <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
-                    <div className={`${item.colorClass} h-full rounded-full transition-all duration-500`} style={{ width: totalMonth > 0 ? `${(item.value / totalMonth) * 100}%` : '0%' }}></div>
+                    <div className={`${item.colorClass} h-full rounded-full transition-all duration-500`} style={{ width: totalMonthlyExpenses > 0 ? `${(item.value / totalMonthlyExpenses) * 100}%` : '0%' }}></div>
                   </div>
                 </div>
               ))}

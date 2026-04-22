@@ -23,8 +23,9 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import type { Member } from '@/lib/mock-data';
-import { formatCurrency, formatDate, formatRelativeDate, PLAN_PRICES, getUpcomingExpiries } from '@/lib/mock-data';
+import { formatCurrency, formatDate, formatRelativeDate } from '@/lib/mock-data';
 import { PaymentModal } from '@/components/dashboard/payment-modal';
+import { useAppContext, Plan } from '@/lib/app-context';
 
 interface CollectionManagementWidgetProps {
   overdueMembers: Member[];
@@ -37,6 +38,7 @@ export function CollectionManagementWidget({
   todayExpiries,
   upcomingExpiries: initialUpcomingExpiries,
 }: CollectionManagementWidgetProps) {
+  const { members, plans } = useAppContext();
   const [contactCounts, setContactCounts] = useState<Record<string, number>>({});
   const [upcomingDaysFilter, setUpcomingDaysFilter] = useState<string>('3');
   const [activeTab, setActiveTab] = useState<string>('overdue');
@@ -44,8 +46,16 @@ export function CollectionManagementWidget({
   const [paymentMember, setPaymentMember] = useState<Member | null>(null);
 
   const upcomingExpiriesFiltered = useMemo(() => {
-    return getUpcomingExpiries(parseInt(upcomingDaysFilter));
-  }, [upcomingDaysFilter]);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const limitDate = new Date(today);
+    limitDate.setDate(today.getDate() + parseInt(upcomingDaysFilter));
+    return members.filter(m => {
+      if (m.status !== 'Activo') return false;
+      const expiryDate = new Date(`${m.nextExpiry}T00:00:00`);
+      return expiryDate > today && expiryDate <= limitDate;
+    }).sort((a, b) => new Date(`${a.nextExpiry}T00:00:00`).getTime() - new Date(`${b.nextExpiry}T00:00:00`).getTime());
+  }, [upcomingDaysFilter, members]);
   const handleWhatsApp = (member: Member, type: 'overdue' | 'today' | 'upcoming') => {
     const gymName = process.env.NEXT_PUBLIC_GYM_NAME || 'el gimnasio';
     let message = '';
@@ -53,10 +63,10 @@ export function CollectionManagementWidget({
     if (type === 'overdue') {
       message = encodeURIComponent(`Hola ${member.name.split(' ')[0]}, te escribimos desde ${gymName}. Notamos que tenés un saldo pendiente de ${formatCurrency(member.debt)}. ¿Podemos ayudarte a regularizar tu situación?`);
     } else if (type === 'today') {
-      const planPrice = PLAN_PRICES[member.plan];
+      const planPrice = plans.find(p => p.name === member.plan)?.price || 0;
       message = encodeURIComponent(`Hola ${member.name.split(' ')[0]}! Te escribimos desde ${gymName}. Tu membresía de ${member.plan} vence hoy. El valor para renovar es ${formatCurrency(planPrice)}. ¿Te gustaría renovar?`);
     } else {
-      const planPrice = PLAN_PRICES[member.plan];
+      const planPrice = plans.find(p => p.name === member.plan)?.price || 0;
       message = encodeURIComponent(`Hola ${member.name.split(' ')[0]}! Te contamos desde ${gymName} que tu membresía vence pronto (${formatDate(member.nextExpiry)}). Podés renovarla por ${formatCurrency(planPrice)}. ¡Te esperamos!`);
     }
 
@@ -131,13 +141,14 @@ export function CollectionManagementWidget({
                 ) : (
                   <TableCell className="bg-white px-6 py-4 whitespace-nowrap text-left">
                     <span className="font-semibold text-foreground">
-                      {formatCurrency(PLAN_PRICES[member.plan])}
+                      {member.plan}
+                      <span className="text-slate-400 mx-1">•</span>
+                      {formatCurrency(plans.find(p => p.name === member.plan)?.price || 0)}/mes
                     </span>
                   </TableCell>
                 )}
                 <TableCell className="bg-white px-6 py-4 whitespace-nowrap text-center">
                   <div className="flex items-center justify-center gap-2">
-                    {/* Cobrar: izquierda — neutral oscuro para jerarquía profesional */}
                     <button
                       className="h-8 flex items-center gap-1.5 px-3 rounded-lg bg-slate-800 text-white hover:bg-slate-700 transition-colors shadow-sm text-sm font-semibold cursor-pointer"
                       onClick={() => { setPaymentMember(member); setIsPaymentModalOpen(true); }}

@@ -13,14 +13,9 @@ import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { formatCurrency } from '@/lib/mock-data';
+import { useAppContext, Plan } from '@/lib/app-context';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
-
-interface Plan {
-  id: string;
-  name: string;
-  price: number;
-}
 
 interface TeamUser {
   id: string;
@@ -46,13 +41,6 @@ interface AuditEntry {
 }
 
 // ─── Mock inicial de planes ───────────────────────────────────────────────────
-
-const INITIAL_PLANS: Plan[] = [
-  { id: 'p1', name: 'Libre', price: 60000 },
-  { id: 'p2', name: '3 veces por semana', price: 50000 },
-  { id: 'p3', name: 'Funcional', price: 50000 },
-  { id: 'p4', name: 'Sala Musculación + Funcional', price: 70000 },
-];
 
 const INITIAL_USERS: TeamUser[] = [
   {
@@ -113,8 +101,8 @@ const formatPriceInput = (val: string) => {
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 export function SettingsView() {
+  const { plans, setPlans } = useAppContext();
   // Tarifario state
-  const [plans, setPlans] = useState<Plan[]>(INITIAL_PLANS);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState('');
   const [editPrice, setEditPrice] = useState('');

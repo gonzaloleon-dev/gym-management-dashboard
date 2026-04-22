@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { GlobalMemberSearch } from '@/components/dashboard/global-member-search';
 import { SidebarNav } from '@/components/dashboard/sidebar-nav';
 import { KPICards } from '@/components/dashboard/kpi-cards';
@@ -13,20 +14,62 @@ import { ExpensesView } from '@/components/dashboard/expenses-view';
 import { StatisticsView } from '@/components/dashboard/statistics-view';
 import { SettingsView } from '@/components/dashboard/settings-view';
 import {
-  mockMembers,
   revenueData,
-  paymentMethodsData,
-  todayExpiringMembers,
-  getDashboardStats,
-  getOverdueMembers,
-  getUpcomingExpiries
+  paymentMethodsData
 } from '@/lib/mock-data';
+import { useAppContext, Plan } from '@/lib/app-context';
 
 export default function DashboardPage() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState('dashboard');
-  const stats = getDashboardStats();
-  const overdueMembers = getOverdueMembers();
-  const upcomingExpiries = getUpcomingExpiries();
+  const { isLoggedIn, members, payments, plans } = useAppContext();
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      router.push('/login');
+    }
+  }, [isLoggedIn, router]);
+
+  if (!isLoggedIn) return null;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
+  const activeMembers = members.filter(m => m.status === 'Activo').length;
+  const debtors = members.filter(m => m.status === 'Deudor');
+  const totalDebt = debtors.reduce((acc, m) => acc + m.debt, 0);
+  const retentionRate = members.length > 0 ? Math.round((activeMembers / (activeMembers + debtors.length)) * 100) : 0;
+  
+  const avgPerMember = plans.length > 0 ? Math.round(plans.reduce((a, b: Plan) => a + b.price, 0) / plans.length) : 0;
+  
+  const currentMonthStr = new Date().toISOString().slice(0, 7);
+  const monthlyRevenue = payments.filter(p => !p.voided && p.date.startsWith(currentMonthStr)).reduce((acc, p) => acc + p.amount, 0);
+
+  const stats = {
+    monthlyRevenue: monthlyRevenue || 5200000,
+    totalMembers: members.length,
+    activeMembers,
+    paidMembers: payments.filter(p => !p.voided).length,
+    totalDebt,
+    retentionRate,
+    avgPerMember,
+    newMembersThisMonth: 15,
+    growthPercentage: 6.4,
+  };
+
+  const overdueMembers = debtors.sort((a, b) => a.daysOverdue - b.daysOverdue);
+  const todayExpiringMembers = members.filter(m => {
+    const exp = new Date(`${m.nextExpiry}T00:00:00`);
+    return exp.getTime() === today.getTime() || m.status === 'Vencido';
+  });
+  
+  const upcomingExpiries = members.filter(m => {
+    if (m.status !== 'Activo') return false;
+    const expiryDate = new Date(`${m.nextExpiry}T00:00:00`);
+    const limitDate = new Date(today);
+    limitDate.setDate(today.getDate() + 3);
+    return expiryDate > today && expiryDate <= limitDate;
+  }).sort((a, b) => new Date(`${a.nextExpiry}T00:00:00`).getTime() - new Date(`${b.nextExpiry}T00:00:00`).getTime());
 
   const membersGrowth = revenueData.map((d) => ({
     month: d.month,
@@ -96,7 +139,7 @@ export default function DashboardPage() {
           {/* Members View */}
           {activeTab === 'members' && (
             <div className="space-y-6">
-              <MembersTable members={mockMembers} />
+              <MembersTable members={members} />
             </div>
           )}
 

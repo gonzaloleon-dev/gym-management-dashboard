@@ -31,3 +31,5 @@ next-env.d.ts
 
 # Custom specific assets to ignore
 **/public/images/gym-logo.png
+
+MIGRATION_GUIDE.md

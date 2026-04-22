@@ -8,12 +8,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
+import { useAppContext } from '@/lib/app-context';
 
 const DEMO_USER = process.env.NEXT_PUBLIC_DEMO_USER || 'admin';
 const DEMO_PASS = process.env.NEXT_PUBLIC_DEMO_PASS || 'admin123';
 
 export function LoginForm() {
     const router = useRouter();
+    const { login } = useAppContext();
     const gymName = process.env.NEXT_PUBLIC_GYM_NAME || 'Gym Dashboard';
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -27,7 +29,7 @@ export function LoginForm() {
         setIsLoading(true);
         await new Promise((r) => setTimeout(r, 800));
         if (username === DEMO_USER && password === DEMO_PASS) {
-            sessionStorage.setItem('auth', 'true');
+            login();
             router.push('/');
         } else {
             setError('Usuario o contraseña incorrectos.');

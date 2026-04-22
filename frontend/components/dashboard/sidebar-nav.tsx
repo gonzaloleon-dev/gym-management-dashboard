@@ -15,6 +15,7 @@ import {
   TrendingDown,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useAppContext } from '@/lib/app-context';
 import { Button } from '@/components/ui/button';
 
 const navItems = [
@@ -33,10 +34,11 @@ interface SidebarNavProps {
 
 export function SidebarNav({ activeTab, onTabChange }: SidebarNavProps) {
   const router = useRouter();
+  const { logout } = useAppContext();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   const handleLogout = () => {
-    sessionStorage.removeItem('auth');
+    logout();
     router.push('/login');
   };
 

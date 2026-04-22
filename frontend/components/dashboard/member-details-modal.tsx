@@ -12,7 +12,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Member, PLAN_PRICES } from '@/lib/mock-data';
+import { Member } from '@/lib/mock-data';
+import { useAppContext, Plan } from '@/lib/app-context';
 import { Save, X, CalendarIcon } from 'lucide-react';
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
@@ -48,15 +49,79 @@ const inputClass = "h-10 bg-white border-stone-200 text-slate-900 placeholder:te
 
 export function MemberDetailsModal({ open, onOpenChange, member }: MemberDetailsModalProps) {
   const isEditing = !!member;
+  const { plans, addMember, updateMember } = useAppContext();
+  const [selectedPlan, setSelectedPlan] = useState<string>(member?.plan ?? plans[0]?.name ?? '');
   const [selectedOrigin, setSelectedOrigin] = useState<string>(member?.origin ?? 'Instagram');
+  const [joinDate, setJoinDate] = useState<Date | undefined>(
+    member?.joinDate ? new Date(member.joinDate + "T12:00:00") : new Date()
+  );
   const [expiryDate, setExpiryDate] = useState<Date | undefined>(
     member?.nextExpiry ? new Date(member.nextExpiry + "T12:00:00") : undefined
   );
 
   useEffect(() => {
+    setSelectedPlan(member?.plan ?? plans[0]?.name ?? '');
     setSelectedOrigin(member?.origin ?? 'Instagram');
-    setExpiryDate(member?.nextExpiry ? new Date(member.nextExpiry + "T12:00:00") : undefined);
-  }, [member, open]);
+    
+    if (member) {
+      setJoinDate(new Date(member.joinDate + "T12:00:00"));
+      setExpiryDate(new Date(member.nextExpiry + "T12:00:00"));
+    } else {
+      const today = new Date();
+      setJoinDate(today);
+      const nextMonth = new Date(today);
+      nextMonth.setMonth(nextMonth.getMonth() + 1);
+      setExpiryDate(nextMonth);
+    }
+  }, [member, open, plans]);
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const name = formData.get('name') as string;
+    const phone = formData.get('phone') as string;
+    const email = formData.get('email') as string;
+    const medicalNotes = formData.get('medicalNotes') as string;
+    const emergencyContactName = formData.get('emergencyContactName') as string;
+    const emergencyContactPhone = formData.get('emergencyContactPhone') as string;
+
+    if (isEditing) {
+      updateMember(member.id, {
+        name,
+        phone,
+        email,
+        plan: selectedPlan as any,
+        joinDate: joinDate ? format(joinDate, 'yyyy-MM-dd') : member.joinDate,
+        nextExpiry: expiryDate ? format(expiryDate, 'yyyy-MM-dd') : member.nextExpiry,
+        medicalNotes,
+        emergencyContactName,
+        emergencyContactPhone,
+        origin: selectedOrigin,
+      });
+    } else {
+      addMember({
+        id: `m${Date.now()}`,
+        dni: 'N/A',
+        name,
+        email,
+        phone,
+        plan: selectedPlan as any,
+        status: (expiryDate && new Date(expiryDate) < new Date()) ? 'Vencido' : 'Activo',
+        lastPayment: 'N/A',
+        nextExpiry: expiryDate ? format(expiryDate, 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd'),
+        debt: 0,
+        daysOverdue: 0,
+        joinDate: joinDate ? format(joinDate, 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd'),
+        medicalNotes,
+        emergencyContactName,
+        emergencyContactPhone,
+        personalObjective: 'Salud y bienestar',
+        origin: selectedOrigin,
+        initialPlan: selectedPlan as any,
+      });
+    }
+    onOpenChange(false);
+  };
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -88,7 +153,7 @@ export function MemberDetailsModal({ open, onOpenChange, member }: MemberDetails
         {/* Formulario scrollable sin scrollbar nativa */}
         <form
           className="flex-1 overflow-y-auto px-7 py-6 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
-          onSubmit={(e) => { e.preventDefault(); onOpenChange(false); }}
+          onSubmit={handleSubmit}
         >
           <div className="space-y-0">
 
@@ -97,14 +162,14 @@ export function MemberDetailsModal({ open, onOpenChange, member }: MemberDetails
               <SectionTitle first>Información Básica</SectionTitle>
               <div className="space-y-4">
                 <Field label="Nombre Completo">
-                  <Input id="name" defaultValue={member?.name ?? ''} placeholder="Ej. Juan Pérez" className={inputClass} />
+                  <Input name="name" id="name" defaultValue={member?.name ?? ''} placeholder="Ej. Juan Pérez" className={inputClass} required />
                 </Field>
                 <div className="grid grid-cols-2 gap-3">
                   <Field label="Teléfono / WhatsApp">
-                    <Input id="phone" defaultValue={member?.phone ?? ''} placeholder="+54 11 1234-5678" className={inputClass} />
+                    <Input name="phone" id="phone" defaultValue={member?.phone ?? ''} placeholder="+54 11 1234-5678" className={inputClass} />
                   </Field>
                   <Field label="Email">
-                    <Input id="email" type="email" defaultValue={member?.email ?? ''} placeholder="correo@mail.com" className={inputClass} />
+                    <Input name="email" id="email" type="email" defaultValue={member?.email ?? ''} placeholder="correo@mail.com" className={inputClass} />
                   </Field>
                 </div>
               </div>
@@ -116,42 +181,76 @@ export function MemberDetailsModal({ open, onOpenChange, member }: MemberDetails
               <div className="space-y-4">
                 <div className="grid grid-cols-1 gap-4">
                   <Field label="Plan Actual">
-                    <Select defaultValue={member?.plan ?? '3 veces x semana'}>
+                    <Select value={selectedPlan} onValueChange={setSelectedPlan}>
                       <SelectTrigger className={`${inputClass} w-full cursor-pointer text-slate-900`}>
                         <SelectValue placeholder="Seleccionar Plan" />
                       </SelectTrigger>
                       <SelectContent>
-                        {Object.keys(PLAN_PRICES).map(plan => (
-                          <SelectItem key={plan} value={plan}>{plan}</SelectItem>
+                        {plans.map(plan => (
+                          <SelectItem key={plan.id} value={plan.name}>{plan.name}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                   </Field>
-                  <Field label="Fecha de Inscripción">
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            inputClass,
-                            "w-full justify-start text-left font-normal pl-3 bg-white hover:bg-slate-50 border-slate-200 focus:bg-white text-slate-900 hover:text-slate-900",
-                            !expiryDate && "text-muted-foreground"
-                          )}
-                        >
-                          <CalendarIcon className="mr-2 h-4 w-4 text-slate-400" />
-                          {expiryDate ? format(expiryDate, "dd/MM/yyyy") : <span className="text-slate-400">Seleccionar fecha</span>}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={expiryDate}
-                          onSelect={setExpiryDate}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-                  </Field>
+                  <div className="grid grid-cols-2 gap-3">
+                    <Field label="Fecha de Inscripción">
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              inputClass,
+                              "w-full justify-start text-left font-normal pl-3 bg-white hover:bg-slate-50 border-slate-200 focus:bg-white text-slate-900 hover:text-slate-900",
+                              !joinDate && "text-muted-foreground"
+                            )}
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4 text-slate-400" />
+                            {joinDate ? format(joinDate, "dd/MM/yyyy") : <span className="text-slate-400">Seleccionar fecha</span>}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={joinDate}
+                            onSelect={(newDate) => {
+                              setJoinDate(newDate);
+                              if (!isEditing && newDate) {
+                                const nextM = new Date(newDate);
+                                nextM.setMonth(nextM.getMonth() + 1);
+                                setExpiryDate(nextM);
+                              }
+                            }}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </Field>
+                    <Field label="Fecha de Vencimiento">
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              inputClass,
+                              "w-full justify-start text-left font-normal pl-3 bg-white hover:bg-slate-50 border-slate-200 focus:bg-white text-slate-900 hover:text-slate-900",
+                              !expiryDate && "text-muted-foreground"
+                            )}
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4 text-slate-400" />
+                            {expiryDate ? format(expiryDate, "dd/MM/yyyy") : <span className="text-slate-400">Seleccionar fecha</span>}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={expiryDate}
+                            onSelect={setExpiryDate}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </Field>
+                  </div>
                 </div>
               </div>
             </section>
@@ -162,6 +261,7 @@ export function MemberDetailsModal({ open, onOpenChange, member }: MemberDetails
               <div className="space-y-4">
                 <Field label="Ficha Médica / Lesiones">
                   <Textarea
+                    name="medicalNotes"
                     id="medicalNotes"
                     defaultValue={member?.medicalNotes ?? ''}
                     placeholder="Ej. Lesión en rodilla, apto médico presentado, hipertensión..."
@@ -192,10 +292,10 @@ export function MemberDetailsModal({ open, onOpenChange, member }: MemberDetails
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-3">
                   <Field label="Contacto de Emergencia">
-                    <Input id="emergencyContactName" placeholder="Nombre" defaultValue={member?.emergencyContactName ?? ''} className={inputClass} />
+                    <Input name="emergencyContactName" id="emergencyContactName" placeholder="Nombre" defaultValue={member?.emergencyContactName ?? ''} className={inputClass} />
                   </Field>
                   <Field label="Tel. de Emergencia">
-                    <Input id="emergencyContactPhone" placeholder="Teléfono" defaultValue={member?.emergencyContactPhone ?? ''} className={inputClass} />
+                    <Input name="emergencyContactPhone" id="emergencyContactPhone" placeholder="Teléfono" defaultValue={member?.emergencyContactPhone ?? ''} className={inputClass} />
                   </Field>
                 </div>
                 <Field label="¿Cómo nos conoció?">

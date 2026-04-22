@@ -26,14 +26,15 @@ import {
   TableFooter,
 } from '@/components/ui/table';
 import { HighlightedText } from '@/components/ui/highlighted-text';
-import { recentPayments, formatCurrency, formatDate } from '@/lib/mock-data';
+import { formatCurrency, formatDate, Payment } from '@/lib/mock-data';
+import { useAppContext } from '@/lib/app-context';
 
 // ─── Tipos ────────────────────────────────────────────────────────────────────
 
 type DateFilter = 'today' | 'yesterday' | 'week' | 'month' | 'all';
 type MethodFilter = 'Todos' | 'Efectivo' | 'Transferencia' | 'Mercado Pago' | 'Débito' | 'Cuenta DNI';
 
-const TODAY = new Date('2026-02-13');
+const TODAY = new Date();
 
 function getDateRange(filter: DateFilter): { from: Date; to: Date } | null {
   const from = new Date(TODAY);
@@ -73,13 +74,13 @@ const ITEMS_PER_PAGE = 10;
 // ─── Componente ────────────────────────────────────────────────────────────────
 
 export function PaymentsView() {
+  const { payments, voidPayment } = useAppContext();
   const [searchQuery, setSearchQuery] = useState('');
   const [dateFilter, setDateFilter] = useState<DateFilter>('month');
   const [methodFilter, setMethodFilter] = useState<MethodFilter>('Todos');
-  const [voidedIds, setVoidedIds] = useState<Set<string>>(new Set());
   const [currentPage, setCurrentPage] = useState(1);
   const [isVoidModalOpen, setIsVoidModalOpen] = useState(false);
-  const [paymentToVoid, setPaymentToVoid] = useState<typeof recentPayments[0] | null>(null);
+  const [paymentToVoid, setPaymentToVoid] = useState<Payment | null>(null);
   const [sortBy, setSortBy] = useState<'recent' | 'amount' | 'member'>('recent');
 
   const hasActiveFilters = searchQuery !== '' || dateFilter !== 'month' || methodFilter !== 'Todos';
@@ -96,7 +97,7 @@ export function PaymentsView() {
   const handleMethodChange = (val: MethodFilter) => { setMethodFilter(val); setCurrentPage(1); };
 
   const handleVoid = (id: string) => {
-    setVoidedIds((prev) => new Set(prev).add(id));
+    voidPayment(id);
     setIsVoidModalOpen(false);
   };
 
@@ -109,10 +110,9 @@ export function PaymentsView() {
     // Verificamos si la búsqueda parece ser una fecha (contiene números o barras)
     const isPotentialDate = /[\d/]/.test(searchQuery);
 
-    return recentPayments.filter((p) => {
-      if (voidedIds.has(p.id)) return false;
-
-      // Búsqueda por fecha (parcial o completa en formato DD/MM/YYYY)
+    return payments.filter((p) => {
+      if (p.voided) return false;
+      // Si la búsqueda es estrictamente numérica, buscar coincidencia parcial en nombre o monto (opcional)
       if (isPotentialDate && searchQuery.trim()) {
         const [y, m, d] = p.date.split('-');
         const displayDate = `${d}/${m}/${y}`;
@@ -148,7 +148,7 @@ export function PaymentsView() {
       }
       return 0;
     });
-  }, [searchQuery, dateFilter, methodFilter, voidedIds, sortBy]);
+  }, [searchQuery, dateFilter, methodFilter, sortBy, payments]);
 
   // Totales para el desglose de caja
   const totalFiltered = filtered.reduce((acc, p) => acc + p.amount, 0);
