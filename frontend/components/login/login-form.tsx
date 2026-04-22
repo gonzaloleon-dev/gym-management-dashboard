@@ -52,7 +52,7 @@ export function LoginForm() {
                     {/* Logo */}
                     <div className="flex justify-center">
                         <Image
-                            src="/images/gym-logo.png"
+                            src={process.env.NEXT_PUBLIC_GYM_LOGO_PATH || "/images/gym-logo.png"}
                             alt={`Logo ${gymName}`}
                             width={160}
                             height={48}

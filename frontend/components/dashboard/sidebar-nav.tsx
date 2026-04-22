@@ -73,7 +73,7 @@ export function SidebarNav({ activeTab, onTabChange }: SidebarNavProps) {
           {/* Logo */}
           <div className="flex items-center gap-3 border-b border-sidebar-border px-6 py-5">
             <Image
-              src="/images/gym-logo.png"
+              src={process.env.NEXT_PUBLIC_GYM_LOGO_PATH || "/images/gym-logo.png"}
               alt={process.env.NEXT_PUBLIC_GYM_NAME || "Gym Logo"}
               width={140}
               height={40}
