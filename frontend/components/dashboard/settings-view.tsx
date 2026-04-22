@@ -45,9 +45,9 @@ interface AuditEntry {
 const INITIAL_USERS: TeamUser[] = [
   {
     id: 'u1',
-    name: 'Admin Principal',
+    name: 'Administrador',
     role: 'Administrador',
-    email: 'admin@naxion.com.ar',
+    email: 'admin@gimnasio.com',
     initials: 'AD',
     permissions: { viewFinances: true, viewStats: true, viewExpenses: true, deleteMembers: true },
   },
@@ -55,7 +55,7 @@ const INITIAL_USERS: TeamUser[] = [
     id: 'u2',
     name: 'Nicolás Herrera',
     role: 'Profesor',
-    email: 'nicolas@naxion.com.ar',
+    email: 'nicolas@gimnasio.com',
     initials: 'NH',
     permissions: { viewFinances: false, viewStats: false, viewExpenses: false, deleteMembers: true },
   },
@@ -63,7 +63,7 @@ const INITIAL_USERS: TeamUser[] = [
     id: 'u3',
     name: 'Valentina Torres',
     role: 'Profesor',
-    email: 'valentina@naxion.com.ar',
+    email: 'valentina@gimnasio.com',
     initials: 'VT',
     permissions: { viewFinances: false, viewStats: false, viewExpenses: false, deleteMembers: false },
   },
@@ -71,10 +71,10 @@ const INITIAL_USERS: TeamUser[] = [
 
 const AUDIT_LOG: AuditEntry[] = [
   { id: 'a1', user: 'Nicolás Herrera',   action: 'eliminó al miembro',  target: 'Juan Pérez',          timestamp: '14/04/2026 – 10:32', type: 'delete' },
-  { id: 'a2', user: 'Admin Principal',   action: 'editó el plan de',    target: 'Camila López',         timestamp: '14/04/2026 – 09:15', type: 'edit'   },
+  { id: 'a2', user: 'Administrador',   action: 'editó el plan de',    target: 'Camila López',         timestamp: '14/04/2026 – 09:15', type: 'edit'   },
   { id: 'a3', user: 'Valentina Torres',  action: 'registró el cobro de',target: 'Martín González',      timestamp: '13/04/2026 – 18:47', type: 'create' },
   { id: 'a4', user: 'Nicolás Herrera',   action: 'editó el vencimiento de', target: 'Sofía Díaz',      timestamp: '13/04/2026 – 16:02', type: 'edit'   },
-  { id: 'a5', user: 'Admin Principal',   action: 'eliminó el pago de',  target: 'Federico Romero',      timestamp: '12/04/2026 – 11:20', type: 'delete' },
+  { id: 'a5', user: 'Administrador',   action: 'eliminó el pago de',  target: 'Federico Romero',      timestamp: '12/04/2026 – 11:20', type: 'delete' },
   { id: 'a6', user: 'Valentina Torres',  action: 'creó el miembro',     target: 'Bautista Sosa',        timestamp: '11/04/2026 – 09:05', type: 'create' },
 ];
 

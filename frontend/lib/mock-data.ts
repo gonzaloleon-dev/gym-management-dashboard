@@ -236,7 +236,7 @@ export const recentPayments: Payment[] = [
 
 export const mockExpenses: Expense[] = [
   { id: 'e1', concept: 'Alquiler del Local (Febrero)', amount: 450000, date: '2026-04-05', category: 'Alquiler', method: 'Transferencia' },
-  { id: 'e2', concept: 'Factura EDESUR', amount: 85000, date: '2026-04-10', category: 'Servicios', method: 'Transferencia' },
+  { id: 'e2', concept: 'Factura Luz', amount: 85000, date: '2026-04-10', category: 'Servicios', method: 'Transferencia' },
   { id: 'e3', concept: 'Kit de Limpieza Profunda', amount: 35000, date: '2026-04-12', category: 'Limpieza', method: 'Efectivo' },
   { id: 'e4', concept: 'Service de Cintas (Técnico)', amount: 60000, date: '2026-04-02', category: 'Mantenimiento / Reparaciones', method: 'Mercado Pago' },
   { id: 'e5', concept: 'Reparación Polea Cable Cross', amount: 45000, date: '2026-04-11', category: 'Mantenimiento / Reparaciones', method: 'Efectivo' },
