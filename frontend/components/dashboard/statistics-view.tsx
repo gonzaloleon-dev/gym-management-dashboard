@@ -35,6 +35,35 @@ import { MembersGrowthChart } from '@/components/dashboard/members-growth-chart'
 const PIE_COLORS = ['#14b8a6', '#f59e0b', '#64748b', '#059669'];
 const STATUS_COLORS = ['#14b8a6', '#f59e0b', '#ef4444'];
 
+// Tooltip custom para la dona — color calculado por posición en planData
+const PlanTooltip = ({
+  active,
+  payload,
+  planData,
+}: {
+  active?: boolean;
+  payload?: Array<{ name: string; value: number }>;
+  planData: Array<{ name: string; value: number }>;
+}) => {
+  if (!active || !payload || !payload.length) return null;
+  const entry = payload[0];
+  const colorIndex = planData.findIndex((p) => p.name === entry.name);
+  const color = PIE_COLORS[colorIndex >= 0 ? colorIndex : 0];
+  return (
+    <div className="bg-white border border-slate-200 rounded-xl shadow-lg px-4 py-3 flex items-center gap-3 pointer-events-none">
+      <div className="h-3 w-3 rounded-full shrink-0" style={{ backgroundColor: color }} />
+      <div>
+        <p className="text-xs text-slate-500 font-medium leading-none mb-1">Plan</p>
+        <p className="text-sm font-bold text-slate-800 leading-none">{entry.name}</p>
+      </div>
+      <div className="ml-3 pl-3 border-l border-slate-200">
+        <p className="text-xs text-slate-500 font-medium leading-none mb-1">Alumnos</p>
+        <p className="text-sm font-bold text-slate-800 leading-none">{entry.value}</p>
+      </div>
+    </div>
+  );
+};
+
 export function StatisticsView() {
   const stats = getDashboardStats();
   const { members, plans } = useAppContext();
@@ -46,14 +75,15 @@ export function StatisticsView() {
     revenueData[revenueData.length - 1].month
   );
 
-  // Plan distribution — usa contexto dinámico
+  // Plan distribution — usa contexto dinámico (ordenado mayor a menor)
   const planCounts: Record<string, number> = {};
   Object.keys(PLAN_PRICES).forEach((plan) => {
     planCounts[plan] = members.filter((m) => m.plan === plan).length;
   });
   const planData = Object.entries(planCounts)
     .filter(([, value]) => value > 0)
-    .map(([name, value]) => ({ name, value }));
+    .map(([name, value]) => ({ name, value }))
+    .sort((a, b) => b.value - a.value);
 
   // Status distribution — usa contexto dinámico
   const statusData = [
@@ -279,35 +309,40 @@ export function StatisticsView() {
                             ))}
                           </Pie>
                           <Tooltip
-                            formatter={(value: number, name: string) => [`${value} alumnos`, name]}
-                            contentStyle={{
-                              background: 'white',
-                              border: '1px solid #e5e7eb',
-                              borderRadius: '8px',
-                              fontSize: '13px',
-                            }}
+                            content={(props) => <PlanTooltip {...props} planData={planData} />}
+                            position={{ y: -20 }}
                           />
                         </PieChart>
                       </ResponsiveContainer>
-                      {/* Centro de la dona — position: absolute funciona porque el padre es relative */}
+                      {/* Centro de la dona */}
                       <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                         <span className="text-3xl font-bold text-slate-900">{totalMembers}</span>
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Alumnos</span>
                       </div>
                     </div>
 
-                    {/* Leyenda */}
-                    <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2">
-                      {planData.map((item, index) => (
-                        <div key={item.name} className="flex items-center gap-2 text-xs">
-                          <div
-                            className="h-2.5 w-2.5 rounded-full shrink-0"
-                            style={{ backgroundColor: PIE_COLORS[index % PIE_COLORS.length] }}
-                          />
-                          <span className="text-muted-foreground truncate">{item.name}</span>
-                          <span className="font-semibold text-slate-800 ml-auto">{item.value}</span>
-                        </div>
-                      ))}
+                    {/* Leyenda — ordenada mayor a menor con barra proporcional */}
+                    <div className="mt-5 space-y-3">
+                      {planData.map((item, index) => {
+                        const pct = totalMembers > 0 ? Math.round((item.value / totalMembers) * 100) : 0;
+                        return (
+                          <div key={item.name} className="flex items-center gap-3">
+                            <div
+                              className="h-3 w-3 rounded-full shrink-0"
+                              style={{ backgroundColor: PIE_COLORS[index % PIE_COLORS.length] }}
+                            />
+                            <span className="text-sm text-slate-700 flex-1 truncate">{item.name}</span>
+                            <div className="w-20 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                              <div
+                                className="h-full rounded-full transition-all duration-500"
+                                style={{ width: `${pct}%`, backgroundColor: PIE_COLORS[index % PIE_COLORS.length] }}
+                              />
+                            </div>
+                            <span className="text-sm font-semibold text-slate-800 w-6 text-right">{item.value}</span>
+                            <span className="text-xs text-slate-400 w-8 text-right">{pct}%</span>
+                          </div>
+                        );
+                      })}
                     </div>
                   </CardContent>
                 </Card>
@@ -339,12 +374,11 @@ export function StatisticsView() {
                   <CardContent className="pt-0">
                     <div className="space-y-5">
                       {[
-                        { name: 'Instagram',          color: '#14b8a6' },
-                        { name: 'Recomendación',      color: '#0ea5e9' },
-                        { name: 'Pasa por la puerta', color: '#f59e0b' },
-                        { name: 'Facebook',           color: '#6366f1' },
-                        { name: 'Google',             color: '#10b981' },
-                        { name: 'Otro',               color: '#94a3b8' },
+                        { name: 'Instagram / TikTok',          color: '#14b8a6' },
+                        { name: 'Referido por alumno',          color: '#0ea5e9' },
+                        { name: 'Visto al pasar',               color: '#f59e0b' },
+                        { name: 'Google Maps',                  color: '#10b981' },
+                        { name: 'Otro',                        color: '#94a3b8' },
                       ].map((item, idx) => {
                         const count = members.filter((m) => m.origin === item.name).length;
                         const percentage = members.length > 0
@@ -360,7 +394,7 @@ export function StatisticsView() {
                                 <span className="text-xs text-muted-foreground">({count} alumnos)</span>
                               </div>
                             </div>
-                            <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                            <div className="h-2 w-full bg-slate-200/50 rounded-full overflow-hidden">
                               <div
                                 className="h-full rounded-full bar-animate"
                                 style={{ width: `${percentage}%`, backgroundColor: item.color, animationDelay: `${idx * 80}ms` }}
@@ -377,8 +411,8 @@ export function StatisticsView() {
                 <Card className="border-border bg-card shadow-sm">
                   <CardHeader className="pb-3">
                     <div className="flex items-center gap-2">
-                      <div className="rounded-lg bg-teal-50 p-2">
-                        <ShieldCheck className="h-5 w-5 text-teal-600" />
+                      <div className="rounded-lg bg-primary/10 p-2">
+                        <ShieldCheck className="h-5 w-5 text-primary" />
                       </div>
                       <CardTitle className="text-base font-semibold text-card-foreground">
                         Estado de Membresías
@@ -405,7 +439,7 @@ export function StatisticsView() {
                                 <span className="text-xs text-muted-foreground">({item.value} {item.label})</span>
                               </div>
                             </div>
-                            <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                            <div className="h-2 w-full bg-slate-200/50 rounded-full overflow-hidden">
                               <div
                                 className="h-full rounded-full bar-animate"
                                 style={{ width: `${percentage}%`, backgroundColor: item.color, animationDelay: `${idx * 100}ms` }}

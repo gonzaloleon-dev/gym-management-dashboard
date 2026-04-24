@@ -304,11 +304,10 @@ export function MemberDetailsModal({ open, onOpenChange, member }: MemberDetails
                       <SelectValue placeholder="Seleccionar Origen" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Instagram">Instagram</SelectItem>
-                      <SelectItem value="Facebook">Facebook</SelectItem>
-                      <SelectItem value="Google">Google</SelectItem>
-                      <SelectItem value="Pasa por la puerta">Pasa por la puerta</SelectItem>
-                      <SelectItem value="Recomendación">Recomendación de otro alumno</SelectItem>
+                      <SelectItem value="Instagram / TikTok">Instagram / TikTok</SelectItem>
+                      <SelectItem value="Referido por alumno">Referido por alumno</SelectItem>
+                      <SelectItem value="Visto al pasar">Visto al pasar</SelectItem>
+                      <SelectItem value="Google Maps">Google Maps</SelectItem>
                       <SelectItem value="Otro">Otro (especificar)</SelectItem>
                     </SelectContent>
                   </Select>
