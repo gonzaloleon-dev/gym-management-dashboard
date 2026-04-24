@@ -96,7 +96,7 @@ export function SidebarNav({ activeTab, onTabChange }: SidebarNavProps) {
                     setIsMobileOpen(false);
                   }}
                   className={cn(
-                    'relative flex w-full items-center gap-3 rounded-r-lg px-3 py-3 text-sm font-medium transition-all duration-200',
+                    'relative flex w-full items-center gap-3 rounded-r-lg px-3 py-3 text-sm font-medium transition-all duration-200 cursor-pointer',
                     isActive
                       ? 'bg-primary/8 text-primary border-l-[3px] border-l-primary rounded-l-none'
                       : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground border-l-[3px] border-l-transparent'

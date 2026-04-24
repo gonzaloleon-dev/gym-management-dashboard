@@ -18,6 +18,7 @@ import {
   TrendingUp,
   PieChart as PieChartIcon,
   ShieldCheck,
+  Banknote,
 } from 'lucide-react';
 import {
   mockMembers,
@@ -27,6 +28,7 @@ import {
   paymentMethodsData,
   getDashboardStats,
 } from '@/lib/mock-data';
+import { useAppContext } from '@/lib/app-context';
 import { PaymentMethodsChart } from '@/components/dashboard/payment-methods-chart';
 import { MembersGrowthChart } from '@/components/dashboard/members-growth-chart';
 
@@ -35,24 +37,29 @@ const STATUS_COLORS = ['#14b8a6', '#f59e0b', '#ef4444'];
 
 export function StatisticsView() {
   const stats = getDashboardStats();
+  const { members, plans } = useAppContext();
+  const totalMembers = members.length;
+  const avgPerMember = plans.length > 0
+    ? Math.round(plans.reduce((a, b) => a + b.price, 0) / plans.length)
+    : stats.avgPerMember;
   const [selectedMonth, setSelectedMonth] = useState<string>(
     revenueData[revenueData.length - 1].month
   );
 
-  // Plan distribution
+  // Plan distribution — usa contexto dinámico
   const planCounts: Record<string, number> = {};
   Object.keys(PLAN_PRICES).forEach((plan) => {
-    planCounts[plan] = mockMembers.filter((m) => m.plan === plan).length;
+    planCounts[plan] = members.filter((m) => m.plan === plan).length;
   });
   const planData = Object.entries(planCounts)
     .filter(([, value]) => value > 0)
     .map(([name, value]) => ({ name, value }));
 
-  // Status distribution
+  // Status distribution — usa contexto dinámico
   const statusData = [
-    { name: 'Activos', value: mockMembers.filter((m) => m.status === 'Activo').length },
-    { name: 'Vencidos', value: mockMembers.filter((m) => m.status === 'Vencido').length },
-    { name: 'Deudores', value: mockMembers.filter((m) => m.status === 'Deudor').length },
+    { name: 'Activos',   value: members.filter((m) => m.status === 'Activo').length },
+    { name: 'Vencidos',  value: members.filter((m) => m.status === 'Vencido').length },
+    { name: 'Deudores',  value: members.filter((m) => m.status === 'Deudor').length },
   ];
 
   // Growth data
@@ -72,28 +79,60 @@ export function StatisticsView() {
     <div className="space-y-6">
       {/* Fila 1: KPIs */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {/* Total Miembros */}
         <Card className="border-border bg-card shadow-sm">
           <CardContent className="p-5">
-            <p className="text-sm text-muted-foreground mb-1">Total Miembros</p>
-            <p className="text-3xl font-bold text-card-foreground">{stats.totalMembers}</p>
+            <div className="flex items-start justify-between">
+              <div className="space-y-2 flex-1">
+                <p className="text-sm text-muted-foreground">Total Miembros</p>
+                <p className="text-2xl font-bold text-card-foreground">{totalMembers}</p>
+              </div>
+              <div className="rounded-lg p-2.5 shrink-0 bg-primary/10">
+                <Users className="h-5 w-5 text-primary" />
+              </div>
+            </div>
           </CardContent>
         </Card>
+        {/* Tasa de Retención */}
         <Card className="border-border bg-card shadow-sm">
           <CardContent className="p-5">
-            <p className="text-sm text-muted-foreground mb-1">Tasa de Retención</p>
-            <p className="text-3xl font-bold text-primary">{stats.retentionRate}%</p>
+            <div className="flex items-start justify-between">
+              <div className="space-y-2 flex-1">
+                <p className="text-sm text-muted-foreground">Tasa de Retención</p>
+                <p className="text-2xl font-bold text-primary">{stats.retentionRate}%</p>
+              </div>
+              <div className="rounded-lg p-2.5 shrink-0 bg-primary/10">
+                <ShieldCheck className="h-5 w-5 text-primary" />
+              </div>
+            </div>
           </CardContent>
         </Card>
+        {/* Cuota Promedio */}
         <Card className="border-border bg-card shadow-sm">
           <CardContent className="p-5">
-            <p className="text-sm text-muted-foreground mb-1">Ticket Promedio</p>
-            <p className="text-3xl font-bold text-card-foreground">{formatCurrency(stats.avgPerMember)}</p>
+            <div className="flex items-start justify-between">
+              <div className="space-y-2 flex-1">
+                <p className="text-sm text-muted-foreground">Cuota Promedio</p>
+                <p className="text-2xl font-bold text-card-foreground">{formatCurrency(avgPerMember)}</p>
+              </div>
+              <div className="rounded-lg p-2.5 shrink-0 bg-primary/10">
+                <Banknote className="h-5 w-5 text-primary" />
+              </div>
+            </div>
           </CardContent>
         </Card>
+        {/* Crecimiento Mensual */}
         <Card className="border-border bg-card shadow-sm">
           <CardContent className="p-5">
-            <p className="text-sm text-muted-foreground mb-1">Crecimiento Mensual</p>
-            <p className="text-3xl font-bold text-primary">+{stats.growthPercentage}%</p>
+            <div className="flex items-start justify-between">
+              <div className="space-y-2 flex-1">
+                <p className="text-sm text-muted-foreground">Crecimiento Mensual</p>
+                <p className="text-2xl font-bold text-primary">+{stats.growthPercentage}%</p>
+              </div>
+              <div className="rounded-lg p-2.5 shrink-0 bg-primary/10">
+                <TrendingUp className="h-5 w-5 text-primary" />
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -142,8 +181,8 @@ export function StatisticsView() {
                   <CardHeader className="pb-2">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <div className="rounded-lg bg-teal-50 p-2">
-                          <Activity className="h-5 w-5 text-teal-600" />
+                        <div className="rounded-lg bg-primary/10 p-2">
+                          <Activity className="h-5 w-5 text-primary" />
                         </div>
                         <CardTitle className="text-base font-semibold text-card-foreground">
                           Flujo de Miembros
@@ -206,8 +245,8 @@ export function StatisticsView() {
                 <Card className="border-border bg-card shadow-sm flex flex-col">
                   <CardHeader className="pb-2">
                     <div className="flex items-center gap-2">
-                      <div className="rounded-lg bg-teal-50 p-2">
-                        <PieChartIcon className="h-5 w-5 text-teal-600" />
+                      <div className="rounded-lg bg-primary/10 p-2">
+                        <PieChartIcon className="h-5 w-5 text-primary" />
                       </div>
                       <CardTitle className="text-base font-semibold text-card-foreground">
                         Distribución por Plan
@@ -252,7 +291,7 @@ export function StatisticsView() {
                       </ResponsiveContainer>
                       {/* Centro de la dona — position: absolute funciona porque el padre es relative */}
                       <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                        <span className="text-3xl font-bold text-slate-900">{stats.totalMembers}</span>
+                        <span className="text-3xl font-bold text-slate-900">{totalMembers}</span>
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Alumnos</span>
                       </div>
                     </div>
@@ -288,8 +327,8 @@ export function StatisticsView() {
                 <Card className="border-border bg-card shadow-sm">
                   <CardHeader className="pb-3">
                     <div className="flex items-center gap-2">
-                      <div className="rounded-lg bg-emerald-50 p-2">
-                        <Users className="h-5 w-5 text-emerald-600" />
+                      <div className="rounded-lg bg-primary/10 p-2">
+                        <Users className="h-5 w-5 text-primary" />
                       </div>
                       <CardTitle className="text-base font-semibold text-card-foreground">
                         Origen de Alumnos
@@ -307,9 +346,9 @@ export function StatisticsView() {
                         { name: 'Google',             color: '#10b981' },
                         { name: 'Otro',               color: '#94a3b8' },
                       ].map((item, idx) => {
-                        const count = mockMembers.filter((m) => m.origin === item.name).length;
-                        const percentage = mockMembers.length > 0
-                          ? Math.round((count / mockMembers.length) * 100)
+                        const count = members.filter((m) => m.origin === item.name).length;
+                        const percentage = members.length > 0
+                          ? Math.round((count / members.length) * 100)
                           : 0;
                         if (count === 0) return null;
                         return (
@@ -350,12 +389,12 @@ export function StatisticsView() {
                   <CardContent className="pt-0">
                     <div className="space-y-5">
                       {[
-                        { name: 'Activos',    value: mockMembers.filter((m) => m.status === 'Activo').length,  color: '#14b8a6', label: 'alumnos al día' },
-                        { name: 'Vencen Hoy', value: mockMembers.filter((m) => m.status === 'Vencido').length, color: '#f59e0b', label: 'a renovar hoy' },
-                        { name: 'Deudores',   value: mockMembers.filter((m) => m.status === 'Deudor').length,  color: '#ef4444', label: 'con deuda' },
+                        { name: 'Activos',    value: members.filter((m) => m.status === 'Activo').length,  color: '#14b8a6', label: 'alumnos al día' },
+                        { name: 'Vencen Hoy', value: members.filter((m) => m.status === 'Vencido').length, color: '#f59e0b', label: 'a renovar hoy' },
+                        { name: 'Deudores',   value: members.filter((m) => m.status === 'Deudor').length,  color: '#ef4444', label: 'con deuda' },
                       ].map((item, idx) => {
-                        const percentage = mockMembers.length > 0
-                          ? Math.round((item.value / mockMembers.length) * 100)
+                        const percentage = members.length > 0
+                          ? Math.round((item.value / members.length) * 100)
                           : 0;
                         return (
                           <div key={item.name} className="space-y-1.5">
@@ -379,7 +418,7 @@ export function StatisticsView() {
                       {/* Totalizador */}
                       <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
                         <span className="text-sm font-semibold text-slate-700">Total registrados</span>
-                        <span className="text-sm font-bold text-slate-900">{mockMembers.length} alumnos</span>
+                        <span className="text-sm font-bold text-slate-900">{members.length} alumnos</span>
                       </div>
                     </div>
                   </CardContent>

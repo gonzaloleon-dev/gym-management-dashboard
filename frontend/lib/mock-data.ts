@@ -70,7 +70,7 @@ const plans: MembershipPlan[] = ['3 veces por semana', 'Libre', 'Funcional', 'Sa
 
 const generateMockMembers = (count: number): Member[] => {
   const members: Member[] = [];
-  const today = new Date('2026-04-22'); // Hoy simulado
+  const today = new Date();
   
   for (let i = 1; i <= count; i++) {
     const firstName = firstNames[i % firstNames.length];
@@ -125,12 +125,16 @@ const generateMockMembers = (count: number): Member[] => {
       emergencyContactPhone: '+54 11 0000-0000',
       personalObjective: 'Salud y bienestar',
       origin: (
-        i % 6 === 0 ? 'Instagram'
-        : i % 6 === 1 ? 'Recomendación'
-        : i % 6 === 2 ? 'Pasa por la puerta'
-        : i % 6 === 3 ? 'Facebook'
-        : i % 6 === 4 ? 'Google'
-        : 'Otro'
+        i % 10 === 0 ? 'Instagram'
+        : i % 10 === 1 ? 'Instagram'
+        : i % 10 === 2 ? 'Recomendación'
+        : i % 10 === 3 ? 'Recomendación'
+        : i % 10 === 4 ? 'Recomendación'
+        : i % 10 === 5 ? 'Pasa por la puerta'
+        : i % 10 === 6 ? 'Facebook'
+        : i % 10 === 7 ? 'Google'
+        : i % 10 === 8 ? 'Otro'
+        : 'Instagram'
       ),
       initialPlan: '3 veces x semana',
     });
