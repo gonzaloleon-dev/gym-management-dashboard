@@ -16,34 +16,34 @@ interface PaymentMethodsChartProps {
 
 const getIcon = (method: string) => {
   switch (method.toLowerCase()) {
-    case 'efectivo': return <Banknote className="h-4 w-4 text-emerald-600" />;
-    case 'transferencia': return <Landmark className="h-4 w-4 text-blue-600" />;
-    case 'cuenta dni': return <Landmark className="h-4 w-4 text-violet-600" />;
-    case 'mercado pago': return <Activity className="h-4 w-4 text-sky-500" />;
-    case 'débito': return <CreditCard className="h-4 w-4 text-indigo-600" />;
-    default: return <Wallet className="h-4 w-4 text-slate-600" />;
+    case 'efectivo':     return <Banknote   className="h-4 w-4 text-teal-600"   />;
+    case 'transferencia': return <Landmark  className="h-4 w-4 text-blue-700"   />;
+    case 'mercado pago':  return <Activity  className="h-4 w-4 text-sky-500"    />;
+    case 'cuenta dni':    return <Landmark  className="h-4 w-4 text-slate-500"  />;
+    case 'débito':        return <CreditCard className="h-4 w-4 text-amber-600"  />;
+    default:              return <Wallet    className="h-4 w-4 text-slate-600"  />;
   }
 };
 
 const getBgColor = (method: string) => {
   switch (method.toLowerCase()) {
-    case 'efectivo': return 'bg-emerald-50';
+    case 'efectivo':      return 'bg-teal-50';
     case 'transferencia': return 'bg-blue-50';
-    case 'cuenta dni': return 'bg-violet-50';
-    case 'mercado pago': return 'bg-sky-50';
-    case 'débito': return 'bg-indigo-50';
-    default: return 'bg-slate-50';
+    case 'mercado pago':  return 'bg-sky-50';
+    case 'cuenta dni':    return 'bg-slate-100';
+    case 'débito':        return 'bg-amber-50';
+    default:              return 'bg-slate-50';
   }
 };
 
 const getProgressColor = (method: string) => {
   switch (method.toLowerCase()) {
-    case 'efectivo': return 'bg-emerald-500';
-    case 'transferencia': return 'bg-blue-500';
-    case 'cuenta dni': return 'bg-violet-500';
-    case 'mercado pago': return 'bg-sky-500';
-    case 'débito': return 'bg-indigo-500';
-    default: return 'bg-slate-500';
+    case 'efectivo':      return 'bg-teal-500';
+    case 'transferencia': return 'bg-blue-700';
+    case 'mercado pago':  return 'bg-sky-500';
+    case 'cuenta dni':    return 'bg-slate-400';
+    case 'débito':        return 'bg-amber-500';
+    default:              return 'bg-slate-500';
   }
 };
 
@@ -56,8 +56,8 @@ export function PaymentMethodsChart({ data }: PaymentMethodsChartProps) {
     <Card className="border-border bg-card shadow-sm h-full flex flex-col">
       <CardHeader className="pb-4">
         <div className="flex items-center gap-2">
-          <div className="rounded-lg bg-teal-50 p-2">
-            <Wallet className="h-5 w-5 text-teal-600" />
+          <div className="rounded-lg bg-primary/10 p-2">
+            <Wallet className="h-5 w-5 text-primary" />
           </div>
           <CardTitle className="text-base font-semibold text-card-foreground">
             Métodos de Pago del Mes

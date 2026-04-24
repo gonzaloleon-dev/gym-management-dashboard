@@ -32,7 +32,7 @@ import { useAppContext } from '@/lib/app-context';
 import { PaymentMethodsChart } from '@/components/dashboard/payment-methods-chart';
 import { MembersGrowthChart } from '@/components/dashboard/members-growth-chart';
 
-const PIE_COLORS = ['#14b8a6', '#f59e0b', '#0ea5e9', '#6366f1'];
+const PIE_COLORS = ['#14b8a6', '#f59e0b', '#64748b', '#059669'];
 const STATUS_COLORS = ['#14b8a6', '#f59e0b', '#ef4444'];
 
 export function StatisticsView() {
