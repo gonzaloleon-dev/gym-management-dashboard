@@ -68,27 +68,75 @@ const firstNames = ['Martín', 'Lucía', 'Santiago', 'Camila', 'Tomás', 'Valent
 const lastNames = ['González', 'Fernández', 'Rodríguez', 'López', 'Martínez', 'Pérez', 'Díaz', 'Sánchez', 'Romero', 'Álvarez', 'Torres', 'Herrera', 'Morales', 'Vargas', 'Castro', 'Ruiz', 'Gómez', 'Blanco', 'Paz', 'Sosa', 'Siri', 'Méndez', 'Guzmán', 'García', 'Lombardi', 'Navarro', 'Rojas', 'Luna', 'Acosta', 'Benitez'];
 const plans: MembershipPlan[] = ['3 veces por semana', 'Libre', 'Funcional', 'Sala Musculación + Funcional'];
 
+const medicalNotes = [
+  'Apto médico al día. Sin lesiones.',
+  'Lesión de rodilla derecha. Evitar sentadillas profundas.',
+  'Apto médico al día. Hipertensión controlada.',
+  'Sin antecedentes. Apto médico vigente.',
+  'Operación de hombro hace 2 años. Recuperado al 100%.',
+  'Apto médico al día. Diabetes tipo 2 controlada.',
+  'Hernias de disco L4-L5. Evitar impacto.',
+  'Sin lesiones. Apto médico al día.',
+];
+
+const personalObjectives = [
+  'Bajar de peso y tonificar',
+  'Ganar masa muscular',
+  'Salud cardiovascular',
+  'Mejorar flexibilidad y postura',
+  'Preparación para maratón',
+  'Rehabilitación y bienestar',
+  'Mantenimiento general',
+  'Competencia amateur de powerlifting',
+];
+
+const emergencyNames = [
+  'María González', 'Carlos Fernández', 'Ana Rodríguez', 'Luis Martínez',
+  'Patricia López', 'Jorge Díaz', 'Laura Pérez', 'Roberto Sánchez',
+];
+
 const generateMockMembers = (count: number): Member[] => {
   const members: Member[] = [];
   const today = new Date();
-  
+  today.setHours(0, 0, 0, 0);
+
+  // Pre-calculamos fechas de ingreso para que sean realistas
+  // ~8 alumnos este mes, ~10 mes anterior, resto distribuido en últimos 12 meses
+  const getJoinDate = (i: number): string => {
+    const d = new Date(today);
+    if (i <= 8) {
+      // Este mes
+      d.setDate(Math.max(1, today.getDate() - (i * 3)));
+    } else if (i <= 18) {
+      // Mes anterior
+      d.setMonth(d.getMonth() - 1);
+      d.setDate(1 + ((i - 9) * 2));
+    } else {
+      // Distribuidos en últimos 2-12 meses
+      const monthsBack = 2 + ((i - 19) % 10);
+      d.setMonth(d.getMonth() - monthsBack);
+      d.setDate(1 + (i % 28));
+    }
+    return d.toISOString().split('T')[0];
+  };
+
   for (let i = 1; i <= count; i++) {
     const firstName = firstNames[i % firstNames.length];
     const lastName = lastNames[Math.floor(i / firstNames.length) % lastNames.length];
     const name = `${firstName} ${lastName}`;
     const plan = plans[i % plans.length];
-    
+
     let nextExpiryDate: Date;
     let status: 'Activo' | 'Vencido' | 'Deudor';
     let debt = 0;
     let daysOverdue = 0;
 
     if (i % 5 === 0) {
-      const monthsBack = (i % 3) + 1;
+      const monthsBack = (i % 2) + 1;
       nextExpiryDate = new Date(today);
       nextExpiryDate.setMonth(today.getMonth() - monthsBack);
       status = 'Deudor';
-      debt = PLAN_PRICES[plan]; // deuda de 1 mes (el mes vencido más reciente)
+      debt = PLAN_PRICES[plan];
       daysOverdue = Math.floor((today.getTime() - nextExpiryDate.getTime()) / (1000 * 60 * 60 * 24));
     } else if (i % 7 === 0) {
       nextExpiryDate = new Date(today);
@@ -104,15 +152,22 @@ const generateMockMembers = (count: number): Member[] => {
     const lastPaymentDate = new Date(nextExpiryDate);
     lastPaymentDate.setMonth(nextExpiryDate.getMonth() - 1);
     const lastPayment = lastPaymentDate.toISOString().split('T')[0];
-    
-    const joinDate = '2024-01-15'; 
-    
+
+    const joinDate = getJoinDate(i);
+
+    // DNI y teléfono deterministas (sin Math.random)
+    const dniBase = 20000000 + (i * 371239) % 20000000;
+    const dniStr = dniBase.toString().replace(/(\d{2})(\d{3})(\d{3})/, '$1.$2.$3');
+    const phoneArea = ['11', '341', '351', '221', '261', '381'][i % 6];
+    const phoneNum1 = String(4000 + (i * 137) % 6000).padStart(4, '0');
+    const phoneNum2 = String(1000 + (i * 97) % 9000).padStart(4, '0');
+
     members.push({
       id: i.toString(),
-      dni: `${25 + (i % 20)}.${Math.floor(Math.random() * 900) + 100}.${Math.floor(Math.random() * 900) + 100}`,
+      dni: dniStr,
       name,
-      email: `${firstName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")}.${lastName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")}${i}@gmail.com`,
-      phone: `+54 11 ${Math.floor(Math.random() * 9000) + 1000}-${Math.floor(Math.random() * 9000) + 1000}`,
+      email: `${firstName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')}.${lastName.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')}${i > 20 ? i : ''}@gmail.com`,
+      phone: `+54 ${phoneArea} ${phoneNum1}-${phoneNum2}`,
       plan,
       status,
       lastPayment,
@@ -120,10 +175,10 @@ const generateMockMembers = (count: number): Member[] => {
       debt,
       daysOverdue,
       joinDate,
-      medicalNotes: 'Apto médico al día. Sin lesiones.',
-      emergencyContactName: 'Familiar de Contacto',
-      emergencyContactPhone: '+54 11 0000-0000',
-      personalObjective: 'Salud y bienestar',
+      medicalNotes: medicalNotes[i % medicalNotes.length],
+      emergencyContactName: emergencyNames[i % emergencyNames.length],
+      emergencyContactPhone: `+54 11 ${String(4000 + (i * 213) % 6000).padStart(4, '0')}-${String(1000 + (i * 53) % 9000).padStart(4, '0')}`,
+      personalObjective: personalObjectives[i % personalObjectives.length],
       origin: (
         i % 10 <= 2 ? 'Instagram / TikTok'
         : i % 10 <= 5 ? 'Referido por alumno'
@@ -132,7 +187,7 @@ const generateMockMembers = (count: number): Member[] => {
         : i % 10 === 8 ? 'Google Maps'
         : 'Otro'
       ),
-      initialPlan: '3 veces x semana',
+      initialPlan: plan,
     });
   }
   return members;
@@ -272,18 +327,21 @@ export function formatDate(dateStr: string): string {
 
 export function formatRelativeDate(dateStr: string, type: 'overdue' | 'today' | 'upcoming', daysOverdue: number): string {
   if (type === 'today') return 'Hoy';
+  
   if (type === 'overdue') {
     if (daysOverdue === 1) return 'Hace 1 día';
     if (daysOverdue < 30) return `Hace ${daysOverdue} días`;
     const months = Math.floor(daysOverdue / 30);
     return months === 1 ? 'Hace 1 mes' : `Hace ${months} meses`;
   }
-  const targetDate = new Date(dateStr);
-  const now = new Date('2026-04-22'); 
-  const diffTime = Math.max(0, targetDate.getTime() - now.getTime());
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  if (diffDays === 0) return 'Mañana';
-  if (diffDays === 1) return 'En 1 día';
+  
+  const targetDate = new Date(`${dateStr}T00:00:00`);
+  const now = new Date(); 
+  now.setHours(0, 0, 0, 0);
+  const diffTime = targetDate.getTime() - now.getTime();
+  const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+  
+  if (diffDays <= 1) return 'Mañana';
   return `En ${diffDays} días`;
 }
 

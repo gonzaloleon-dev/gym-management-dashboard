@@ -8,14 +8,12 @@ import { KPICards } from '@/components/dashboard/kpi-cards';
 import { MembersGrowthChart } from '@/components/dashboard/members-growth-chart';
 import { CollectionManagementWidget } from '@/components/dashboard/collection-management-widget';
 import { MembersTable } from '@/components/dashboard/members-table';
-import { QuickActions } from '@/components/dashboard/quick-actions';
+
 import { PaymentsView } from '@/components/dashboard/payments-view';
 import { ExpensesView } from '@/components/dashboard/expenses-view';
 import { StatisticsView } from '@/components/dashboard/statistics-view';
 import { SettingsView } from '@/components/dashboard/settings-view';
 import {
-  revenueData,
-  paymentMethodsData
 } from '@/lib/mock-data';
 import { useAppContext, Plan } from '@/lib/app-context';
 
@@ -95,10 +93,6 @@ export default function DashboardPage() {
     return expiryDate > today && expiryDate <= limitDate;
   }).sort((a, b) => new Date(`${a.nextExpiry}T00:00:00`).getTime() - new Date(`${b.nextExpiry}T00:00:00`).getTime());
 
-  const membersGrowth = revenueData.map((d) => ({
-    month: d.month,
-    members: d.members,
-  }));
 
   return (
     <div className="min-h-screen bg-background">

@@ -128,9 +128,14 @@ export function CollectionManagementWidget({
                 </TableCell>
                 {type !== 'today' && (
                   <TableCell className="bg-white px-6 py-4 whitespace-nowrap text-left">
-                    <span className="text-sm font-medium text-muted-foreground">
-                      {formatRelativeDate(member.nextExpiry, type, member.daysOverdue)}
-                    </span>
+                    <div className="flex flex-col">
+                      <span className="text-sm font-semibold text-slate-800">
+                        {formatRelativeDate(member.nextExpiry, type, member.daysOverdue)}
+                      </span>
+                      <span className="text-[11px] font-medium text-slate-400 mt-0.5">
+                        {formatDate(member.nextExpiry)}
+                      </span>
+                    </div>
                   </TableCell>
                 )}
                 {type === 'overdue' ? (
