@@ -88,7 +88,7 @@ const generateMockMembers = (count: number): Member[] => {
       nextExpiryDate = new Date(today);
       nextExpiryDate.setMonth(today.getMonth() - monthsBack);
       status = 'Deudor';
-      debt = PLAN_PRICES[plan] * monthsBack;
+      debt = PLAN_PRICES[plan]; // deuda de 1 mes (el mes vencido más reciente)
       daysOverdue = Math.floor((today.getTime() - nextExpiryDate.getTime()) / (1000 * 60 * 60 * 24));
     } else if (i % 7 === 0) {
       nextExpiryDate = new Date(today);
@@ -309,23 +309,28 @@ export function getDashboardStats() {
   const debtors = mockMembers.filter(m => m.status === 'Deudor');
   const totalDebt = debtors.reduce((acc, m) => acc + m.debt, 0);
   
-  // Tasa de retención simulada basada en activos vs deudores
-  const retentionRate = Math.round((activeMembers / (activeMembers + debtors.length)) * 100);
+  const retentionRate = (activeMembers + debtors.length) > 0
+    ? Math.round((activeMembers / (activeMembers + debtors.length)) * 100)
+    : 0;
   
-  // Promedio por miembro (promedio simple de todos los planes actuales)
   const planPrices = Object.values(PLAN_PRICES);
   const avgPerMember = Math.round(planPrices.reduce((a, b) => a + b, 0) / planPrices.length);
 
+  const currentMonthStr = new Date().toISOString().slice(0, 7);
+  const monthlyRevenue = recentPayments
+    .filter(p => !p.voided && p.date.startsWith(currentMonthStr))
+    .reduce((acc, p) => acc + p.amount, 0);
+
   return {
-    monthlyRevenue: 5200000,
+    monthlyRevenue,
     totalMembers: mockMembers.length,
     activeMembers,
-    paidMembers: recentPayments.length,
+    paidMembers: recentPayments.filter(p => !p.voided).length,
     totalDebt,
     retentionRate,
     avgPerMember,
-    newMembersThisMonth: 15,
-    growthPercentage: 6.4,
+    newMembersThisMonth: 0,
+    growthPercentage: 0,
     todayExpiries: todayExpiringMembers.length,
     upcomingExpiries: getUpcomingExpiries().length,
     debtors: debtors.sort((a, b) => b.daysOverdue - a.daysOverdue),

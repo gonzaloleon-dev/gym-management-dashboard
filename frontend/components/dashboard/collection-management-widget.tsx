@@ -61,7 +61,8 @@ export function CollectionManagementWidget({
     let message = '';
 
     if (type === 'overdue') {
-      message = encodeURIComponent(`Hola ${member.name.split(' ')[0]}, te escribimos desde ${gymName}. Notamos que tenés un saldo pendiente de ${formatCurrency(member.debt)}. ¿Podemos ayudarte a regularizar tu situación?`);
+      const effectiveDebt = plans.find(p => p.name === member.plan)?.price ?? member.debt;
+      message = encodeURIComponent(`Hola ${member.name.split(' ')[0]}, te escribimos desde ${gymName}. Notamos que tenés un saldo pendiente de ${formatCurrency(effectiveDebt)}. ¿Podemos ayudarte a regularizar tu situación?`);
     } else if (type === 'today') {
       const planPrice = plans.find(p => p.name === member.plan)?.price || 0;
       message = encodeURIComponent(`Hola ${member.name.split(' ')[0]}! Te escribimos desde ${gymName}. Tu membresía de ${member.plan} vence hoy. El valor para renovar es ${formatCurrency(planPrice)}. ¿Te gustaría renovar?`);
@@ -135,15 +136,13 @@ export function CollectionManagementWidget({
                 {type === 'overdue' ? (
                   <TableCell className="bg-white px-6 py-4 whitespace-nowrap text-left">
                     <span className="font-semibold text-red-600">
-                      {formatCurrency(member.debt)}
+                      {formatCurrency(plans.find(p => p.name === member.plan)?.price ?? member.debt)}
                     </span>
                   </TableCell>
                 ) : (
                   <TableCell className="bg-white px-6 py-4 whitespace-nowrap text-left">
-                    <span className="font-semibold text-foreground">
-                      {member.plan}
-                      <span className="text-slate-400 mx-1">•</span>
-                      {formatCurrency(plans.find(p => p.name === member.plan)?.price || 0)}/mes
+                    <span className="font-semibold text-slate-900">
+                      {formatCurrency(plans.find(p => p.name === member.plan)?.price || 0)}
                     </span>
                   </TableCell>
                 )}

@@ -173,23 +173,35 @@ export function ExpensesView() {
   // Evolución histórica (Últimos 6 meses). Se aseguran datos coherentes sin caída a cero.
   const balanceHistory = useMemo(() => {
     const baseRevenue = monthlyRevenue > 0 ? monthlyRevenue : 650000;
-    const baseExpenses = totalMonthlyExpenses > 0 ? totalMonthlyExpenses : 690000;
 
-    const history = [
-      { name: 'Sep', Ingresos: baseRevenue * 0.90, Gastos: baseRevenue * 0.65 },
-      { name: 'Oct', Ingresos: baseRevenue * 0.95, Gastos: baseRevenue * 0.80 },
-      { name: 'Nov', Ingresos: baseRevenue * 0.92, Gastos: baseRevenue * 0.70 },
-      { name: 'Dic', Ingresos: baseRevenue * 1.10, Gastos: baseRevenue * 0.85 },
-      { name: 'Ene', Ingresos: baseRevenue * 1.05, Gastos: baseRevenue * 0.75 },
-    ];
-    // Mes actual
+    // Generar los últimos 6 meses dinámicamente
+    const MONTH_NAMES = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+    const now = new Date();
+    const history = [];
+    for (let i = 5; i >= 1; i--) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const monthStr = d.toISOString().slice(0, 7);
+      const rev = payments
+        .filter(p => !p.voided && p.date.startsWith(monthStr))
+        .reduce((acc, p) => acc + p.amount, 0);
+      const exp = expenses
+        .filter(e => e.date.startsWith(monthStr))
+        .reduce((acc, e) => acc + e.amount, 0);
+      // Si no hay datos reales para ese mes, usar un valor estimado proporcional al actual
+      history.push({
+        name: MONTH_NAMES[d.getMonth()],
+        Ingresos: rev > 0 ? rev : Math.round(baseRevenue * (0.75 + Math.random() * 0.35)),
+        Gastos: exp > 0 ? exp : Math.round(baseRevenue * (0.45 + Math.random() * 0.30)),
+      });
+    }
+    // Mes actual con datos reales
     history.push({
-      name: 'Feb',
+      name: MONTH_NAMES[now.getMonth()],
       Ingresos: monthlyRevenue,
       Gastos: totalMonthlyExpenses,
     });
     return history;
-  }, [monthlyRevenue, totalMonthlyExpenses]);
+  }, [monthlyRevenue, totalMonthlyExpenses, payments, expenses]);
 
   // Handlers para acciones
   const handleQuickSave = () => {

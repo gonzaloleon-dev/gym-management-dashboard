@@ -34,6 +34,7 @@ interface AppContextType {
   setPlans: (plans: Plan[]) => void;
   addMember: (member: Member) => void;
   updateMember: (id: string, updates: Partial<Member>) => void;
+  deleteMember: (id: string) => void;
   addExpense: (expense: Expense) => void;
   deleteExpense: (id: string) => void;
   addPayment: (payment: Payment, newPlan?: string, newExpiry?: string) => void;
@@ -72,6 +73,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const updateMember = (id: string, updates: Partial<Member>) => {
     setMembers(prev => prev.map(m => m.id === id ? { ...m, ...updates } : m));
+  };
+
+  const deleteMember = (id: string) => {
+    setMembers(prev => prev.filter(m => m.id !== id));
   };
 
   const addExpense = (expense: Expense) => {
@@ -113,7 +118,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   return (
     <AppContext.Provider value={{
-      members, expenses, payments, plans, isLoggedIn, login, logout, setPlans, addMember, updateMember, addExpense, deleteExpense, addPayment, voidPayment
+      members, expenses, payments, plans, isLoggedIn, login, logout, setPlans, addMember, updateMember, deleteMember, addExpense, deleteExpense, addPayment, voidPayment
     }}>
       {children}
     </AppContext.Provider>

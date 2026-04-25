@@ -20,16 +20,18 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
-import { PLAN_PRICES, formatCurrency } from '@/lib/mock-data';
+import { formatCurrency } from '@/lib/mock-data';
+import { useAppContext } from '@/lib/app-context';
 
 export function QuickActions() {
+  const { plans } = useAppContext();
   const [isExpanded, setIsExpanded] = useState(false);
   const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
   const [memberDialogOpen, setMemberDialogOpen] = useState(false);
 
-  const planOptions = Object.entries(PLAN_PRICES).map(([plan, price]) => ({
-    value: plan,
-    label: `${plan} - ${formatCurrency(price)}`,
+  const planOptions = plans.map((plan) => ({
+    value: plan.name,
+    label: `${plan.name} — ${formatCurrency(plan.price)}`,
   }));
 
   return (

@@ -14,7 +14,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Member } from '@/lib/mock-data';
 import { useAppContext, Plan } from '@/lib/app-context';
-import { Save, X, CalendarIcon } from 'lucide-react';
+import { Save, X, CalendarIcon, Trash2 } from 'lucide-react';
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { format } from "date-fns"
@@ -49,7 +49,7 @@ const inputClass = "h-10 bg-white border-stone-200 text-slate-900 placeholder:te
 
 export function MemberDetailsModal({ open, onOpenChange, member }: MemberDetailsModalProps) {
   const isEditing = !!member;
-  const { plans, addMember, updateMember } = useAppContext();
+  const { plans, addMember, updateMember, deleteMember } = useAppContext();
   const [selectedPlan, setSelectedPlan] = useState<string>(member?.plan ?? plans[0]?.name ?? '');
   const [selectedOrigin, setSelectedOrigin] = useState<string>(member?.origin ?? 'Instagram');
   const [joinDate, setJoinDate] = useState<Date | undefined>(
@@ -325,6 +325,21 @@ export function MemberDetailsModal({ open, onOpenChange, member }: MemberDetails
 
           {/* Footer sticky */}
           <div className="flex gap-3 pt-7 mt-7 border-t border-stone-100">
+            {isEditing && (
+              <Button
+                type="button"
+                variant="outline"
+                className="h-10 px-3 border-red-200 text-red-500 hover:bg-red-50 hover:text-red-700 transition-all text-[13px] font-sans cursor-pointer"
+                onClick={() => {
+                  if (member) {
+                    deleteMember(member.id);
+                    onOpenChange(false);
+                  }
+                }}
+              >
+                <Trash2 className="w-4 h-4" />
+              </Button>
+            )}
             <Button
               type="button"
               variant="outline"

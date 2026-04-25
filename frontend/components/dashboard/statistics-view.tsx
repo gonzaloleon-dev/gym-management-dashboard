@@ -24,9 +24,7 @@ import {
   mockMembers,
   revenueData,
   formatCurrency,
-  PLAN_PRICES,
   paymentMethodsData,
-  getDashboardStats,
 } from '@/lib/mock-data';
 import { useAppContext } from '@/lib/app-context';
 import { PaymentMethodsChart } from '@/components/dashboard/payment-methods-chart';
@@ -65,20 +63,51 @@ const PlanTooltip = ({
 };
 
 export function StatisticsView() {
-  const stats = getDashboardStats();
-  const { members, plans } = useAppContext();
+  const { members, plans, payments } = useAppContext();
   const totalMembers = members.length;
+
+  // Cuota promedio — precios actuales del contexto
   const avgPerMember = plans.length > 0
     ? Math.round(plans.reduce((a, b) => a + b.price, 0) / plans.length)
-    : stats.avgPerMember;
+    : 0;
+
+  // Tasa de retención dinámica
+  const activeCount  = members.filter(m => m.status === 'Activo').length;
+  const debtorCount  = members.filter(m => m.status === 'Deudor').length;
+  const retentionRate = (activeCount + debtorCount) > 0
+    ? Math.round((activeCount / (activeCount + debtorCount)) * 100)
+    : 0;
+
+  // Crecimiento mensual dinámico
+  const currentMonthStr = new Date().toISOString().slice(0, 7);
+  const prevMonthDate   = new Date();
+  prevMonthDate.setMonth(prevMonthDate.getMonth() - 1);
+  const prevMonthStr    = prevMonthDate.toISOString().slice(0, 7);
+  const newThisMonth    = members.filter(m => m.joinDate?.startsWith(currentMonthStr)).length;
+  const newPrevMonth    = members.filter(m => m.joinDate?.startsWith(prevMonthStr)).length;
+  const growthPercentage = newPrevMonth > 0
+    ? Math.round(((newThisMonth - newPrevMonth) / newPrevMonth) * 100 * 10) / 10
+    : newThisMonth > 0 ? 100 : 0;
+
+  // Métodos de pago — calculado desde payments reales del contexto
+  const METHOD_LIST = ['Efectivo', 'Transferencia', 'Mercado Pago', 'Cuenta DNI', 'Débito', 'Otros'] as const;
+  const dynamicPaymentMethodsData = METHOD_LIST.map(method => ({
+    method,
+    amount: payments.filter(p => !p.voided && p.method === method).reduce((a, p) => a + p.amount, 0),
+    count:  payments.filter(p => !p.voided && p.method === method).length,
+  })).filter(d => d.count > 0);
+  const paymentMethodsDisplay = dynamicPaymentMethodsData.length > 0
+    ? dynamicPaymentMethodsData
+    : paymentMethodsData; // fallback a mock si no hay pagos registrados
+
   const [selectedMonth, setSelectedMonth] = useState<string>(
     revenueData[revenueData.length - 1].month
   );
 
-  // Plan distribution — usa contexto dinámico (ordenado mayor a menor)
+  // Plan distribution — usa plans del contexto (sincronizado con Configuración)
   const planCounts: Record<string, number> = {};
-  Object.keys(PLAN_PRICES).forEach((plan) => {
-    planCounts[plan] = members.filter((m) => m.plan === plan).length;
+  plans.forEach((plan) => {
+    planCounts[plan.name] = members.filter((m) => m.plan === plan.name).length;
   });
   const planData = Object.entries(planCounts)
     .filter(([, value]) => value > 0)
@@ -129,7 +158,7 @@ export function StatisticsView() {
             <div className="flex items-start justify-between">
               <div className="space-y-2 flex-1">
                 <p className="text-sm text-muted-foreground">Tasa de Retención</p>
-                <p className="text-2xl font-bold text-primary">{stats.retentionRate}%</p>
+                <p className="text-2xl font-bold text-primary">{retentionRate}%</p>
               </div>
               <div className="rounded-lg p-2.5 shrink-0 bg-primary/10">
                 <ShieldCheck className="h-5 w-5 text-primary" />
@@ -157,7 +186,9 @@ export function StatisticsView() {
             <div className="flex items-start justify-between">
               <div className="space-y-2 flex-1">
                 <p className="text-sm text-muted-foreground">Crecimiento Mensual</p>
-                <p className="text-2xl font-bold text-primary">+{stats.growthPercentage}%</p>
+                <p className="text-2xl font-bold text-primary">
+                  {growthPercentage >= 0 ? '+' : ''}{growthPercentage}%
+                </p>
               </div>
               <div className="rounded-lg p-2.5 shrink-0 bg-primary/10">
                 <TrendingUp className="h-5 w-5 text-primary" />
@@ -349,7 +380,7 @@ export function StatisticsView() {
 
                 {/* Lista Financiera Métodos de Pago */}
                 <div className="h-full">
-                  <PaymentMethodsChart data={paymentMethodsData} />
+                  <PaymentMethodsChart data={paymentMethodsDisplay} />
                 </div>
               </div>
             </TabsContent>

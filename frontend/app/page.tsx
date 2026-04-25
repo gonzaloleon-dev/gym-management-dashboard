@@ -37,24 +37,48 @@ export default function DashboardPage() {
   
   const activeMembers = members.filter(m => m.status === 'Activo').length;
   const debtors = members.filter(m => m.status === 'Deudor');
-  const totalDebt = debtors.reduce((acc, m) => acc + m.debt, 0);
+  // Deuda calculada con precios ACTUALES de plans (no el campo estático member.debt)
+  const totalDebt = debtors.reduce((acc, m) => {
+    const planPrice = plans.find(p => p.name === m.plan)?.price ?? m.debt;
+    return acc + planPrice;
+  }, 0);
   const retentionRate = members.length > 0 ? Math.round((activeMembers / (activeMembers + debtors.length)) * 100) : 0;
   
   const avgPerMember = plans.length > 0 ? Math.round(plans.reduce((a, b: Plan) => a + b.price, 0) / plans.length) : 0;
   
   const currentMonthStr = new Date().toISOString().slice(0, 7);
-  const monthlyRevenue = payments.filter(p => !p.voided && p.date.startsWith(currentMonthStr)).reduce((acc, p) => acc + p.amount, 0);
+  const monthlyRevenue = payments
+    .filter(p => !p.voided && p.date.startsWith(currentMonthStr))
+    .reduce((acc, p) => acc + p.amount, 0);
+
+  // Miembros (únicos) que pagaron este mes
+  const paidMemberIds = new Set(
+    payments.filter(p => !p.voided && p.date.startsWith(currentMonthStr)).map(p => p.memberId)
+  );
+  const paidMembers = paidMemberIds.size;
+
+  // Nuevos alumnos este mes (joinDate del mes actual)
+  const newMembersThisMonth = members.filter(m => m.joinDate?.startsWith(currentMonthStr)).length;
+
+  // Crecimiento: nuevos vs mes anterior
+  const prevMonthDate = new Date();
+  prevMonthDate.setMonth(prevMonthDate.getMonth() - 1);
+  const prevMonthStr = prevMonthDate.toISOString().slice(0, 7);
+  const prevMonthMembers = members.filter(m => m.joinDate?.startsWith(prevMonthStr)).length;
+  const growthPercentage = prevMonthMembers > 0
+    ? Math.round(((newMembersThisMonth - prevMonthMembers) / prevMonthMembers) * 100 * 10) / 10
+    : newMembersThisMonth > 0 ? 100 : 0;
 
   const stats = {
-    monthlyRevenue: monthlyRevenue || 5200000,
+    monthlyRevenue,
     totalMembers: members.length,
     activeMembers,
-    paidMembers: payments.filter(p => !p.voided).length,
+    paidMembers,
     totalDebt,
     retentionRate,
     avgPerMember,
-    newMembersThisMonth: 15,
-    growthPercentage: 6.4,
+    newMembersThisMonth,
+    growthPercentage,
   };
 
   const overdueMembers = debtors.sort((a, b) => a.daysOverdue - b.daysOverdue);
